@@ -1,0 +1,241 @@
+<div class="flex card gap-2 justify-content-between  align-items-center ">
+    
+
+<div class=" flex justify-content-center">
+    <p-treeSelect class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Tipo de Trabajo"></p-treeSelect>
+</div>
+
+<div class=" flex justify-content-center">
+    <p-treeSelect class="md:w-20rem w-full small" containerStyleClass="w-full"  placeholder="Num OT"></p-treeSelect>
+    <!--p-dropdown [options]="cities" class="md:w-20rem w-full" containerStyleClass="w-full"  optionLabel="name"></!--p-dropdown-->
+</div>
+
+<div class="flex justify-content-center">
+    <input type="text" pInputText  class="p-inputtext-sm ">
+</div>
+
+
+<div class=" flex justify-content-center">
+    <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+    <input pInputText type="text">
+</div>
+
+<p-button label="Orden Hija"></p-button>
+</div>
+
+<div class="grid">
+
+
+    <div class="col-12 md:col-8 lg:col-8 pr-2">
+     <div class="pb-5">
+        
+<p-table >
+    <ng-template pTemplate="header">
+        <tr>
+            <th scope="col">Tipo</th>
+            <th scope="col">Norma Reparto</th>
+            <th scope="col">No. Economico</th>
+            <th scope="col">Marca</th>
+            <th scope="col">Modelo</th>
+            <th scope="col">Serie</th>
+            <th scope="col">Horometro Actual</th>
+            <th scope="col">Horometro Nuevo</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body">
+        <tr>
+            <td>dsvdsv</td>
+            <td>dvsdv</td>
+            <td>dsdvsv</td>
+            <td>dsd</td>
+            <td>dsvdsv</td>
+            <td>dvsdv</td>
+            <td>dsdvsv</td>
+            <td>dsd</td>
+        </tr>
+    </ng-template>
+</p-table>
+     </div>
+
+
+        <div class="card pt-4">
+            <div class=" flex justify-content-center">
+                <p-fieldset legend="Datos del cliente">
+                   <div class="grid ">
+                    <div class="col-6  ">
+                        
+                        <div class=" flex justify-content-center">
+                            <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+                            <span class="p-input-icon-left w-25rem ">
+                                <i class="pi pi-search"></i>
+                               
+                                <input type="text" pInputText formControlName="text" class="w-full" placeholder="Cliente" />
+                            </span>
+                        </div>
+                        
+                        <div class=" flex justify-content-center">
+                            <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+                            <input type="text" pInputText formControlName="text" class="md:w-25rem w-full mt-2" placeholder="Nombre">
+                        </div>
+                        
+                        
+                        <div class=" flex justify-content-center">
+                            <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+                            <input type="text" pInputText formControlName="text" class="md:w-25rem w-full mt-2" placeholder="Dirección">
+                        </div>
+                    </div>
+                    <div class="col-6  flex justify-content-end flex-wrap">
+                        <div class=" flex justify-content-center">
+                            <input type="text" pInputText formControlName="text" class="" placeholder="Ciudad">
+                        </div>
+                        
+                        <div class=" flex justify-content-center">
+                            <input type="text" pInputText formControlName="text" class=" mt-2" placeholder="Teléfono">
+                        </div>
+                        
+                        
+                        <div class=" flex justify-content-center">
+                            <input type="text" pInputText formControlName="text" class=" mt-2" placeholder="Contrato">
+                        </div>
+
+                        <div class=" flex justify-content-center">
+                            <input type="text" pInputText formControlName="text" class=" mt-2" placeholder="OC/OT">
+                        </div>
+                    </div>
+                   </div>
+                </p-fieldset>
+            </div>
+            <div class=" flex justify-content-center mt-5">
+                <p-fieldset legend="Reporte del cliente">
+                   <div class="grid">
+                    <div class="col-8 md:col-8 pr-4 lg:col-8 ">
+                        <div class="flex">
+                            <textarea rows="5" cols="30" pInputTextarea class="md:w-25rem w-full" placeholder="Problema Reportado"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-4 flex justify-content-end flex-wrap">
+
+                        <div class=" flex justify-content-center">
+                            <p-dropdown formControlName="city" [options]="cities"  class="w-full" placeholder="Tipo Falla" ></p-dropdown>
+                            
+                        </div>
+                        
+                        <div class=" flex justify-content-center">
+                            <input type="text" pInputText class="p-inputtext-sm mt-2" placeholder="Reportado por:">
+                        </div>
+                        
+                        
+                        <div class=" flex justify-content-center">
+                        <input type="text" pInputText class="p-inputtext-sm mt-2" placeholder="Autorizado por:">
+                            <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+                        </div>
+                    </div>
+                   </div>
+                </p-fieldset>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="card col-4 md:col-4 lg:col-4">
+      
+<div class="flex justify-content-center">
+    <p-fieldset legend="Estado OT">
+        <div class="col-12  flex justify-content-center flex-wrap">
+            <div class=" flex justify-content-center  mt-2">
+                <p-treeSelect class="md:w-20rem w-full" containerStyleClass="w-full" formControlName="selectedNodes"  placeholder="Select Item"></p-treeSelect>
+            </div>
+            
+            <div class=" flex justify-content-center mt-4 custom-width">
+                <p-calendar  [showIcon]="true" containerStyleClass="w-full"   class="md:w-20rem w-full" ></p-calendar>
+                <!--p-treeSelect class="md:w-20rem w-full mt-4" containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Select Item"></!--p-treeSelect-->
+            </div>
+            
+            
+            <div class=" flex justify-content-center mt-4">
+                <p-treeSelect class="md:w-20rem w-full " containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Select Item"></p-treeSelect>
+            </div>
+
+            <div class=" flex justify-content-center mt-4 custom-width">
+                <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+                <span class="p-input-icon-left w-20rem">
+                    <i class="pi pi-search"></i>
+                   
+                    <input type="text" pInputText formControlName="text" class="w-full "  placeholder="" />
+                </span>
+            </div>
+
+            <div class=" flex justify-content-center mt-4">
+                <p-treeSelect class="md:w-20rem w-full " containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Select Item"></p-treeSelect>
+            </div>
+            
+            
+            <div class=" flex justify-content-center mt-4">
+                <p-treeSelect class="md:w-20rem w-full " containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Select Item"></p-treeSelect>
+            </div>
+
+            <div class="flex gap-2 mt-4">
+                <p-button label="Cancelar OT" styleClass="p-button-warning"></p-button>
+                <p-button label="Terminar OT" styleClass="p-button-warning"></p-button>
+            </div>
+
+            <div class=" flex justify-content-center mt-4">
+                <p-treeSelect class="md:w-20rem w-full" containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Select Item"></p-treeSelect>
+            </div>
+
+        </div>
+    </p-fieldset>
+</div>
+    </div>
+</div>
+
+
+<div class="card">
+    <p-tabView>
+        <p-tabPanel header="Diagnóstico Real">
+          
+<div class="card flex justify-content-center col-12">
+    <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Diagnóstico" ></textarea>
+</div>
+        </p-tabPanel>
+        <p-tabPanel header="Refacciones">
+            <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+            </p>
+        </p-tabPanel>
+        <p-tabPanel header="Mano de Obra">
+            <p>
+                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
+                qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+            </p>
+        </p-tabPanel>
+        <p-tabPanel header="Terceros">
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+        </p-tabPanel>
+        <p-tabPanel header="Recomendaciones Tecnicas">
+            <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+            </p>
+        </p-tabPanel>
+        <p-tabPanel header="Anexos">
+            <p>
+                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
+                qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+            </p>
+        </p-tabPanel>
+    </p-tabView>
+</div>
+<div class="flex gap-2">
+    <p-button label="Grabar"></p-button>
+    <p-button label="Regresar" styleClass="p-button-secondary"></p-button>
+</div>
+
+ 

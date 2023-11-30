@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   loginForm!: FormGroup;
 
@@ -26,6 +26,13 @@ export class LoginComponent {
       ],
     });
   }
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/']);
+    }
+  }
+
+
 
   submitForm() {
     if (this.loginForm.valid) {
@@ -34,6 +41,7 @@ export class LoginComponent {
   
       // Verificar las credenciales
       if (this.authService.login(email, password)) {
+        this.authService.setRedirectUrl('/dashboard');
         this.showConfirmation();
       } else {
         this.showInvalidCredentialsError();
@@ -68,7 +76,7 @@ export class LoginComponent {
         
       }
     });
-  }
+  } 
 
   showValidationError() {
     let errorMessage = 'Debe llenar todos los campos.';

@@ -15,10 +15,27 @@ export class AppMenuComponent implements OnInit {
     ngOnInit() {
         this.model = [
             {
+                label: 'Home',
                 items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-th-large', routerLink: ['/'] }
+                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }
                 ]
             },
+            {
+                label:'Ordenes de trabajo',
+                items: [
+                    { label: 'Ordenes de trabajo ', icon: 'pi pi-cog ' ,
+                
+                items: [
+                    //{ label: 'Ordenes de trabajo ', icon: 'pi pi-cog ', routerLink: ['/ordenes'] },
+                    { label: 'Creación de Órden de Trabajo ', icon: 'pi pi-cog ', routerLink: ['/ordenes'] },
+                    { label: 'Busca de Órdenes de Trabajo ', icon: 'pi pi-cog ', routerLink: ['/buscaOrdenes'] },
+                       ]
+                
+                   },
+                      
+                ]
+            },
+
         ];
     }
 }
