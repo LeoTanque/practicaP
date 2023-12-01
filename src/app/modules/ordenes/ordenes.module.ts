@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { OrdenesRoutingModule } from './ordenes-routing.module';
 import { OrdenesComponent } from './ordenes/ordenes.component';
@@ -12,8 +13,11 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext'
 import { TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
-
-
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { ToolbarModule } from 'primeng/toolbar';
+import { DialogModule } from 'primeng/dialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { InputNumberModule } from 'primeng/inputnumber';
 @NgModule({
   declarations: [
     OrdenesComponent,
@@ -22,6 +26,8 @@ import { CalendarModule } from 'primeng/calendar';
   imports: [
     CommonModule,
     OrdenesRoutingModule,
+    //FormsModule,
+    //ReactiveFormsModule,
     TreeSelectModule,
     FieldsetModule,
     InputTextareaModule,
@@ -30,8 +36,12 @@ import { CalendarModule } from 'primeng/calendar';
     DropdownModule,
     InputTextModule,
     TableModule,
-    CalendarModule
-    
+    CalendarModule,
+    RadioButtonModule,
+    ToolbarModule,
+    DialogModule,
+    //ConfirmDialogModule,
+    InputNumberModule
   ]
 })
 export class OrdenesModule { }
