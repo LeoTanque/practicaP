@@ -13,6 +13,15 @@ import { TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
 import { BuscaOrdenesComponent } from './busca-ordenes/busca-ordenes.component';
 
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { RippleModule } from 'primeng/ripple';
+import { MultiSelectModule } from 'primeng/multiselect';
+
+import { ProgressBarModule } from 'primeng/progressbar';
+import { ToastModule } from 'primeng/toast';
+import { SliderModule } from 'primeng/slider';
+import { RatingModule } from 'primeng/rating';
+
 @NgModule({
   declarations: [
     BuscaOrdenesComponent
@@ -28,7 +37,16 @@ import { BuscaOrdenesComponent } from './busca-ordenes/busca-ordenes.component';
     DropdownModule,
     InputTextModule,
     TableModule,
-    CalendarModule
+    CalendarModule,
+    ToggleButtonModule,
+		RippleModule,
+		MultiSelectModule,
+		DropdownModule,
+		ProgressBarModule,
+		ToastModule,
+    SliderModule,
+    RatingModule
+    
   ]
 })
 export class BuscaOrdenesModule { }

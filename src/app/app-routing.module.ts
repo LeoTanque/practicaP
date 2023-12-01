@@ -9,8 +9,8 @@ const routes: Routes = [
     children: [
       
       { path: '', loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule) },
-      { path: 'ordenes', loadChildren: () => import('./modules/ordenes/ordenes.module').then(m => m.OrdenesModule), canActivate: [AuthGuard] },
-      { path: 'buscaOrdenes', loadChildren: () => import('./modules/buscaOrdenes/busca-ordenes.module').then(m =>m.BuscaOrdenesModule)}
+      { path: 'ordenes', loadChildren: () => import('./modules/ordenes/ordenes.module').then(m => m.OrdenesModule),  },
+      { path: 'buscaOrdenes', loadChildren: () => import('./modules/buscaOrdenes/busca-ordenes.module').then(m =>m.BuscaOrdenesModule),}
   ]
   },
  

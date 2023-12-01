@@ -15,8 +15,65 @@
     
     <div class=" flex justify-content-center">
         <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
-        <input pInputText type="text">
+        <input pInputText type="text"  class="md:w-18rem" placeholder="Buscar cliente">
+
+        
     </div>
     
-    <p-button label="Buscar"  styleClass="p-button-success"></p-button>
+    <p-button label="Buscar"  styleClass="p-button-success w-15rem " ></p-button>
     </div>
+
+   
+<div class="card">
+    <p-table
+        [value]="ordenes"
+        [paginator]="true"
+        [rows]="5"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10, 25, 50]"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:35%">Tipo de Trabajo</th>
+                <th style="width:5%">Serie</th>
+                <th style="width:10%">Num Doc</th>
+                <th style="width:10%">Card Code</th>
+                <th style="width:25%">Cliente</th>
+                <th style="width:25%">Fecha</th>
+                <th style="width:15%">Estado</th>
+                <th style="width:10%">Prioridad</th>
+                <th style="width:25%">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-ordenes>
+            <tr>
+                <td>{{ ordenes.tipo }}</td>
+                <td>{{ ordenes.serie }}</td>
+                <td>{{ ordenes.numDoc }}</td>
+                <td>{{ ordenes.cardCode }}</td>
+                <td>{{ ordenes.cliente }}</td>
+                <td>{{ ordenes.fecha }}</td>
+                <td>{{ ordenes.estado }}</td>
+                <td>{{ ordenes.prioridad }}</td>
+                <td>
+                    <div class="flex ">
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2 " ></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" ></button>
+                    </div>
+                  
+                </td>
+            </tr>
+        </ng-template>
+
+       <ng-template pTemplate="paginatorleft">
+        <p-button type="button"  styleClass="p-button-text"></p-button>
+    </ng-template>
+    <ng-template pTemplate="paginatorright">
+        <p-button type="button"  styleClass="p-button-text"></p-button>
+    </ng-template>
+    </p-table>
+</div>
+
+
