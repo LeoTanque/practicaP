@@ -14,6 +14,7 @@ export class OrdenesComponent implements OnInit {
  terceros:boolean=false;
  recomendaciones:boolean = false;
  refacciones: boolean = false;
+ manoDeObra:boolean = false;
  product!: any;
  productos!: any[];
   selectedCity: any;
@@ -49,11 +50,27 @@ openNew3() {
   this.submitted = false;
  this.refacciones = true
 }
+
+openNew4() {
+  this.product = {};
+  this.submitted = false;
+ this.manoDeObra = true
+}
+
 hideDialog() {
   this.productDialog = false;
   this.submitted = false;
   this.terceros = false
+  this.manoDeObra = false;
+  this.refacciones = false;
+  this.recomendaciones = false
 }
 
+mTerceros() {
+  //this.productDialog = false;
+ // this.submitted = false;
+  this.terceros = false
+  this.manoDeObra = false
+}
 
 }

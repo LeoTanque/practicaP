@@ -18,6 +18,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { CheckboxModule } from 'primeng/checkbox';
 @NgModule({
   declarations: [
     OrdenesComponent,
@@ -41,7 +42,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
     ToolbarModule,
     DialogModule,
     //ConfirmDialogModule,
-    InputNumberModule
+    InputNumberModule,
+    CheckboxModule
   ]
 })
 export class OrdenesModule { }
