@@ -1,0 +1,651 @@
+<div class="flex card gap-2 justify-content-between  align-items-center ">
+    
+
+    <div class=" flex justify-content-center">
+        <p-dropdown class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Tipo de Trabajo"></p-dropdown>
+    </div>
+    
+    <div class=" flex justify-content-center">
+        <p-dropdown class="md:w-20rem w-full small" containerStyleClass="w-full"  placeholder="Num OT"></p-dropdown>
+        <!--p-dropdown [options]="cities" class="md:w-20rem w-full" containerStyleClass="w-full"  optionLabel="name"></!--p-dropdown-->
+    </div>
+    
+    <div class="flex justify-content-center">
+        <input type="text" pInputText  class="p-inputtext-sm ">
+    </div>
+    
+    
+    <div class=" flex justify-content-center">
+        <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+        <input pInputText type="text">
+    </div>
+    
+    <p-button label="Orden Hija"></p-button>
+    </div>
+    
+    <div class="grid">
+    
+    
+        <div class="col-8 md:col-8 lg:col-8 pr-2">
+         <div class="pb-5">
+            <p-toolbar styleClass="mb-4 gap-2">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+                    
+                </ng-template>
+            </p-toolbar>
+    <p-table styleClass="p-datatable-gridlines">
+        [value]="ordenes"
+       
+        <ng-template pTemplate="header">
+            <tr>
+                <th scope="col">Tipo</th>
+                <th scope="col">Norma Reparto</th>
+                <th scope="col">No. Economico</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Modelo</th>
+                <th scope="col">Serie</th>
+                <th scope="col">Horometro Actual</th>
+                <th scope="col">Horometro Nuevo</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-ordenes>
+            <tr>
+                <td>dsvdsv</td>
+                <td>dvsdv</td>
+                <td>dsdvsv</td>
+                <td>dsd</td>
+                <td>dsvdsv</td>
+                <td>dvsdv</td>
+                <td>dsdvsv</td>
+                <td>dsd</td>
+            </tr>
+        </ng-template>
+    </p-table>
+         </div>
+    
+         <p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Orden de Trabajo" [modal]="true" styleClass="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="formgrid">
+                    
+                    <div class="field">
+                        <label for="normaReparto">Norma Reparto</label>
+                        <input type="text" pInputText id="normaReparto" class="small-input" />
+                    </div>
+                    <div class="field">
+                        <label for="noEconomico">No. Economico</label>
+                        <input type="text" pInputText id="noEconomico" class="small-input" />
+                    </div>
+                    <div class="flex">
+                        <div class="col-6">
+                            <label for="marca">Marca</label>
+                            <input type="text" pInputText id="marca" class="small-input" />
+                        </div>
+                        <div class="col-6">
+                            <label for="modelo">Modelo</label>
+                            <input type="text" pInputText id="modelo" class="small-input" />
+                        </div>
+                    </div>
+                    
+                   <div class="flex">
+                    <div class="col-6">
+                        <label for="tipo">Tipo</label>
+                        <p-treeSelect  containerStyleClass="w-full"  placeholder="Tipo"></p-treeSelect>
+                    </div>
+    
+                    <div class="col-6">
+                        <label for="serie">Serie</label>
+                        <input type="text" pInputText id="serie" class="small-input" />
+                    </div>
+                    </div>
+                   
+                    <div class="field">
+                        <label for="horometroActual">Horometro Actual</label>
+                        <input type="text" pInputText id="horometroActual" class="small-input" />
+                    </div>
+                    <div class="field">
+                        <label for="horometroNuevo">Horometro Nuevo</label>
+                        <input type="text" pInputText id="horometroNuevo" class="small-input" />
+                    </div>
+                </div>
+            </ng-template>
+        
+            <ng-template pTemplate="footer">
+                <div class="flex justify-content-center">
+                    <div class="p-col-6">
+                        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideDialog()"></button>
+                    </div>
+                    <div class="p-col-6">
+                        <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-secondary"></button>
+                    </div>
+                </div>
+            </ng-template>
+        </p-dialog>
+         
+       
+        
+
+            <div class="card ">
+                <div class=" flex justify-content-center">
+                    <form [formGroup]="miFormulario">
+
+                        <p-fieldset legend="Datos del cliente">
+                          <div class="grid">
+                            <div class="col-6">
+                              <div class="flex justify-content-center">
+                                <span class="p-input-icon-left w-30rem">
+                                  <i class="pi pi-search"></i>
+                                  <input type="text" pInputText formControlName="cliente" class="custom-width w-full" placeholder="Cliente" />
+                                </span>
+                              </div>
+                      
+                              <div class="flex justify-content-center">
+                                <input type="text" pInputText formControlName="nombre" class="custom-width w-full mt-2" placeholder="Nombre">
+                              </div>
+                      
+                              <div class="flex justify-content-center">
+                                <input type="text" pInputText formControlName="direccion" class="custom-width w-full mt-2" placeholder="Dirección">
+                              </div>
+                            </div>
+                      
+                            <div class="col-6 flex justify-content-end flex-wrap">
+                              <div class="flex justify-content-center ">
+                                <input type="text" pInputText formControlName="ciudad" class="custom-width" placeholder="Ciudad">
+                              </div>
+                      
+                              <div class="flex justify-content-center">
+                                <input type="text" pInputText formControlName="telefono" class="custom-width mt-2" placeholder="Teléfono">
+                              </div>
+                      
+                              <div class="flex justify-content-center">
+                                <input type="text" pInputText formControlName="contrato" class="custom-width mt-2" placeholder="Contrato">
+                              </div>
+                      
+                              <div class="flex justify-content-center ">
+                                <input type="text" pInputText formControlName="oc_ot" class="custom-width mt-2" placeholder="OC/OT">
+                              </div>
+                            </div>
+                          </div>
+                        </p-fieldset>
+                      
+                        <!-- Botones del formulario u otras secciones aquí -->
+                      
+                      </form>
+                </div>
+                <div class=" flex justify-content-center mt-5">
+                    <p-fieldset legend="Reporte del cliente">
+                       <div class="grid">
+                        <div class="col-8 md:col-8 pr-4 lg:col-8 ">
+                            <div class="flex col-12">
+                                <textarea rows="5" cols="30" pInputTextarea class="md:w-25rem w-full" placeholder="Problema Reportado"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-4 flex justify-content-end flex-wrap">
+    
+                            <div class=" flex justify-content-center chiqui">
+                                
+                                <p-treeSelect formControlName="city" class="md:w-15rem w-full" containerStyleClass="w-full"  placeholder="Tipo Falla"></p-treeSelect>
+                            </div>
+                            
+                            <div class=" flex justify-content-center chiqui ">
+                                <input type="text" pInputText class="chiqui mt-2" placeholder="Reportado por:">
+                            </div>
+                            
+                            
+                            <div class=" flex justify-content-center chiqui">
+                            <input type="text" pInputText class="chiqui mt-2" placeholder="Autorizado por:">
+                                <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+                            </div>
+                            
+    
+                            <div class="flex flex-wrap mt-2 align-items-start">
+                                <div class="flex align-items-start">
+                                    <label for="ingredient3" class="mr-2">Fuera de Servicio </label>
+                                    <div class="gap-3 flex">
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                       </div>
+                    </p-fieldset>
+                </div>
+            </div>
+        </div>
+    
+    
+        
+    </div>
+    
+    
+    <div class="card">
+        <p-tabView>
+            <p-tabPanel header="Diagnóstico Real">
+              
+    <div class="card flex justify-content-center col-12">
+        <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Diagnóstico" ></textarea>
+    </div>
+            </p-tabPanel>
+            <p-tabPanel header="Refacciones">
+                
+                        <p-toolbar styleClass="mb-4 gap-2">
+                            <ng-template pTemplate="left">
+                                <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew3()"></button>
+                               
+                            </ng-template>
+                        </p-toolbar>
+                        <div class="flex col-12 pb-5">
+                            <div class="col-9 ">
+                <p-table styleClass="p-datatable-gridlines">
+                    [value]="ordenes"
+                   
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th scope="col" style="width:25%">No. Parte</th>
+                            <th scope="col" style="width:40%">Descripcion</th>
+                            <th scope="col" style="width:25%">Cantidad</th>
+                            <th scope="col" style="width:25%">CC</th>
+                            <th scope="col" style="width:25%">Nor.Reparto</th>
+                            <th scope="col" style="width:25%">Solicitado</th>
+                            <th scope="col" style="width:25%">Almacen</th>
+                            <th scope="col" style="width:25%">Existencia</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-ordenes>
+                        <tr>
+                            <td>dsvdsv</td>
+                            <td>dvsdv</td>
+                            <td>dsdvsv</td>
+                            <td>dsd</td>
+                            <td>dsvdsv</td>
+                            <td>dvsdv</td>
+                            <td>dsdvsv</td>
+                            <td>dsd</td>
+                            
+                        </tr>
+                    </ng-template>
+                </p-table>
+                     </div>
+    
+                     <div class="col-3">
+                        <div class=" flex justify-content-center custom-width">
+                            <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Coordinador"></p-dropdown>
+                        </div>
+            
+                        <div class="flex gap-2 mt-4  ">
+                            <p-button label="+ Cotizacion" styleClass="p-button-warning"></p-button>
+                            <p-button label="- Cotizacion" styleClass="p-button-warning"></p-button>
+                        </div>
+                     </div>
+                </div>
+                
+    
+    
+    
+                <p-dialog [(visible)]="refacciones" [style]="{ width: '450px' }" header="Refacciones" [modal]="true" styleClass="p-fluid">
+      <ng-template pTemplate="content">
+        <div class="formgrid grid">
+          <div class="flex">
+            <div class="field col-16">
+              <label for="noParte">No. Parte</label>
+              <p-inputNumber inputId="integeronly" formControlName="noParte"></p-inputNumber>
+            </div>
+    
+            <div class="field col-6">
+              <label for="cantidad">Cantidad</label>
+              <p-inputNumber inputId="integeronly" formControlName="cantidad"></p-inputNumber>
+            </div>
+          </div>
+    
+          <div class="field col-12">
+            <label for="descripcion">Descripción</label>
+            <textarea type="text" pInputText id="descripcion" class="full-width"></textarea>
+          </div>
+    
+          <div class="field col-12">
+            <label for="norReparto">Nor. Reparto</label>
+            <input type="text" pInputText id="norReparto" class="full-width" />
+          </div>
+    
+          <div class="flex col-12">
+            <div class="field col-6">
+              <label for="solicitado">Solicitado</label>
+              <p-treeSelect class="w-full" containerStyleClass="w-full" placeholder="Solicitado"></p-treeSelect>
+            </div>
+            <div class="field col-6">
+              <label for="almacen">Almacen</label>
+              <p-treeSelect class="w-full" containerStyleClass="w-full" placeholder="Almacen"></p-treeSelect>
+            </div>
+          </div>
+    
+          <div class="flex col-12">
+            <div class="field col-8">
+              <label for="existencia">Existencia</label>
+              <input type="text" pInputText id="existencia" class="full-width" />
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <div class="flex align-items-center">
+                <p-radioButton name="tipoExistencia" inputId="ingredient1"  value="CC"></p-radioButton>
+                <label for="ingredient1" class="ml-2">CC</label>
+              </div>
+              
+              <div class="flex align-items-center">
+                <p-radioButton name="tipoExistencia" inputId="ingredient2" value="SC"></p-radioButton>
+                <label for="ingredient2" class="ml-2">SC</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    
+      <ng-template pTemplate="footer">
+        <div class="flex justify-content-center">
+          <div class="p-col-6">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideDialog()"></button>
+          </div>
+          <div class="p-col-6">
+            <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-secondary"></button>
+          </div>
+        </div>
+      </ng-template>
+    </p-dialog>
+    
+                
+                
+            </p-tabPanel>
+            <p-tabPanel header="Mano de Obra">
+                <div class="pb-5">
+                    <p-toolbar styleClass="mb-4 gap-2">
+                        <ng-template pTemplate="left">
+                            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew4()"></button>
+                         
+                        </ng-template>
+                    </p-toolbar>
+            <p-table styleClass="p-datatable-gridlines">
+                [value]="manoDeObra"
+               
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col" style="width:15%">Artículos</th>
+                        <th scope="col" style="width:20%">Nombres</th>
+                        <th scope="col" style="width:10%">Horas</th>
+                        <th scope="col" style="width:10%">Cantidad</th>
+                        <th scope="col" style="width:15%">Técnico</th>
+                        <th scope="col" style="width:15%">Nombre</th>
+                        <th scope="col" style="width:10%">Fecha</th>
+                        <th scope="col" style="width:10%">Horas Reales</th>
+                        <th scope="col" style="width:5%">Ejecutadas</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-manoDeObra>
+                    <tr>
+                        <td>dsvdsv</td>
+                        <td>dvsdv</td>
+                        <td>dsdvsv</td>
+                        <td>dsd</td>
+                        <td>dsvdsv</td>
+                        <td>dvsdv</td>
+                        <td>dsdvsv</td>
+                        <td>dsd</td>
+                        <td>dsd</td>
+                        
+                    </tr>
+                </ng-template>
+            </p-table>
+    
+            <div class="flex justify-content-center col-12 mt-5">
+                <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Comentarios" ></textarea>
+            </div>
+                 </div>
+    
+                 <p-dialog [(visible)]="manoDeObra" [style]="{ width: '450px' }" header="Mano de Obra" [modal]="true" styleClass="p-fluid">
+                    <ng-template pTemplate="content">
+                        <div class="formgrid grid">
+                            <div class="field col-12">
+                                <label for="articulo">Artículo</label>
+                                <input type="text" pInputText id="articulo" class="full-width small-input" />
+                            </div>
+                            <div class="field col-12">
+                                <label for="nombres">Nombres</label>
+                                <textarea type="text" pInputText id="nombres" class="full-width large-input"></textarea>
+                            </div>
+    
+                            <div class="flex col-12">
+                                <div class="field col-6">
+                                    <label for="horas">Horas</label>
+                                    <input type="text" pInputText id="horas" class="full-width small-input" />
+                                </div>
+                                <div class="field col-6">
+                                    <label for="cantidad">Cantidad</label>
+                                    <input type="text" pInputText id="cantidad" class="full-width small-input" />
+                                </div>
+                            </div>
+                          
+                            <div class="flex col-12">
+                                <div class="field col-6">
+                                    <label for="tecnico">Técnico</label>
+                                    <input type="text" pInputText id="tecnico" class="full-width small-input" />
+                                </div>
+                                <div class="field col-6">
+                                    <label for="nombre">Nombre</label>
+                                    <input type="text" pInputText id="nombre" class="full-width small-input" />
+                                </div>
+                            </div>
+                            
+    
+                            <div class="flex justify-content-center">
+                                <div class="field col-4">
+                                    <label for="fecha">Fecha</label>
+                                    <p-calendar [showIcon]="true"></p-calendar>
+                                </div>
+        
+                                
+                                    <div class="field col-4">
+                                        <label for="horasReales">Horas Reales</label>
+                                        <input type="text" pInputText id="horasReales" class="full-width small-input" />
+                                    </div>
+                                    <div class="flex flex-wrap gap-3">
+                                        <div class="flex align-items-center">
+                                            <p-radioButton ngDefaultControl  name="pizza" value="Cheese"  inputId="ingredient1"></p-radioButton>
+                                            <label for="ingredient1" class="ml-2">Ejecutada</label>
+                                        </div>
+                                        
+                                    </div>
+                            </div>
+                           
+                            
+                           
+                        </div>
+                    </ng-template>
+                
+                    <ng-template pTemplate="footer">
+                        <div class="flex justify-content-center">
+                            <div class="p-col-6">
+                                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideDialog()"></button>
+                            </div>
+                            <div class="p-col-6">
+                                <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-secondary"></button>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dialog>
+                
+            </p-tabPanel>
+            <p-tabPanel header="Terceros">
+                <div class="pb-5">
+                    <p-toolbar styleClass="mb-4 gap-2">
+                        <ng-template pTemplate="left">
+                            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew1()"></button>
+                            
+                        </ng-template>
+                    </p-toolbar>
+            <p-table styleClass="p-datatable-gridlines">
+                [value]="manoDeObra"
+               
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col" style="width:25%">Proveedor</th>
+                        <th scope="col" style="width:40%">Nombre</th>
+                        <th scope="col" style="width:25%">Orden de compra</th>
+                        <th scope="col" style="width:25%">Total</th>
+                       
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-manoDeObra>
+                    <tr>
+                        <td>dsvdsv</td>
+                        <td>dvsdv</td>
+                        <td>dsdvsv</td>
+                        <td>dsd</td>
+                        
+                    </tr>
+                </ng-template>
+            </p-table>
+                 </div>
+                 <p-dialog [(visible)]="terceros" [style]="{ width: '450px' }" header="Terceros" [modal]="true" styleClass="p-fluid">
+                    <ng-template pTemplate="content">
+                        <div class="formgrid grid">
+                            <div class="field col-12">
+                                <label for="proveedor">Proveedor</label>
+                                <input type="text" pInputText id="proveedor" class="full-width small-input" />
+                            </div>
+                            <div class="field col-12">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" pInputText id="nombre" class="full-width small-input" />
+                            </div>
+                            <div class="field col-12">
+                                <label for="ordenCompra">Orden de Compra</label>
+                                <input type="text" pInputText id="ordenCompra" class="full-width small-input" />
+                            </div>
+                            <div class="field col-12">
+                                <label for="total">Total</label>
+                                <input type="text" pInputText id="total" class="full-width small-input" />
+                            </div>
+                        </div>
+                    </ng-template>
+                
+                    <ng-template pTemplate="footer">
+                        <div class="flex justify-content-center">
+                            <div class="p-col-6">
+                                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideDialog()"></button>
+                            </div>
+                            <div class="p-col-6">
+                                <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-secondary"></button>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dialog>
+                
+                
+            </p-tabPanel>
+            <p-tabPanel header="Recomendaciones Tecnicas">
+                <div class="pb-5">
+                    <p-toolbar styleClass="mb-4 gap-2">
+                        <ng-template pTemplate="left">
+                            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew2()"></button>
+                           
+                        </ng-template>
+                    </p-toolbar>
+            <p-table styleClass="p-datatable-gridlines">
+                [value]="recomendaciones"
+               
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col" style="width:25%">No.Parte</th>
+                        <th scope="col" style="width:40%">Descripcion</th>
+                        <th scope="col" style="width:25%">Cantidad</th>
+                       
+                       
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-recomendaciones>
+                    <tr>
+                        <td>dsvdsv</td>
+                        <td>dvsdv</td>
+                        <td>dsdvsv</td>
+                       
+                        
+                    </tr>
+                </ng-template>
+            </p-table>
+    
+            <div class="flex justify-content-center col-12 mt-5">
+                <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Comentarios" ></textarea>
+            </div>
+                 </div>
+    
+                 <p-dialog [(visible)]="recomendaciones" [style]="{ width: '450px' }" header="Recomendaciones Tecnicas" [modal]="true" styleClass="p-fluid">
+                    <ng-template pTemplate="content">
+                        <div class="formgrid grid">
+                            <div class="field col-12">
+                                <label for="noParte">No.Parte</label>
+                                <input type="text" pInputText id="noParte" class="full-width small-input" />
+                            </div>
+                            <div class="field col-12">
+                                <label for="descripcion">Descripcion</label>
+                                <textarea pInputTextarea id="descripcion" class="full-width"></textarea>
+                            </div>
+                            <div class="field col-12">
+                                <label for="cantidad">Cantidad</label>
+                                <input type="text" pInputText id="cantidad" class="full-width small-input" />
+                            </div>
+                        </div>
+                    </ng-template>
+                
+                    <ng-template pTemplate="footer">
+                        <div class="flex align-items-center">
+                            <div class="p-col-6">
+                                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideDialog()"></button>
+                            </div>
+                            <div class="p-col-6">
+                                <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-secondary"></button>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dialog>
+                
+                
+            </p-tabPanel>
+            <p-tabPanel header="Anexos">
+                <div class="grid grid-cols-12">
+                    <div class="col-10 me-4">
+                        <p-table styleClass="p-datatable-gridlines">
+                            [value]="anexos"
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width:25%">Archivo</th>
+                                    <th style="width:15%">Tipo</th>
+                                    <th style="width:40%">Descripción</th>
+                                    <th style="width:10%">Acciones</th>
+                                    
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-anexos>
+                                <tr>
+                                    <td>dsvdsv</td>
+                                    <td>dvsdv</td>
+                                    <td>dsdvsv</td>
+                                    <td>dsd</td>
+                                    
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <div class="col-2">
+                       
+                        <button pButton pRipple label="Subir Adjunto" icon="pi pi-upload" class="p-button-help"></button>
+                      
+                    </div>
+                </div>
+                
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+    <div class="flex gap-2">
+        <p-button label="Grabar"></p-button>
+        <p-button label="Regresar" styleClass="p-button-secondary"></p-button>
+    </div>
+    
+     

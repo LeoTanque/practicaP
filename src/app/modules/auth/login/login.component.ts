@@ -15,13 +15,12 @@ export class LoginComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private router: Router, private authService: AuthService) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required,]],
       password: [
         '',
         [
           Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(/^(?=.*[A-Z])(?=.*[0-9])/),
+          
         ],
       ],
     });
@@ -36,16 +35,22 @@ export class LoginComponent implements OnInit {
 
   submitForm() {
     if (this.loginForm.valid) {
+      
       const email = this.loginForm.get('email')?.value;
       const password = this.loginForm.get('password')?.value;
-  
-      // Verificar las credenciales
-      if (this.authService.login(email, password)) {
-        this.authService.setRedirectUrl('/dashboard');
-        this.showConfirmation();
-      } else {
-        this.showInvalidCredentialsError();
-      }
+      this.authService.login(email,password).subscribe(
+        (res:any)=>{
+          console.log(res)
+          if(res.Detail.Active==='1'){
+            //salvar Activo con valor 1 en localstore
+            this.authService.updateActivoState('1');
+            this.router.navigate(['/'])
+          }
+          else{
+            this.showInvalidCredentialsError()
+          }
+        }
+      )
     } else {
       this.showValidationError();
     }

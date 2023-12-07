@@ -21,6 +21,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { SliderModule } from 'primeng/slider';
 import { RatingModule } from 'primeng/rating';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RadioButton, RadioButtonModule } from 'primeng/radiobutton';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,10 @@ import { RatingModule } from 'primeng/rating';
 		ProgressBarModule,
 		ToastModule,
     SliderModule,
-    RatingModule
+    RatingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RadioButtonModule
     
   ]
 })

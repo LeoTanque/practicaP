@@ -13,7 +13,7 @@ import { ChartModule } from 'primeng/chart';
   imports: [
     CommonModule,
     DashboardRoutingModule,
-    ChartModule
+    ChartModule,
   ]
 })
 export class DashboardModule { }

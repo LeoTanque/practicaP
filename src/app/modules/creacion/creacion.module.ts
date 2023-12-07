@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { OrdenesRoutingModule } from './ordenes-routing.module';
-import { OrdenesComponent } from './ordenes/ordenes.component';
+import { CreacionRoutingModule } from './creacion-routing.module';
+import { CreacionComponent } from './creacion/creacion.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { CheckboxModule } from 'primeng/checkbox';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { FieldsetModule } from 'primeng/fieldset';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -13,23 +15,22 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext'
 import { TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
-import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { CheckboxModule } from 'primeng/checkbox';
 
 @NgModule({
   declarations: [
-    OrdenesComponent
-    
+    CreacionComponent
   ],
   imports: [
     CommonModule,
-    OrdenesRoutingModule,
-    FormsModule,
+    CreacionRoutingModule,
     ReactiveFormsModule,
+    FormsModule,
+    RadioButtonModule,
+    CheckboxModule,
     TreeSelectModule,
     FieldsetModule,
     InputTextareaModule,
@@ -42,9 +43,8 @@ import { CheckboxModule } from 'primeng/checkbox';
     RadioButtonModule,
     ToolbarModule,
     DialogModule,
-    //ConfirmDialogModule,
     InputNumberModule,
-    CheckboxModule
+    
   ]
 })
-export class OrdenesModule { }
+export class CreacionModule { }

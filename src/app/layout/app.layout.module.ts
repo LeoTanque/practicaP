@@ -26,6 +26,7 @@ import { ButtonModule } from 'primeng/button';
         AppMenuComponent,
         AppSidebarComponent,
         AppLayoutComponent,
+        
     ],
     imports: [
         BrowserModule,
@@ -41,7 +42,7 @@ import { ButtonModule } from 'primeng/button';
         RippleModule,
         RouterModule,
         AppConfigModule,
-        ButtonModule
+        ButtonModule,
     ],
     exports: [AppLayoutComponent]
 })

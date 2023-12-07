@@ -1,4 +1,4 @@
-<div class="flex card gap-2 justify-content-between  align-items-center ">
+<div class="md:flex card md:gap-2 md:justify-content-between  md:align-items-center ">
     
 
 <div class=" flex justify-content-center">
@@ -66,70 +66,9 @@
 
 
      
-     <!--p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Product Details" [modal]="true" styleClass="p-fluid">
-        <ng-template pTemplate="content">
-            <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.image" class="block m-auto pb-3" *ngIf="product.image" />
-            <div class="field">
-                <label for="name">Name</label>
-                <input type="text" pInputText id="name"  required autofocus />
-                <small class="p-error" *ngIf="submitted && !product.name">Name is required.</small>
-            </div>
-            <div class="field">
-                <label for="description">Description</label>
-                <textarea id="description" pInputTextarea  required rows="3" cols="20"></textarea>
-            </div>
     
-            <div class="field">
-                <label for="inventoryStatus">Inventory Status</label>
-                <p-dropdown  inputId="inventoryStatus" >
-                    <ng-template pTemplate="selectedItem">
-                        
-                    </ng-template>
-                    <ng-template let-option pTemplate="item">
-                       
-                    </ng-template>
-                </p-dropdown>
-            </div>
-    
-            <div class="field">
-                <label class="mb-3">Category</label>
-                <div class="formgrid grid">
-                    <div class="field-radiobutton col-6">
-                        <p-radioButton id="category1" name="category" value="Accessories" ></p-radioButton>
-                        <label for="category1">Accessories</label>
-                    </div>
-                    <div class="field-radiobutton col-6">
-                        <p-radioButton id="category2" name="category" value="Clothing"></p-radioButton>
-                        <label for="category2">Clothing</label>
-                    </div>
-                    <div class="field-radiobutton col-6">
-                        <p-radioButton id="category3" name="category" value="Electronics" ></p-radioButton>
-                        <label for="category3">Electronics</label>
-                    </div>
-                    <div class="field-radiobutton col-6">
-                        <p-radioButton id="category4" name="category" value="Fitness" ></p-radioButton>
-                        <label for="category4">Fitness</label>
-                    </div>
-                </div>
-            </div>
-    
-            <div class="formgrid grid">
-                <div class="field col">
-                    <label for="price">Price</label>
-                    <p-inputNumber id="price" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
-                </div>
-                <div class="field col">
-                    <label for="quantity">Quantity</label>
-                    <p-inputNumber id="quantity" ></p-inputNumber>
-                </div>
-            </div>
-        </ng-template>
-    
-        <ng-template pTemplate="footer">
-            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" ></button>
-            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" ></button>
-        </ng-template>
-    </!--p-dialog-->
+
+
     <p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Orden de Trabajo" [modal]="true" styleClass="p-fluid">
         <ng-template pTemplate="content">
             <div class="formgrid">
@@ -203,37 +142,37 @@
                            <span class="p-input-icon-left w-30rem ">
                                 <i class="pi pi-search"></i>
                                
-                                <input type="text" pInputText formControlName="text" class="custom-width w-full" placeholder="Cliente" />
+                                <input type="text" pInputText  class="custom-width w-full" placeholder="Cliente" />
                             </span>
                         </div>
                         
                         <div class=" flex justify-content-center">
                             <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
-                            <input type="text" pInputText formControlName="text" class="custom-width w-full mt-2" placeholder="Nombre">
+                            <input type="text" pInputText  class="custom-width w-full mt-2" placeholder="Nombre">
                         </div>
                         
                         
                         <div class=" flex justify-content-center">
                             <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
-                            <input type="text" pInputText formControlName="text" class="custom-width w-full mt-2" placeholder="Dirección">
+                            <input type="text" pInputText  class="custom-width w-full mt-2" placeholder="Dirección">
                         </div>
                     </div>
                     <div class="col-6  flex justify-content-end flex-wrap">
                         <div class=" flex justify-content-center ">
-                            <input type="text" pInputText formControlName="text" class="custom-width" placeholder="Ciudad">
+                            <input type="text" pInputText  class="custom-width" placeholder="Ciudad">
                         </div>
                         
                         <div class=" flex justify-content-center">
-                            <input type="text" pInputText formControlName="text" class="custom-width mt-2" placeholder="Teléfono">
+                            <input type="text" pInputText class="custom-width mt-2" placeholder="Teléfono">
                         </div>
                         
                         
                         <div class=" flex justify-content-center">
-                            <input type="text" pInputText formControlName="text" class="custom-width mt-2" placeholder="Contrato">
+                            <input type="text" pInputText  class="custom-width mt-2" placeholder="Contrato">
                         </div>
 
                         <div class=" flex justify-content-center ">
-                            <input type="text" pInputText formControlName="text" class="custom-width mt-2" placeholder="OC/OT">
+                            <input type="text" pInputText class="custom-width mt-2" placeholder="OC/OT">
                         </div>
                     </div>
                    </div>
@@ -251,7 +190,7 @@
 
                         <div class=" flex justify-content-center chiqui">
                             
-                            <p-treeSelect formControlName="city" class="md:w-15rem w-full" containerStyleClass="w-full"  placeholder="Tipo Falla"></p-treeSelect>
+                            <p-treeSelect  class="md:w-15rem w-full" containerStyleClass="w-full"  placeholder="Tipo Falla"></p-treeSelect>
                         </div>
                         
                         <div class=" flex justify-content-center chiqui ">
@@ -265,22 +204,22 @@
                         </div>
                         
 
-                        <div class="flex flex-wrap mt-2 align-items-start">
+                        <!--div-- class="flex flex-wrap mt-2 align-items-start">
                             <div class="flex align-items-start">
                                 <label for="ingredient3" class="mr-2">Fuera de Servicio </label>
                                 <div class="gap-3 flex">
                                     <div class="flex align-items-start">
-                                        <p-radioButton name="si" value="Si" inputId="ingredient1"></p-radioButton>
+                                        <p-radioButton name="si" value="Si" ></p-radioButton>
                                         <label for="ingredient1" class="ml-2">Si</label>
                                     </div>
                                 
                                     <div class="flex align-items-center">
-                                        <p-radioButton ngDefaultControl  name="si" value="No"  inputId="ingredient2"></p-radioButton>
+                                        <p-radioButton   name="si" value="No"  ></p-radioButton>
                                         <label for="ingredient2" class="ml-2">No</label>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </!--div-->
                         
                         
                     </div>
@@ -297,7 +236,7 @@
             <p-fieldset legend="Estado OT">
                  <div class="col-12  flex justify-content-center flex-wrap">
             <div class=" flex justify-content-center custom-width mt-2">
-                <p-dropdown class=" w-full" containerStyleClass="w-full" formControlName="selectedNodes"  placeholder="Prioridad"></p-dropdown>
+                <p-dropdown class=" w-full" containerStyleClass="w-full"   placeholder="Prioridad"></p-dropdown>
             </div>
             
             <div class=" flex justify-content-center mt-5 ">
@@ -307,7 +246,7 @@
             
             
             <div class=" flex justify-content-center mt-5 custom-width">
-                <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Status"></p-dropdown>
+                <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Status"></p-dropdown>
             </div>
 
             <div class=" flex justify-content-center mt-5 custom-width">
@@ -315,17 +254,17 @@
                 <span class="p-input-icon-left w-20rem">
                     <i class="pi pi-search"></i>
                    
-                    <input type="text" pInputText formControlName="text" class="w-full "  placeholder="Agente de Ventas" />
+                    <input type="text" pInputText  class="w-full "  placeholder="Agente de Ventas" />
                 </span>
             </div>
 
             <div class=" flex justify-content-center mt-5 custom-width">
-                <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Técnico Responsable"></p-dropdown>
+                <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Técnico Responsable"></p-dropdown>
             </div>
             
             
             <div class=" flex justify-content-center mt-5 custom-width">
-                <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Coordinador"></p-dropdown>
+                <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Coordinador"></p-dropdown>
             </div>
 
             <div class="flex gap-2 mt-4">
@@ -334,7 +273,7 @@
             </div>
 
             <div class=" flex justify-content-center mt-5 custom-width">
-                <p-dropdown class="md:w-20rem w-full" containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Formatos Impresos"></p-dropdown>
+                <p-dropdown class="md:w-20rem w-full" containerStyleClass="w-full" placeholder="Formatos Impresos"></p-dropdown>
             </div>
 
         </div>
@@ -395,7 +334,7 @@
 
                  <div class="col-3">
                     <div class=" flex justify-content-center custom-width">
-                        <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Coordinador"></p-dropdown>
+                        <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Coordinador"></p-dropdown>
                     </div>
         
                     <div class="flex gap-2 mt-4  ">
@@ -414,12 +353,12 @@
       <div class="flex">
         <div class="field col-16">
           <label for="noParte">No. Parte</label>
-          <p-inputNumber inputId="integeronly" formControlName="noParte"></p-inputNumber>
+          <p-inputNumber inputId="integeronly" ></p-inputNumber>
         </div>
 
         <div class="field col-6">
           <label for="cantidad">Cantidad</label>
-          <p-inputNumber inputId="integeronly" formControlName="cantidad"></p-inputNumber>
+          <p-inputNumber inputId="integeronly" ></p-inputNumber>
         </div>
       </div>
 
@@ -449,7 +388,7 @@
           <label for="existencia">Existencia</label>
           <input type="text" pInputText id="existencia" class="full-width" />
         </div>
-        <div class="flex flex-wrap gap-3">
+        <!--div-- class="flex flex-wrap gap-3">
           <div class="flex align-items-center">
             <p-radioButton name="tipoExistencia" inputId="ingredient1"  value="CC"></p-radioButton>
             <label for="ingredient1" class="ml-2">CC</label>
@@ -459,7 +398,7 @@
             <p-radioButton name="tipoExistencia" inputId="ingredient2" value="SC"></p-radioButton>
             <label for="ingredient2" class="ml-2">SC</label>
           </div>
-        </div>
+        </!--div-->
       </div>
     </div>
   </ng-template>
@@ -570,13 +509,13 @@
                                     <label for="horasReales">Horas Reales</label>
                                     <input type="text" pInputText id="horasReales" class="full-width small-input" />
                                 </div>
-                                <div class="flex flex-wrap gap-3">
+                                <!--div-- class="flex flex-wrap gap-3">
                                     <div class="flex align-items-center">
                                         <p-radioButton ngDefaultControl  name="pizza" value="Cheese"  inputId="ingredient1"></p-radioButton>
                                         <label for="ingredient1" class="ml-2">Ejecutada</label>
                                     </div>
                                     
-                                </div>
+                                </!--div-->
                         </div>
                        
                         
@@ -606,7 +545,7 @@
                     </ng-template>
                 </p-toolbar>
         <p-table styleClass="p-datatable-gridlines">
-            [value]="manoDeObra"
+            [value]="Terceros"
            
             <ng-template pTemplate="header">
                 <tr>

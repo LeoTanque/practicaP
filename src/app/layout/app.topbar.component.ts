@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
 import { AuthService } from '../services/auth.service';
@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
     selector: 'app-topbar',
     templateUrl: './app.topbar.component.html'
 }) 
-export class AppTopBarComponent {
+export class AppTopBarComponent implements OnInit {
 
     items!: MenuItem[]; 
 
@@ -23,7 +23,13 @@ export class AppTopBarComponent {
     constructor(public layoutService: LayoutService, private authService: AuthService) { 
         
     }
+  ngOnInit(): void {
+    this.getUserName()
+  }
 
+  getUserName(): string {
+    return this.authService.getUserDisplayName();
+  }
     async logout() {
         const { value } = await Swal.fire({
           title: '¿Desea desloguearse?',
