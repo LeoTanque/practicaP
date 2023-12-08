@@ -2,12 +2,16 @@
     
 
 <div class=" flex justify-content-center">
-    <p-dropdown class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Tipo de Trabajo"></p-dropdown>
+    <p-dropdown [style]="{'width': dropdownWidth}"  class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Tipo de Trabajo" 
+    [options]="tiposTrabajo" optionLabel="Name" optionValue="Code">
+    ></p-dropdown>
 </div>
 
 <div class=" flex justify-content-center">
-    <p-dropdown class="md:w-20rem w-full small" containerStyleClass="w-full"  placeholder="Num OT"></p-dropdown>
-    <!--p-dropdown [options]="cities" class="md:w-20rem w-full" containerStyleClass="w-full"  optionLabel="name"></!--p-dropdown-->
+    <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full small" containerStyleClass="w-full"  placeholder="Num OT"
+    [options]="listaSeries" optionLabel="Name" optionValue="Code">
+    ></p-dropdown>
+ 
 </div>
 
 <div class="flex justify-content-center">
@@ -16,7 +20,7 @@
 
 
 <div class=" flex justify-content-center">
-    <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+
     <input pInputText type="text">
 </div>
 
@@ -92,26 +96,33 @@
                     </div>
                 </div>
                 
-               <div class="flex">
-                <div class="col-6">
-                    <label for="tipo">Tipo</label>
-                    <p-treeSelect  containerStyleClass="w-full"  placeholder="Tipo"></p-treeSelect>
+                <div class="flex col-12">
+                    <div class="col-6 ">
+                        <label for="tipo">Tipo</label>
+                        <p-dropdown  containerStyleClass="w-full" class="md:w-15rem w-full "  placeholder="Tipo"
+                        [options]="listaTrabajos" optionLabel="Name" optionValue="Code">
+                        ></p-dropdown>
+                    </div>
+                              
+    
+                    <div class="col-6">
+                        <label for="serie">Serie</label>
+                        <input type="text" pInputText id="serie" class="small-input" />
+                    </div>
                 </div>
-
-                <div class="col-6">
-                    <label for="serie">Serie</label>
-                    <input type="text" pInputText id="serie" class="small-input" />
-                </div>
-                </div>
+              
                
-                <div class="field">
+               
+               <div class="flex">
+                <div class="field col-6">
                     <label for="horometroActual">Horometro Actual</label>
                     <input type="text" pInputText id="horometroActual" class="small-input" />
                 </div>
-                <div class="field">
+                <div class="field col-6">
                     <label for="horometroNuevo">Horometro Nuevo</label>
                     <input type="text" pInputText id="horometroNuevo" class="small-input" />
                 </div>
+               </div>
             </div>
         </ng-template>
     
@@ -147,13 +158,13 @@
                         </div>
                         
                         <div class=" flex justify-content-center">
-                            <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+                           
                             <input type="text" pInputText  class="custom-width w-full mt-2" placeholder="Nombre">
                         </div>
                         
                         
                         <div class=" flex justify-content-center">
-                            <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+                           
                             <input type="text" pInputText  class="custom-width w-full mt-2" placeholder="Dirección">
                         </div>
                     </div>
@@ -189,8 +200,10 @@
                     <div class="col-4 flex justify-content-end flex-wrap">
 
                         <div class=" flex justify-content-center chiqui">
-                            
-                            <p-treeSelect  class="md:w-15rem w-full" containerStyleClass="w-full"  placeholder="Tipo Falla"></p-treeSelect>
+
+                            <p-dropdown [style]="{'width': dropdownWidth1}" class="md:w-15rem " containerStyleClass="custom-dropdown"  placeholder="Tipo Falla"
+                            [options]="listaFallos" optionLabel="Name" optionValue="Code">
+                            ></p-dropdown>
                         </div>
                         
                         <div class=" flex justify-content-center chiqui ">
@@ -200,26 +213,28 @@
                         
                         <div class=" flex justify-content-center chiqui">
                         <input type="text" pInputText class="chiqui mt-2" placeholder="Autorizado por:">
-                            <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+                           
                         </div>
                         
 
-                        <!--div-- class="flex flex-wrap mt-2 align-items-start">
-                            <div class="flex align-items-start">
-                                <label for="ingredient3" class="mr-2">Fuera de Servicio </label>
+                        <form [formGroup]="miFormulario">
+                            <div class="flex flex-wrap mt-2 align-items-start">
+                              <div class="flex align-items-start">
+                                <label for="fueraDeServicio" class="mr-2">Fuera de Servicio </label>
                                 <div class="gap-3 flex">
-                                    <div class="flex align-items-start">
-                                        <p-radioButton name="si" value="Si" ></p-radioButton>
-                                        <label for="ingredient1" class="ml-2">Si</label>
-                                    </div>
-                                
-                                    <div class="flex align-items-center">
-                                        <p-radioButton   name="si" value="No"  ></p-radioButton>
-                                        <label for="ingredient2" class="ml-2">No</label>
-                                    </div>
+                                  <div class="flex align-items-start">
+                                    <p-radioButton formControlName="fueraDeServicio" name="fueraDeServicio" value="Si"></p-radioButton>
+                                    <label for="si" class="ml-2">Si</label>
+                                  </div>
+                                  <div class="flex align-items-center">
+                                    <p-radioButton formControlName="fueraDeServicio" name="fueraDeServicio" value="No"></p-radioButton>
+                                    <label for="no" class="ml-2">No</label>
+                                  </div>
                                 </div>
+                              </div>
                             </div>
-                        </!--div-->
+                          </form>
+                          
                         
                         
                     </div>
@@ -234,23 +249,21 @@
       
          <div class="flex justify-content-center  ">
             <p-fieldset legend="Estado OT">
-                 <div class="col-12  flex justify-content-center flex-wrap">
-            <div class=" flex justify-content-center custom-width mt-2">
-                <p-dropdown class=" w-full" containerStyleClass="w-full"   placeholder="Prioridad"></p-dropdown>
+                 <div class="col-12  flex justify-content-center flex-wrap custom-width">
+            <div class=" flex justify-content-center  mt-2">
+                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem  w-full" containerStyleClass="w-full"   placeholder="Prioridad"></p-dropdown>
             </div>
             
             <div class=" flex justify-content-center mt-5 ">
                 <p-calendar  [showIcon]="true" containerStyleClass="w-full"   class="w-full" placeholder="dd/mm/aa"></p-calendar>
-                <!--p-treeSelect class="md:w-20rem w-full mt-4" containerStyleClass="w-full" formControlName="selectedNodes" placeholder="Select Item"></!--p-treeSelect-->
-            </div>
+              </div>
             
             
-            <div class=" flex justify-content-center mt-5 custom-width">
-                <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Status"></p-dropdown>
+            <div class=" flex justify-content-center mt-5 ">
+                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Status"></p-dropdown>
             </div>
 
-            <div class=" flex justify-content-center mt-5 custom-width">
-                <!--p-treeSelect-- class="md:w-20rem w-full" containerStyleClass="w-full"  placeholder="Select Item"></!--p-treeSelect-->
+            <div class=" flex justify-content-center mt-5 ">
                 <span class="p-input-icon-left w-20rem">
                     <i class="pi pi-search"></i>
                    
@@ -258,13 +271,17 @@
                 </span>
             </div>
 
-            <div class=" flex justify-content-center mt-5 custom-width">
-                <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Técnico Responsable"></p-dropdown>
+            <div class=" flex justify-content-center mt-5 ">
+                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Técnico Responsable"
+                [options]="listaTecnicos" optionLabel="Name" optionValue="Code">
+                ></p-dropdown>
             </div>
             
             
-            <div class=" flex justify-content-center mt-5 custom-width">
-                <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Coordinador"></p-dropdown>
+            <div class=" flex justify-content-center mt-5 ">
+                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Coordinador"
+                [options]="listaCordinadores" optionLabel="Name" optionValue="Code">
+                ></p-dropdown>
             </div>
 
             <div class="flex gap-2 mt-4">
@@ -272,8 +289,8 @@
                 <p-button label="Terminar OT" styleClass="p-button-warning"></p-button>
             </div>
 
-            <div class=" flex justify-content-center mt-5 custom-width">
-                <p-dropdown class="md:w-20rem w-full" containerStyleClass="w-full" placeholder="Formatos Impresos"></p-dropdown>
+            <div class=" flex justify-content-center mt-5 ">
+                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full" containerStyleClass="w-full" placeholder="Formatos Impresos"></p-dropdown>
             </div>
 
         </div>
@@ -375,11 +392,11 @@
       <div class="flex col-12">
         <div class="field col-6">
           <label for="solicitado">Solicitado</label>
-          <p-treeSelect class="w-full" containerStyleClass="w-full" placeholder="Solicitado"></p-treeSelect>
+          <p-dropdown class="w-full" containerStyleClass="w-full" placeholder="Solicitado"></p-dropdown>
         </div>
         <div class="field col-6">
           <label for="almacen">Almacen</label>
-          <p-treeSelect class="w-full" containerStyleClass="w-full" placeholder="Almacen"></p-treeSelect>
+          <p-dropdown class="w-full" containerStyleClass="w-full" placeholder="Almacen"></p-dropdown>
         </div>
       </div>
 
@@ -388,7 +405,7 @@
           <label for="existencia">Existencia</label>
           <input type="text" pInputText id="existencia" class="full-width" />
         </div>
-        <!--div-- class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-3">
           <div class="flex align-items-center">
             <p-radioButton name="tipoExistencia" inputId="ingredient1"  value="CC"></p-radioButton>
             <label for="ingredient1" class="ml-2">CC</label>
@@ -398,7 +415,7 @@
             <p-radioButton name="tipoExistencia" inputId="ingredient2" value="SC"></p-radioButton>
             <label for="ingredient2" class="ml-2">SC</label>
           </div>
-        </!--div-->
+        </div>
       </div>
     </div>
   </ng-template>
@@ -509,13 +526,13 @@
                                     <label for="horasReales">Horas Reales</label>
                                     <input type="text" pInputText id="horasReales" class="full-width small-input" />
                                 </div>
-                                <!--div-- class="flex flex-wrap gap-3">
+                                <div class="flex flex-wrap gap-3">
                                     <div class="flex align-items-center">
                                         <p-radioButton ngDefaultControl  name="pizza" value="Cheese"  inputId="ingredient1"></p-radioButton>
                                         <label for="ingredient1" class="ml-2">Ejecutada</label>
                                     </div>
                                     
-                                </!--div-->
+                                </div>
                         </div>
                        
                         
@@ -711,4 +728,3 @@
     <p-button label="Regresar" styleClass="p-button-secondary"></p-button>
 </div>
 
- 

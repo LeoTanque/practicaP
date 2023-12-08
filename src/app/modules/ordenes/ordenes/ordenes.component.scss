@@ -15,11 +15,24 @@
 
 
 
-::ng-deep  .p-dropdown {
-    width: 20rem;
+
+
+
+.custom-dropdown {
+    width: 15rem;
 }
 
+.chiqui .p-dropdown {
+    /* Estilos específicos para .chiqui */
+    width: 15rem;
+}
+
+ 
+  
 .chiqui{
     width: 15rem !important;
 }
 
+::ng-deep  .p-fieldset .p-fieldset-content {
+    padding: 0.5rem;
+}
