@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Table } from 'primeng/table';
 import { CreacionOrdenesService } from 'src/app/services/creacion-ordenes.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-ordenes',
@@ -12,7 +13,8 @@ export class OrdenesComponent implements OnInit {
   globalFilter: string = '';
 @ViewChild('dt') dt!: Table;
 
-@ViewChild('dt') mc01Table!: Table;  
+@ViewChild('dt') mc01Table!: Table;   
+
   globalFilterMC01: string = ''; 
   ingredient!: any;
  cities!: any[];
@@ -40,6 +42,7 @@ miFormulario!: FormGroup;
 dropdownWidth: string = '20rem';
 dropdownWidth1: string = '15rem';
 dropdownWidth2:string = '5rem'
+
 selectedSeries: any;
 
 tipoSeleccionado: string | undefined;
@@ -66,12 +69,13 @@ nombreProp: string = '';
 direccionProp: string = '';
 otroInput: string = '';
 
-constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: FormBuilder){
+
+elementosTabla: any[]=[
+  {tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:''},
+]
 
 
-
- 
-}
+constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: FormBuilder){}
 
 
   ngOnInit(): void {
@@ -86,7 +90,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       selectedSeries: [''],
       otroInput: [''],
       selectedSeriesInput: [''],
-      
+      fueraDeServicio: [''],
     });
   }
 
@@ -172,13 +176,33 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
   }
 
 
-  loadDataToInitialTable1() {
-    // Lógica para cargar datos BT01 y asignarlos a bt01DataArray
-    this.bt01DataArray ; // Asigna los datos BT01 aquí
+
+
+  agregarNuevaFila() {
+    const nuevaFila = {
+     
+    };
+  
+    // Determina el tipo de fila según la propiedad isBT01Selected
+    if (this.isBT01Selected) {
+      // Agrega la nueva fila al arreglo de BT01
+      this.bt01DataArray.push(nuevaFila);
+    } else {
+      // Agrega la nueva fila al arreglo de MC01
+      this.mc01DataArray.push(nuevaFila);
+    }
+  
+    // Actualizar la tabla
+    this.loadDataToInitialTable();
+  
+    // Refrescar la tabla
+    if (this.isBT01Selected) {
+      this.dt?.reset(); // Para BT01
+    } else {
+      this.mc01Table?.reset(); // Para MC01
+    }
   }
-
-
-
+  
 
   onDropdownChange(event: any) {
     console.log('Dropdown changed:', event.value);
@@ -203,34 +227,12 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
         this.miFormulario.get('selectedSeriesInput')?.setValue(nextNum);
        
       }
+      
     }
   }
   
   
-
-  
-
-  
-  
-  /*
-  onTipoChange(event: any) {
-    console.log('Tipo changed:', event.value);
-
-    // Establece las variables en función de la opción seleccionada
-    this.isBT01Selected = event.value === 'BT01';
-    this.isMC01Selected = event.value === 'MC01';
-
-    // Puedes agregar lógica adicional aquí según sea necesario
-
-    // Muestra el modal correspondiente en función de la opción seleccionada
-    if (this.isBT01Selected) {
-      this.visibleBT01Modal = true;
-    } else if (this.isMC01Selected) {
-      this.visibleMC01Modal = true;
-    }
-  }*/
-
-  onTipoChange(event: any) {
+ onTipoChange(event: any) {
     console.log('Tipo changed:', event.value);
   
     // Establece las variables en función de la opción seleccionada
@@ -239,60 +241,102 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
   
     if (this.isBT01Selected) {
       this.visibleBT01Modal = true;
-      this.cargarDatosBT01(); 
+      
     
     } else if (this.isMC01Selected) {
       this.visibleMC01Modal = true;
-      this.cargarDatosMC01();
+     
     }
   }
- 
-
- 
-
+  
+  
   onRowDoubleClick(event: any, rowData: any, tipo: string) {
-    // Obtén los datos de la fila seleccionada
-    console.log('Datos de la fila seleccionada:', rowData);
+  let seleccion= this.miFormulario.value.tipoTrabajo
+   if(this.elementosTabla.length>0 && this.elementosTabla[0].tipo !== null ){
+      if(seleccion=== 'MP1200' || seleccion==='MP1000'|| seleccion==='MP200'|| seleccion==='MP2000'|| 
+      seleccion==='MP2400'|| seleccion==='MP250'|| seleccion==='MP500'|| seleccion==='MP600'){
+        this.elementosTabla[this.elementosTabla.length-1]={tipo:1, U_NReparto: rowData.U_NReparto, U_NumEcon:rowData.U_NumEcon, U_GoodsBrand:rowData.U_GoodsBrand,
+          U_GoodsModel:rowData.U_GoodsModel, U_GoodsSerial:rowData.U_GoodsSerial, U_OdoAct:rowData.U_OdoAct}
+          this.visibleBT01Modal= false;
+         this.visibleMC01Modal=false;
+         
+        this.elementosTabla.push({tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:''})
+      
+        this.selectedRowData = rowData;
+        this.clienteProp = rowData.U_CliProp;
+        this.nombreProp = rowData.U_NCliProp;
+        this.direccionProp = rowData.U_DCliProp;
+      }else{
+        Swal.fire({
+          title: "Error",
+          text: "No se puede agregar mas equipos",
+          icon: "error"
+        });
+this.visibleBT01Modal=false;
+this.visibleMC01Modal=false
+      }
+   }
+   else if(this.elementosTabla.length===1 && this.elementosTabla[0].tipo === null ){
+    this.elementosTabla[0]={tipo:1, U_NReparto: rowData.U_NReparto, U_NumEcon:rowData.U_NumEcon, U_GoodsBrand:rowData.U_GoodsBrand,
+       U_GoodsModel:rowData.U_GoodsModel, U_GoodsSerial:rowData.U_GoodsSerial, U_OdoAct:rowData.U_OdoAct}
+       this.visibleBT01Modal= false;
+       this.visibleMC01Modal=false;
 
-    // Limpiar la tabla antes de agregar nuevos datos
-    
-    // Agrega lógica adicional según el tipo (BT01 o MC01)
-    if (tipo === 'BT01') {
-      // Asegúrate de tener la propiedad bt01DataArray definida
-      this.bt01DataArray = [rowData];  // Aquí estamos asignando un nuevo array con un solo elemento
-      console.log(rowData);
+       this.elementosTabla.push({tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:''})
 
-      // También puedes cerrar el modal BT01 aquí si es necesario
-      this.visibleBT01Modal = false;
-    } else if (tipo === 'MC01') {
-      // Asegúrate de tener la propiedad mc01DataArray definida
-      this.mc01DataArray = [rowData];  // Aquí estamos asignando un nuevo array con un solo elemento
-      console.log(rowData);
-      // También puedes cerrar el modal MC01 aquí si es necesario
-      this.visibleMC01Modal = false;
-    }
-
-    // Asigna los datos a la variable selectedRowData
-    this.selectedRowData = rowData;
-
-    this.clienteProp = rowData.U_CliProp;
-    this.nombreProp = rowData.U_NCliProp;
-    this.direccionProp = rowData.U_DCliProp;
-    // Puedes realizar otras acciones según sea necesario
+       this.selectedRowData = rowData;
+       this.clienteProp = rowData.U_CliProp;
+       this.nombreProp = rowData.U_NCliProp;
+       this.direccionProp = rowData.U_DCliProp;
+       
+   }
   }
 
 
-// Método para cargar los datos en la primera tabla
+
+
 loadDataToInitialTable() {
-  // Asegúrate de tener la lógica adecuada para cargar los datos en tu tabla principal
-  // Por ejemplo, podrías hacer algo como:
+  // Lógica para cargar datos BT01 y asignarlos a bt01DataArray
   this.bt01DataArray.forEach(row => {
     this.bt01Data.push(row);
   });
+
+  // Lógica para cargar datos MC01 y asignarlos a mc01DataArray
   this.mc01DataArray.forEach(row => {
     this.mc01Data.push(row);
   });
+
+  // Actualizar la tabla principal
+  this.dt?.reset();  // Para BT01
+  this.mc01Table?.reset();  // Para MC01
 }
+
+
+
+
+
+
+/*
+loadDataToInitialTable() {
+  // Limpiar los arreglos
+  this.bt01Data = [];
+  this.mc01Data = [];
+
+  // Lógica para cargar datos BT01 y asignarlos a bt01DataArray
+  this.bt01DataArray.forEach(row => {
+    this.bt01Data.push({ ...row });
+  });
+
+  // Lógica para cargar datos MC01 y asignarlos a mc01DataArray
+  this.mc01DataArray.forEach(row => {
+    this.mc01Data.push({ ...row });
+  });
+
+  // Actualizar la tabla principal
+  this.dt?.reset();  // Para BT01
+  this.mc01Table?.reset();  // Para MC01
+}*/
+
 
 
   hideBT01Modal() {
@@ -306,13 +350,7 @@ loadDataToInitialTable() {
 
 
 
-/*
-  onInputChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    if (this.selectedSeries && target) {
-      this.selectedSeries.U_NextNum = target.value;
-    }
-  }*/
+
 
   openNew() {
     this.product = {};
@@ -360,6 +398,23 @@ mTerceros() {
  // this.submitted = false;
   this.terceros = false
   this.manoDeObra = false
+}
+
+onchange(){
+
+  let seleccion= this.miFormulario.value.tipoTrabajo
+  console.log(this.miFormulario.value.tipoTrabajo)
+
+  if(this.elementosTabla.length >1 && seleccion==='BD' || seleccion==='CA' || seleccion==='CP' 
+  || seleccion ==='CyP'|| seleccion==='HB'|| seleccion==='Hrria'|| seleccion==='Mbra'|| seleccion ==='MC'||
+  seleccion==='Mpd'|| seleccion==='PAP'|| seleccion==='RECP'|| seleccion==='Rp'|| seleccion==='Rta'||
+  seleccion==='Tr'){
+    Swal.fire({
+      title: "Error",
+      text: "Esta selección no permite tener mas de un equipo agregado en la tabla",
+      icon: "error"
+    });
+  }
 }
 
 }

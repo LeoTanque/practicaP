@@ -22,6 +22,9 @@ export class CreacionOrdenesService {
     return this.http.post<any>('/api/TablasSinObjeto/ListarEquipos?typeequipo=MC01',{UserCode:"THERNANDEZ", UserPassWord: "12456"} )
   }
   
+
+
+
 }
 
 

@@ -4,7 +4,7 @@
   
       <div class="flex justify-content-center">
         <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full" containerStyleClass="w-full" placeholder="Tipo de Trabajo"
-          [options]="tiposTrabajo" optionLabel="Name" optionValue="Code" formControlName="tipoTrabajo" 
+          [options]="tiposTrabajo" optionLabel="Name" optionValue="Code" formControlName="tipoTrabajo" (onChange)="onchange()" 
           >
         </p-dropdown>
       </div>
@@ -36,25 +36,25 @@
 
     <div class="col-8 md:col-8 lg:col-8 pr-2">
      <div class="pb-4">
-        <p-toolbar styleClass="mt-3 gap-2">
+        <!--p-toolbar styleClass="mt-3 gap-2">
             <ng-template pTemplate="left">
-                <!--button-- pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></!--button-->
+                <button pButton label="Agregar Nueva Fila" (click)="agregarNuevaFila()" class="p-button-success"></!--button>
+                <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></!--button>
                 <p-dropdown  containerStyleClass="w-full" class="md:w-15rem w-full "  placeholder="Tipo"
                 [options]="listaTrabajos" optionLabel="Name" optionValue="Code" (onChange)="onTipoChange($event)"
                 [(ngModel)]="selectedTipo"
                 ></p-dropdown>
             </ng-template>
-        </p-toolbar>
-        <!-- Tabla principal para mostrar datos seleccionados de BT01 y MC01 -->
+        </!--p-toolbar-->
+       
 <p-table 
-[value]="bt01DataArray"
-[value]="mc01DataArray"
+[value]="elementosTabla"
 dataKey="id"
 [paginator]="true"
 [rows]="10"
 [rowsPerPageOptions]="[5, 10, 20]"
 [responsive]="true"
-styleClass="p-datatable-gridlines align-items-center"
+styleClass="p-datatable-gridlines align-items-center mt-3"
 class="text-xs"
 >
 <ng-template pTemplate="header">
@@ -65,8 +65,8 @@ class="text-xs"
     <th  style="width:25%">Marca</th>
     <th  style="width:25%">Modelo</th>
     <th  style="width:25%">Serie</th>
-    <th  style="width:10%">H. Actual</th>
-    <th  style="width:10%">H. Nuevo</th>
+    <th  style="width:10%">Hodom. Actual</th>
+    <th  style="width:10%">Hodom. Nuevo</th>
     <th  style="width:25%">Acciones</th>
   </tr>
 </ng-template>
@@ -75,7 +75,7 @@ class="text-xs"
     <td>
         <p-dropdown [style]="{'width': dropdownWidth2}" containerStyleClass="w-full" class="md:w-15rem w-full "  placeholder="Tipo"
         [options]="listaTrabajos" optionLabel="Name" optionValue="Code" (onChange)="onTipoChange($event)"
-        [(ngModel)]="selectedTipo" appendTo="body"
+         appendTo="body"
         ></p-dropdown>
     </td>
     <td>{{ rowData.U_NReparto }}</td>
@@ -85,13 +85,16 @@ class="text-xs"
     <td>{{ rowData.U_GoodsSerial }}</td>
     <td>{{ rowData.U_OdoAct }}</td>
     <td>
-        <input type="text" pInputText class="w-4rem" />
+        <p-inputNumber [size]=2 inputId="minmax" mode="decimal" [min]="rowData.U_OdoAct" [max]="" 
+        > </p-inputNumber>
+        <!--input type="text" pInputText class="w-4rem" /-->
     </td>
     <td>
         <!--p-button type="button" label="B"  styleClass="p-button-danger" ></!--p-button-->
         <p-button icon="pi pi-times" severity="danger" styleClass="p-button-danger"></p-button>
       </td>
   </tr>
+
 </ng-template>
 </p-table>
 
@@ -108,6 +111,7 @@ class="text-xs"
     <!--button-- pButton label="Limpiar" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></!--button-->
     <span class="p-input-icon-left ml-auto">
       <i class="pi pi-search"></i>
+      
       <input pInputText type="text" [(ngModel)]="globalFilter" (input)="filterTable()" placeholder="Buscar..." />
     </span>
   </div>
@@ -122,14 +126,14 @@ class="text-xs"
  
   >
     <ng-template pTemplate="header">
-      <tr >
+      <tr>
         
         <th scope="col">#.Econ</th>
         <th scope="col">N.Reparto</th>
         <th scope="col">Marca</th>
         <th scope="col">Modelo</th>
         <th scope="col">Serie</th>
-        <th scope="col">Horometro Actual</th>
+        <th scope="col">Hodometro Actual</th>
         <th scope="col">CardCode</th>
       </tr>
     </ng-template>
@@ -154,9 +158,12 @@ class="text-xs"
       </div>
       
       <div class="flex justify-content-center" *ngIf="isMC01Selected">
-        <!-- MC01 Modal -->
-        <!-- Diálogo para mostrar datos MC01 -->
-        <p-dialog header="Lista de equipos MC01" [(visible)]="visibleMC01Modal" [modal]="true" [style]="{ width: '800px' }" styleClass="p-fluid">
+       
+        <p-dialog header="Lista de equipos MC01" 
+        [(visible)]="visibleMC01Modal" 
+        [modal]="true" 
+        [style]="{ width: '800px' }" 
+        styleClass="p-fluid">
             <div class="flex">
               <!--button pButton label="Limpiar" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear1(dt)"></!--button-->
               <span class="p-input-icon-left ml-auto">
@@ -181,7 +188,7 @@ class="text-xs"
                   <th scope="col">Marca</th>
                   <th scope="col">Modelo</th>
                   <th scope="col">Serie</th>
-                  <th scope="col">Horometro Actual</th>
+                  <th scope="col">Hodometro Actual</th>
                   <th scope="col">CardCode</th>
                  
                 </tr>
@@ -364,7 +371,7 @@ class="text-xs"
                         </div>
                         
 
-                        <!--form [formGroup]="miFormulario">
+                        <form [formGroup]="miFormulario">
                             <div class="flex flex-wrap mt-2 align-items-start">
                               <div class="flex align-items-start">
                                 <label for="fueraDeServicio" class="mr-2">Fuera de Servicio </label>
@@ -380,7 +387,7 @@ class="text-xs"
                                 </div>
                               </div>
                             </div>
-                          </!--form-->
+                          </form>
                           
                         
                         
