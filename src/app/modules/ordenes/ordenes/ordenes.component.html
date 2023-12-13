@@ -4,7 +4,7 @@
   
       <div class="flex justify-content-center">
         <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full" containerStyleClass="w-full" placeholder="Tipo de Trabajo"
-          [options]="tiposTrabajo" optionLabel="Name" optionValue="Code" formControlName="tipoTrabajo" (onChange)="onchange()" 
+          [options]="tiposTrabajo" optionLabel="Name" optionValue="Code" formControlName="tipoTrabajo" (onChange)="onchange($event)" 
           >
         </p-dropdown>
       </div>
@@ -91,7 +91,7 @@ class="text-xs"
     </td>
     <td>
         <!--p-button type="button" label="B"  styleClass="p-button-danger" ></!--p-button-->
-        <p-button icon="pi pi-times" severity="danger" styleClass="p-button-danger"></p-button>
+        <p-button icon="pi pi-times" severity="danger" styleClass="p-button-danger" (click)="onEliminarFila(rowData)"></p-button>
       </td>
   </tr>
 

@@ -69,7 +69,7 @@ nombreProp: string = '';
 direccionProp: string = '';
 otroInput: string = '';
 
-
+valorActual: any;
 elementosTabla: any[]=[
   {tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:''},
 ]
@@ -91,7 +91,10 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       otroInput: [''],
       selectedSeriesInput: [''],
       fueraDeServicio: [''],
+      
     });
+
+    this.valorActual = this.miFormulario.value.tipoTrabajo;
   }
 
   
@@ -251,6 +254,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
   
   
   onRowDoubleClick(event: any, rowData: any, tipo: string) {
+    
   let seleccion= this.miFormulario.value.tipoTrabajo
    if(this.elementosTabla.length>0 && this.elementosTabla[0].tipo !== null ){
       if(seleccion=== 'MP1200' || seleccion==='MP1000'|| seleccion==='MP200'|| seleccion==='MP2000'|| 
@@ -313,7 +317,12 @@ loadDataToInitialTable() {
 
 
 
-
+onEliminarFila(elemento: any) {
+  const indice = this.elementosTabla.indexOf(elemento);
+  if (indice !== -1) {
+    this.elementosTabla.splice(indice, 1);
+  }
+}
 
 
 /*
@@ -400,21 +409,30 @@ mTerceros() {
   this.manoDeObra = false
 }
 
-onchange(){
+onchange(event:any){
 
   let seleccion= this.miFormulario.value.tipoTrabajo
   console.log(this.miFormulario.value.tipoTrabajo)
 
-  if(this.elementosTabla.length >1 && seleccion==='BD' || seleccion==='CA' || seleccion==='CP' 
+  if(this.elementosTabla.length >2 && (seleccion==='BD' || seleccion==='CA' || seleccion==='CP' 
   || seleccion ==='CyP'|| seleccion==='HB'|| seleccion==='Hrria'|| seleccion==='Mbra'|| seleccion ==='MC'||
   seleccion==='Mpd'|| seleccion==='PAP'|| seleccion==='RECP'|| seleccion==='Rp'|| seleccion==='Rta'||
-  seleccion==='Tr'){
+  seleccion==='Tr')){
     Swal.fire({
       title: "Error",
       text: "Esta selección no permite tener mas de un equipo agregado en la tabla",
       icon: "error"
     });
+    this.miFormulario.patchValue({
+      tipoTrabajo: this.valorActual
+    });
+  } else {
+    // Actualiza el valor actual si la validación se cumple
+    this.valorActual = seleccion;
+  
   }
+
+  
 }
 
 }
