@@ -11,10 +11,17 @@
   
       <div class="flex justify-content-center">
         <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full small" containerStyleClass="w-full" placeholder="Num OT"
-          [options]="listaSeries" optionLabel="U_SerName" optionValue="U_SerName" formControlName="selectedSeries"
-           (onChange)="onDropdownChange($event)">
+          [options]="listaSeries" optionLabel="U_SerName" optionValue="Code" formControlName="selectedSeries"
+           (onChange)="onDropdownChange1($event)">
         </p-dropdown>
       </div>
+
+      <!--div class="flex justify-content-center">
+        <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full small" containerStyleClass="w-full" placeholder="Num OT"
+          [options]="listaSeries" optionLabel="U_SerName" optionValue="Code" formControlName="selectedSeries"
+          (onChange)="onSeriesSelectionChange($event)">
+        </p-dropdown>
+      </!--div-->
   
       <div class="flex justify-content-center">
         <input  type="text" pInputText formControlName="otroInput" class="p-inputtext-sm">
@@ -52,7 +59,7 @@
 dataKey="id"
 [paginator]="true"
 [rows]="10"
-[rowsPerPageOptions]="[5, 10, 20]"
+[rowsPerPageOptions]="[5, 10, 15]"
 [responsive]="true"
 styleClass="p-datatable-gridlines align-items-center mt-3"
 class="text-xs"
@@ -112,7 +119,8 @@ class="text-xs"
     <span class="p-input-icon-left ml-auto">
       <i class="pi pi-search"></i>
       
-      <input pInputText type="text" [(ngModel)]="globalFilter" (input)="filterTable()" placeholder="Buscar..." />
+      <input pInputText type="text" (input)="dt1?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+      (ngModelChange)="onFilterChange()" placeholder="Buscar..." />
     </span>
   </div>
 
@@ -123,7 +131,7 @@ class="text-xs"
   [rows]="5" 
   [rowsPerPageOptions]="[5, 10, 15]"
   dataKey="id"
- 
+  [globalFilterFields]="['U_NumEcon', 'U_NReparto', 'U_GoodsBrand', 'U_GoodsModel','U_GoodsSerial','U_OdoAct','U_CliProp']"
   >
     <ng-template pTemplate="header">
       <tr>
@@ -138,7 +146,7 @@ class="text-xs"
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData>
-      <tr  [pSelectableRow]="rowData" (dblclick)="onRowDoubleClick($event, rowData, 'BT01')">
+      <tr  [pSelectableRow]="rowData" (dblclick)="onRowDoubleClick($event, rowData, 'BT01',rowData.U_CliProp )">
         <td>{{ rowData.U_NumEcon }}</td>
         <td>{{ rowData.U_NReparto }}</td>
         <td>{{ rowData.U_GoodsBrand }}</td>
@@ -159,7 +167,8 @@ class="text-xs"
       
       <div class="flex justify-content-center" *ngIf="isMC01Selected">
        
-        <p-dialog header="Lista de equipos MC01" 
+        <p-dialog 
+        header="Lista de equipos MC01" 
         [(visible)]="visibleMC01Modal" 
         [modal]="true" 
         [style]="{ width: '800px' }" 
@@ -168,7 +177,10 @@ class="text-xs"
               <!--button pButton label="Limpiar" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear1(dt)"></!--button-->
               <span class="p-input-icon-left ml-auto">
                 <i class="pi pi-search"></i>
-                <input pInputText type="text" [(ngModel)]="globalFilterMC01" (input)="filterTable1(dt)" placeholder="Buscar..." />
+                <input pInputText type="text" 
+                (input)="dt2?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+                      (ngModelChange)="onFilterChange()"
+                placeholder="Buscar..." />
               </span>
             </div>
           
@@ -179,7 +191,7 @@ class="text-xs"
             [rows]="5" 
             [rowsPerPageOptions]="[5, 10, 15]"
             dataKey="id"
-            
+            [globalFilterFields]="['U_NumEcon', 'U_NReparto', 'U_GoodsBrand', 'U_GoodsModel','U_GoodsSerial','U_OdoAct','U_CliProp']"
             >
               <ng-template pTemplate="header">
                 <tr >
@@ -194,7 +206,7 @@ class="text-xs"
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-rowData>
-                <tr [pSelectableRow]="rowData" (dblclick)="onRowDoubleClick($event, rowData, 'MC01')">
+                <tr [pSelectableRow]="rowData" (dblclick)="onRowDoubleClick($event, rowData, 'MC01', rowData.U_CliProp)">
                   <td>{{ rowData.U_NumEcon }}</td>
                   <td>{{ rowData.U_NReparto }}</td>
                   <td>{{ rowData.U_GoodsBrand }}</td>
@@ -216,84 +228,7 @@ class="text-xs"
 
       </div>
 
-    <!--p-dialog-- [(visible)]="productDialog" [style]="{ width: '450px' }" header="Orden de Trabajo" [modal]="true" styleClass="p-fluid">
-        <ng-template pTemplate="content">
-            <div class="formgrid">
-                
-                <div class="col-12">
-                    <label for="tipo">Tipo</label>
-                    <p-dropdown  containerStyleClass="w-full" class="md:w-15rem w-full "  placeholder="Tipo"
-                    [options]="listaTrabajos" optionLabel="Name" optionValue="Code" (onChange)="onTipoChange($event)"
-                    ></p-dropdown>
-                </div>
-
-                <div class="col-12">
-                    <label for="normaReparto">Norma Reparto</label>
-                    <div class="flex justify-content-center">
-                        <div class="col-10">
-                            <input type="text" pInputText id="normaReparto" class="small-input" />
-                            
-                        </div>
-                       <div class="col-2">
-                        <span class="pi pi-search" (click)="openNew1()"></span>
-                       </div>
-                       
-                    </div>
-                    
-                </div>
-                <div class="col-12">
-                    <label for="noEconomico">No. Economico</label>
-                    <input type="text" pInputText id="noEconomico" class="small-input" />
-                </div>
-                <div class="flex">
-                    <div class="col-6">
-                        <label for="marca">Marca</label>
-                        <input type="text" pInputText id="marca" class="small-input" />
-                    </div>
-                    <div class="col-6">
-                        <label for="modelo">Modelo</label>
-                        <input type="text" pInputText id="modelo" class="small-input" />
-                    </div>
-                </div>
-                
-                <div class="flex col-12">
-                    
-                              
-    
-                    <div class="col-6">
-                        <label for="serie">Serie</label>
-                        <input type="text" pInputText id="serie" class="small-input" />
-                    </div>
-                </div>
-              
-               
-               
-               <div class="flex">
-                <div class="field col-6">
-                    <label for="horometroActual">Horometro Actual</label>
-                    <input type="text" pInputText id="horometroActual" class="small-input" />
-                </div>
-                <div class="field col-6">
-                    <label for="horometroNuevo">Horometro Nuevo</label>
-                    <input type="text" pInputText id="horometroNuevo" class="small-input" />
-                </div>
-               </div>
-            </div>
-        </ng-template>
-    
-        <ng-template pTemplate="footer">
-            <div class="flex justify-content-center">
-                <div class="p-col-6">
-                    <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideDialog()"></button>
-                </div>
-                <div class="p-col-6">
-                    <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-secondary"></button>
-                </div>
-            </div>
-        </ng-template>
-    </!--p-dialog-->
-    
-    
+   
 
         <div class="card ">
             <div class=" flex justify-content-center">
@@ -305,28 +240,28 @@ class="text-xs"
                            <span class="p-input-icon-left w-30rem ">
                                 <i class="pi pi-search"></i>
                                
-                                <input type="text" pInputText [(ngModel)]="clienteProp"  class="custom-width w-full" placeholder="Cliente" />
+                                <input type="text" pInputText [(ngModel)]="dAdicionales.CardCode"  class="custom-width w-full" placeholder="Cliente" />
                             </span>
                         </div>
                         
                         <div class=" flex justify-content-center">
                            
-                            <input type="text" pInputText [(ngModel)]="nombreProp"  class="custom-width w-full mt-2" placeholder="Nombre">
+                            <input type="text" pInputText [(ngModel)]="dAdicionales.CardName"  class="custom-width w-full mt-2" placeholder="Nombre">
                         </div>
                         
                         
                         <div class=" flex justify-content-center">
                            
-                            <input type="text" pInputText [(ngModel)]="direccionProp"  class="custom-width w-full mt-2" placeholder="Dirección">
+                            <input type="text" pInputText [(ngModel)]="dAdicionales.Street"  class="custom-width w-full mt-2" placeholder="Dirección">
                         </div>
                     </div>
                     <div class="col-6  flex justify-content-end flex-wrap">
                         <div class=" flex justify-content-center ">
-                            <input type="text" pInputText  class="custom-width" placeholder="Ciudad">
+                            <input type="text" pInputText [(ngModel)]="dAdicionales.City"  class="custom-width" placeholder="Ciudad">
                         </div>
                         
                         <div class=" flex justify-content-center">
-                            <input type="text" pInputText class="custom-width mt-2" placeholder="Teléfono">
+                            <input type="text" pInputText [(ngModel)]="dAdicionales.Phone1" class="custom-width mt-2" placeholder="Teléfono">
                         </div>
                         
                         
@@ -398,198 +333,266 @@ class="text-xs"
         </div>
     </div>
 
-
-    <div class="card col-4 md:col-4 lg:col-4 mt-4 pb-4">
+    
+        <div class="card col-4 md:col-4 lg:col-4 mt-4 pb-4">
       
-         <div class="flex justify-content-center  ">
-            <p-fieldset legend="Estado OT">
-                 <div class="col-12  flex justify-content-center flex-wrap custom-width">
-            <div class=" flex justify-content-center  mt-4">
-                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem  w-full" containerStyleClass="w-full"   placeholder="Prioridad"></p-dropdown>
-            </div>
-            
-            <div class=" flex justify-content-center mt-5 ">
-                <p-calendar  [showIcon]="true" containerStyleClass="w-full"   class="w-full" placeholder="dd/mm/aa"></p-calendar>
-              </div>
-            
-            
-            <div class=" flex justify-content-center mt-5 ">
-                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Status"></p-dropdown>
-            </div>
+            <div class="flex justify-content-center  ">
+               <p-fieldset legend="Estado OT">
+                    <div class="col-12  flex justify-content-center flex-wrap custom-width">
 
-            <div class=" flex justify-content-center mt-5 ">
-                <span class="p-input-icon-left w-20rem">
-                    <i class="pi pi-search"></i>
-                   
-                    <input type="text" pInputText  class="w-full "  placeholder="Agente de Ventas" />
-                </span>
-            </div>
-
-            <div class=" flex justify-content-center mt-5 ">
-                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Técnico Responsable"
-                [options]="listaTecnicos" optionLabel="Name" optionValue="Code">
-                ></p-dropdown>
-            </div>
-            
-            
-            <div class=" flex justify-content-center mt-5 ">
-                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Coordinador"
-                [options]="listaCordinadores" optionLabel="Name" optionValue="Code">
-                ></p-dropdown>
-            </div>
-
-            <div class="flex gap-2 mt-4">
-                <p-button label="Cancelar OT" styleClass="p-button-warning"></p-button>
-                <p-button label="Terminar OT" styleClass="p-button-warning"></p-button>
-            </div>
-
-            <div class=" flex justify-content-center mt-5 ">
-                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full" containerStyleClass="w-full" placeholder="Formatos Impresos"></p-dropdown>
-            </div>
-
-        </div>
-    </p-fieldset>
-</div>
-    </div>
+                        <form [formGroup]="miFormulario">
+                            <div class=" flex justify-content-center  mt-4">
+                
+                                <p-dropdown 
+                                [style]="{'width': dropdownWidth}" 
+                                class="md:w-20rem  w-full" 
+                                containerStyleClass="w-full" 
+                                placeholder="Prioridad" 
+                                [options]="prioridades" 
+                                formControlName="prioridadSeleccionada" 
+                                
+                                ></p-dropdown>
+                            </div>
+                            
+                            <div class=" flex justify-content-center mt-5 ">
+                                <p-calendar  [showIcon]="true" containerStyleClass="w-full"   class="w-full" placeholder="dd/mm/aa"></p-calendar>
+                              </div>
+                            
+                            
+                            <div class=" flex justify-content-center mt-5 ">
+                                <p-dropdown 
+                                [style]="{'width': dropdownWidth}" 
+                                class="md:w-20rem w-full " 
+                                containerStyleClass="w-full" 
+                                placeholder="Estado"
+                                [options]="estados"
+                                formControlName="estadoSeleccionado" 
+                                (onChange)="onEstadoSeleccionadoChange()"
+                                 ></p-dropdown>
+                            </div>
+                
+                            <div class=" flex justify-content-center mt-5 ">
+                                <span class="p-input-icon-left w-20rem">
+                                    <i class="pi pi-search"></i>
+                                   
+                                    <input type="text" pInputText  class="w-full "  placeholder="Agente de Ventas" />
+                                </span>
+                            </div>
+                
+                            <div class=" flex justify-content-center mt-5 ">
+                                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Técnico Responsable"
+                                [options]="listaTecnicos" optionLabel="Name" optionValue="Code" formControlName ='seleccionTecnico'>
+                                ></p-dropdown>
+                            </div>
+                            
+                            
+                            <div class=" flex justify-content-center mt-5 ">
+                                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Coordinador"
+                                [options]="listaCordinadores" optionLabel="Name" optionValue="Code" formControlName="seleccionCoordinador">
+                                ></p-dropdown>
+                            </div>
+                
+                            <div class="flex gap-2 mt-4">
+                                <p-button label="Cancelar OT" styleClass="p-button-warning"></p-button>
+                                <p-button label="Terminar OT" styleClass="p-button-warning"></p-button>
+                            </div>
+                
+                            <div class=" flex justify-content-center mt-5 ">
+                                <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full" 
+                                containerStyleClass="w-full" placeholder="Formatos Impresos" formControlName="seleccionarFormato" ></p-dropdown>
+                            </div>
+                        </form>
+              
+   
+           </div>
+       </p-fieldset>
+   </div>
+       </div>
+   
+    
 </div>
 
 
 <div class="card mt-2">
-    <p-tabView>
-        <p-tabPanel header="Diagnóstico Real">
+    <p-tabView #tuTabView (onChange)="onTabChange($event)" >
+        <p-tabPanel header="Diagnóstico Real" >
           
-<div class="card flex justify-content-center col-12">
-    <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Diagnóstico" ></textarea>
-</div>
-        </p-tabPanel>
-        <p-tabPanel header="Refacciones">
+      <div class="card flex justify-content-center col-12">
+        <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Diagnóstico"  ></textarea>
+           </div>
+    </p-tabPanel>
+    
+          <p-tabPanel header="Refacciones" [disabled]="!refaccionesHabilitado" >
             
-                    <p-toolbar styleClass="mb-4 gap-2">
+                    <!--p-toolbar styleClass="mb-4 gap-2">
                         <ng-template pTemplate="left">
                             <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew3()"></button>
                            
                         </ng-template>
-                    </p-toolbar>
-                    <div class="flex col-12 pb-5">
-                        <div class="col-9 ">
-            <p-table styleClass="p-datatable-gridlines">
-                [value]="ordenes"
-               
-                <ng-template pTemplate="header">
+                    </!--p-toolbar-->
+         <div class="flex col-12 pb-5">
+          <div class="col-9  ">
+            <p-table 
+            
+            [value]="elementosTablaRefacciones"
+            dataKey="id"
+            [paginator]="true"
+            [rows]="10"
+            [rowsPerPageOptions]="[5, 10, 20]"
+            [responsive]="true"
+            styleClass="p-datatable-gridlines align-items-center mt-3 me-5"
+            class="text-xs"
+            >           
+             <ng-template pTemplate="header">
                     <tr>
                         <th scope="col" style="width:25%">No. Parte</th>
                         <th scope="col" style="width:40%">Descripcion</th>
-                        <th scope="col" style="width:25%">Cantidad</th>
-                        <th scope="col" style="width:25%">CC</th>
-                        <th scope="col" style="width:25%">Nor.Reparto</th>
-                        <th scope="col" style="width:25%">Solicitado</th>
-                        <th scope="col" style="width:25%">Almacen</th>
-                        <th scope="col" style="width:25%">Existencia</th>
+                        <th scope="col" style="width:10%">Cantidad</th>
+                        <th scope="col" style="width:5%">CC</th>
+                        <th scope="col" style="width:5%">SC</th>
+                        <th scope="col" style="width:30%">N.Reparto</th>
+                        <th scope="col" style="width:30%">Almacen</th>
+                        <th scope="col" style="width:5%">Exist</th>
+                        <th  style="width:5%">Eliminar</th>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-ordenes>
+                <ng-template pTemplate="body" let-orden>
                     <tr>
-                        <td>dsvdsv</td>
-                        <td>dvsdv</td>
-                        <td>dsdvsv</td>
-                        <td>dsd</td>
-                        <td>dsvdsv</td>
-                        <td>dvsdv</td>
-                        <td>dsdvsv</td>
-                        <td>dsd</td>
-                        
+                        <td>
+                            <div class="flex gap-1 align-items-center">
+                                <input type="text" pInputText class="w-4rem" />
+                                <i class="pi pi-search" style="color: blue;"(click)="openNew3()" ></i>
+                            </div>
+                           
+                        </td>
+                       
+                        <td>{{ orden.Descripcion }}</td>
+                        <td>
+                            <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
+                            > </p-inputNumber>
+                        </td>
+                        <!--td>{{ordenes.Cantidad}}</!--td-->
+                        <td>
+                            <p-radioButton name="tipoExistencia" inputId="ingredient1" [(ngModel)]="ingredient"  value="CC"></p-radioButton>
+                           <label for="ingredient1" class="ml-2"></label>
+                        </td>
+                        <td>
+                            <p-radioButton name="tipoExistencia" inputId="ingredient2" [(ngModel)]="ingredient" value="SC"></p-radioButton>
+                          <label for="ingredient2" class="ml-2"></label>
+                        </td>
+                        <td>
+                             <!--input type="text" pInputText [(ngModel)]="selectedU_NReparto" class="w-6rem"/-->
+                             
+                             <p-dropdown [options]="[selectedU_NReparto]"  placeholder="" appendTo="body" ></p-dropdown>
+                        </td>
+                     
+                        <td>
+            
+                            <p-dropdown [options]="almacenSeleccionado"  placeholder="" appendTo="body" ></p-dropdown>
+                             
+                        </td>
+                        <td>
+                            <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
+                            > </p-inputNumber>
+                        </td>
+                        <td>
+                            <p-button icon="pi pi-times" severity="danger" styleClass="p-button-danger" (click)="onEliminarFilaRef(orden)"></p-button>
+                        </td>
                     </tr>
                 </ng-template>
             </p-table>
                  </div>
 
                  <div class="col-3">
-                    <div class=" flex justify-content-center custom-width">
-                        <p-dropdown class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Coordinador"></p-dropdown>
+                    <div class=" flex justify-content-center  mt-3">
+                        <p-dropdown [style]="{'width': dropdownWidth1}"  containerStyleClass="w-full"  placeholder="Cotizaciones"></p-dropdown>
                     </div>
         
-                    <div class="flex gap-2 mt-4  ">
-                        <p-button label="+ Cotizacion" styleClass="p-button-warning"></p-button>
-                        <p-button label="- Cotizacion" styleClass="p-button-warning"></p-button>
+                    <div class="flex gap-2 mt-4 justify-content-center ">
+                        <p-button label="+Cotizacion" styleClass="p-button-warning"></p-button>
+                        <p-button label="-Cotizacion" styleClass="p-button-warning"></p-button>
                     </div>
                  </div>
             </div>
             
+            <div class="flex justify-content-center col-12">
+                <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Comentarios"  ></textarea>
+            </div>
 
 
+    <p-dialog 
+    [(visible)]="refacciones" 
+    [style]="{ width: '800px' }" 
+    header="Lista de Artículos" 
+    [modal]="true" 
+    styleClass="p-fluid">
+    
+           <ng-template pTemplate="content">
+            <div class="flex mb-2">
+               
+                <span class="p-input-icon-left ml-auto">
+                  <i class="pi pi-search"></i>
+                  <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+                      (ngModelChange)="onFilterChange()" placeholder="Buscar..." />
+                </span>
+              </div>
+            
+              <p-table 
+              #dt3 
+              [value]="dRefacciones" 
+              [paginator]="true" 
+              [rows]="5" 
+              [rowsPerPageOptions]="[5, 10, 15]"
+              dataKey="id"
+              [globalFilterFields]="['WhsName', 'ItemCode', 'ItemName', 'stocktotal']"
+              >
 
-            <p-dialog [(visible)]="refacciones" [style]="{ width: '450px' }" header="Refacciones" [modal]="true" styleClass="p-fluid">
-  <ng-template pTemplate="content">
-    <div class="formgrid grid">
-      <div class="flex">
-        <div class="field col-16">
-          <label for="noParte">No. Parte</label>
-          <p-inputNumber inputId="integeronly" ></p-inputNumber>
-        </div>
-
-        <div class="field col-6">
-          <label for="cantidad">Cantidad</label>
-          <p-inputNumber inputId="integeronly" ></p-inputNumber>
-        </div>
-      </div>
-
-      <div class="field col-12">
-        <label for="descripcion">Descripción</label>
-        <textarea type="text" pInputText id="descripcion" class="full-width"></textarea>
-      </div>
-
-      <div class="field col-12">
-        <label for="norReparto">Nor. Reparto</label>
-        <input type="text" pInputText id="norReparto" class="full-width" />
-      </div>
-
-      <div class="flex col-12">
-        <div class="field col-6">
-          <label for="solicitado">Solicitado</label>
-          <p-dropdown class="w-full" containerStyleClass="w-full" placeholder="Solicitado"></p-dropdown>
-        </div>
-        <div class="field col-6">
-          <label for="almacen">Almacen</label>
-          <p-dropdown class="w-full" containerStyleClass="w-full" placeholder="Almacen"></p-dropdown>
-        </div>
-      </div>
-
-      <div class="flex col-12">
-        <div class="field col-8">
-          <label for="existencia">Existencia</label>
-          <input type="text" pInputText id="existencia" class="full-width" />
-        </div>
-        <div class="flex flex-wrap gap-3">
-          <div class="flex align-items-center">
-            <p-radioButton name="tipoExistencia" inputId="ingredient1"  value="CC"></p-radioButton>
-            <label for="ingredient1" class="ml-2">CC</label>
-          </div>
-          
-          <div class="flex align-items-center">
-            <p-radioButton name="tipoExistencia" inputId="ingredient2" value="SC"></p-radioButton>
-            <label for="ingredient2" class="ml-2">SC</label>
-          </div>
-        </div>
-      </div>
-    </div>
+              <!--ng-template pTemplate="caption">
+                <div class="flex">
+                    
+                    <span class="p-input-icon-left ml-auto">
+                      <i class="pi pi-search"></i>
+                      <input  pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+                      (ngModelChange)="onFilterChange()"  placeholder="Buscar " />
+                       
+                    </span>
+                  </div>
+              </!--ng-template-->
+                <ng-template pTemplate="header">
+                  <tr >
+                    <th scope="col">Almacen</th>
+                    <th scope="col">Codigo Art</th>
+                    <th scope="col">Descripcion</th>
+                    <th scope="col">Stock</th>
+                  </tr>
+    
+                </ng-template>
+                <ng-template pTemplate="body" let-orden>
+                  <tr  [pSelectableRow]="orden" (dblclick)="onrowDobleClickref(orden)">
+                    <td>{{ orden.WhsName }}</td>
+                    <td>{{ orden.ItemCode}}</td>
+                    <td>{{ orden.ItemName }}</td>
+                    <td>{{ orden.stocktotal }}</td>
+                    
+                    
+                  </tr>
+                </ng-template>
+              </p-table>
+            
+              <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
+                <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
+              </div>
   </ng-template>
 
-  <ng-template pTemplate="footer">
-    <div class="flex justify-content-center">
-      <div class="p-col-6">
-        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideDialog()"></button>
-      </div>
-      <div class="p-col-6">
-        <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-secondary"></button>
-      </div>
-    </div>
-  </ng-template>
-</p-dialog>
+
+    </p-dialog>
 
             
             
         </p-tabPanel>
-        <p-tabPanel header="Mano de Obra">
+
+
+        <p-tabPanel header="Mano de Obra" [disabled]="!manoDeObraHabilitado">
             <div class="pb-5">
                 <p-toolbar styleClass="mb-4 gap-2">
                     <ng-template pTemplate="left">
@@ -707,7 +710,8 @@ class="text-xs"
             </p-dialog>
             
         </p-tabPanel>
-        <p-tabPanel header="Terceros">
+
+        <p-tabPanel header="Terceros" [disabled]="!tercerosHbilitado">
             <div class="pb-5">
                 <p-toolbar styleClass="mb-4 gap-2">
                     <ng-template pTemplate="left">
@@ -774,7 +778,7 @@ class="text-xs"
             
             
         </p-tabPanel>
-        <p-tabPanel header="Recomendaciones Tecnicas">
+        <p-tabPanel header="Recomendaciones Tecnicas" [disabled]="!recomendacionesHbilitado">
             <div class="pb-5">
                 <p-toolbar styleClass="mb-4 gap-2">
                     <ng-template pTemplate="left">
@@ -842,7 +846,7 @@ class="text-xs"
             
             
         </p-tabPanel>
-        <p-tabPanel header="Anexos">
+        <p-tabPanel header="Anexos" [disabled]="!anexosHabilitado">
             <div class="grid grid-cols-12">
                 <div class="col-10 me-4">
                     <p-table styleClass="p-datatable-gridlines">

@@ -19,10 +19,12 @@ import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CheckboxModule } from 'primeng/checkbox';
+import { CustomFilterPipe } from 'src/app/services/pipe';
 
 @NgModule({
   declarations: [
-    OrdenesComponent
+    OrdenesComponent,
+    //CustomFilterPipe,
     
   ],
   imports: [

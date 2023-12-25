@@ -23,8 +23,22 @@ export class CreacionOrdenesService {
   }
   
 
+datosMC01(codigo:any, tipo:any):Observable<any>{
+return this.http.post<any>(`/api/TablasSinObjeto/ListarClientes?cardcode=${codigo}&type=${tipo}`, {UserCode:"THERNANDEZ", UserPassWord: "12456"})
+}
 
 
+datosRefacciones():Observable<any>{
+return this.http.post<any>('/api/TablasSinObjeto/ListarArticulos', {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+}
+
+seriesAlmacen(serie:any):Observable<any>{
+  return this.http.post<any>(`/api/TablasSinObjeto/ObtenerSerieXalmacen?serie=${serie}`, {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+}
+/*
+seriesAlmacen():Observable<any>{
+  return this.http.post<any>('/api/TablasSinObjeto/ObtenerSerieXalmacen?serie=CUA', {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+}*/
 }
 
 
