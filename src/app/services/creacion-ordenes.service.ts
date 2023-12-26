@@ -35,10 +35,16 @@ return this.http.post<any>('/api/TablasSinObjeto/ListarArticulos', {UserCode:"TH
 seriesAlmacen(serie:any):Observable<any>{
   return this.http.post<any>(`/api/TablasSinObjeto/ObtenerSerieXalmacen?serie=${serie}`, {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
 }
+
 /*
-seriesAlmacen():Observable<any>{
-  return this.http.post<any>('/api/TablasSinObjeto/ObtenerSerieXalmacen?serie=CUA', {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+traerCotizaciones(cardcode:any):Observable<any>{
+  return this.http.post<any>(`/api/TablasSinObjeto/ListarCotizacion?cardcode=${cardcode}`, {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
 }*/
+
+traerCotizaciones():Observable<any>{
+  return this.http.post<any>('/api/TablasSinObjeto/ListarCotizacion?cardcode=CLN00099', {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+}
+
 }
 
 

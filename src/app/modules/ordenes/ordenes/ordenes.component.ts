@@ -31,6 +31,7 @@ export class OrdenesComponent implements OnInit {
  terceros:boolean=false;
  recomendaciones:boolean = false;
  refacciones: boolean = false;
+ cotizaciones:boolean= false
  manoDeObra:boolean = false;
  product!: any;
  productos!: any[];
@@ -51,7 +52,7 @@ export class OrdenesComponent implements OnInit {
 dropdownWidth: string = '20rem';
 dropdownWidth1: string = '15rem';
 dropdownWidth2:string = '5rem'
-
+dropdownWidth3: string='8rem'
 selectedSeries: any;
 
 tipoSeleccionado: string | undefined;
@@ -71,6 +72,7 @@ mc01DataArray: any[] = [];
 dAdicionales:any={};
 SerieAlmacen:any[]=[]
 dRefacciones:any[]= [];
+dCotizaciones:any[]=[];
 selectedRowData: any;
 
 selectedProduct: any;
@@ -132,7 +134,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     this.selectedSeries = null;
    // this.cargarDatosAdicionalesMC01();
   
-  
+  this.cargarDatosCotizaciones();
 
     this.miFormulario = this.fb.group({
       tipoTrabajo: [''], // Puedes proporcionar un valor predeterminado si es necesario
@@ -270,6 +272,40 @@ cargarDatosSeriealmacen(serie: any) {
 }
 
 
+/*
+cargarDatosCotizaciones(cardcode:any){
+this.creacionOrdenesService.traerCotizaciones(cardcode).subscribe(
+  (response)=>{
+    if(response.ResultCode === 0 && response.data){
+      this.dCotizaciones = response.data;
+      console.log('Datos de las corizaciones', this.dCotizaciones)
+    }else {
+      console.error('Error al obtener datos MC01 del API');
+    }
+  },
+  (error) => {
+    console.error('Error de conexión al API');
+  
+  }
+  )
+}*/
+
+cargarDatosCotizaciones(){
+  this.creacionOrdenesService.traerCotizaciones().subscribe(
+    (response)=>{
+      if(response.ResultCode === 0 && response.data){
+        this.dCotizaciones = response.data;
+        console.log('Datos de las corizaciones', this.dCotizaciones)
+      }else {
+        console.error('Error al obtener datos de cotizaciones del API');
+      }
+    },
+    (error) => {
+      console.error('Error de conexión al API');
+    
+    }
+    )
+  }
 
 cargarDatosRefacciones(){
   
@@ -529,7 +565,7 @@ onrowDobleClickref(orden: any) {
       // Muestra una alerta de éxito
       Swal.fire({
         title: 'Éxito',
-        text: 'La fila seleccionada coincide con al menos uno de los almacenes por serie seleccionado.',
+        text: 'La fila seleccionada coincide con uno de los almacenes por serie seleccionado.',
         icon: 'success'
       });
     } else {
@@ -554,6 +590,11 @@ onrowDobleClickref(orden: any) {
   }
 }
 
+
+onrowDobleClickcotizacion(cotizacion:any){
+console.log('Datos de la fila seleccionada:', cotizacion)
+this.cotizaciones=false
+}
 
 
 loadDataToInitialTable() {
@@ -590,6 +631,10 @@ onEliminarFilaRef(elemento:any){
 openNew3() {
  
   this.refacciones = true
+ }
+
+ cotizacion(){
+  this.cotizaciones = true;
  }
 
   hideBT01Modal() {
@@ -677,7 +722,8 @@ hideDialog() {
   this.terceros = false
   this.manoDeObra = false;
   this.refacciones = false;
-  this.recomendaciones = false
+  this.recomendaciones = false;
+  this.cotizaciones = false;
 }
 
 mTerceros() {
