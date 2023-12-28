@@ -121,8 +121,11 @@ anexosHabilitado:boolean= true
 panelActivo: string = 'diagnosticoPanel';
 
 almacenSeleccionado: any | undefined;
+opcionesCotizaciones: string[] = [];
 compararAlmacen:any
 //almacenSeleccionado:any[]=[]
+cardcode: string = '';
+
 constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: FormBuilder){}
 
 
@@ -134,7 +137,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     this.selectedSeries = null;
    // this.cargarDatosAdicionalesMC01();
   
-  this.cargarDatosCotizaciones();
+ // this.cargarDatosCotizaciones();
 
     this.miFormulario = this.fb.group({
       tipoTrabajo: [''], // Puedes proporcionar un valor predeterminado si es necesario
@@ -273,23 +276,6 @@ cargarDatosSeriealmacen(serie: any) {
 
 
 /*
-cargarDatosCotizaciones(cardcode:any){
-this.creacionOrdenesService.traerCotizaciones(cardcode).subscribe(
-  (response)=>{
-    if(response.ResultCode === 0 && response.data){
-      this.dCotizaciones = response.data;
-      console.log('Datos de las corizaciones', this.dCotizaciones)
-    }else {
-      console.error('Error al obtener datos MC01 del API');
-    }
-  },
-  (error) => {
-    console.error('Error de conexión al API');
-  
-  }
-  )
-}*/
-
 cargarDatosCotizaciones(){
   this.creacionOrdenesService.traerCotizaciones().subscribe(
     (response)=>{
@@ -305,7 +291,32 @@ cargarDatosCotizaciones(){
     
     }
     )
+  }*/
+
+
+cargarDatosCotizaciones(codigo:any){
+  
+  this.creacionOrdenesService.traerCotizaciones(codigo).subscribe(
+    (response)=>{
+      if(response.ResultCode === 0 && response.data){
+        this.dCotizaciones = response.data;
+        console.log('Datos de las corizaciones', this.dCotizaciones)
+
+        this.cotizaciones=true
+      }else {
+        console.error('Error al obtener datos de cotizaciones del API');
+      }
+    },
+    (error) => {
+      console.error('Error de conexión al API');
+    
+    }
+    )
   }
+
+
+
+
 
 cargarDatosRefacciones(){
   
@@ -375,6 +386,8 @@ onFilterChange() {
     }
   }*/
   
+
+
   onDropdownChange1(event: any) {
   
     console.log('Dropdown changed:', event.value);
@@ -412,9 +425,7 @@ onFilterChange() {
     }
   }
   
-  
-
-  
+ 
   
  onTipoChange(event: any) {
     console.log('Tipo changed:', event.value);
@@ -436,6 +447,7 @@ onFilterChange() {
   
   onRowDoubleClick(event: any, rowData: any, tipo: string, codigo:any) {
     this.cargarDatosAdicionalesMC01(tipo, codigo)
+    console.log(tipo,codigo)
   let seleccion= this.miFormulario.value.tipoTrabajo
    if(this.elementosTabla.length>0 && this.elementosTabla[0].tipo !== null ){
       if(seleccion=== 'MP1200' || seleccion==='MP1000'|| seleccion==='MP200'|| seleccion==='MP2000'|| 
@@ -591,10 +603,72 @@ onrowDobleClickref(orden: any) {
 }
 
 
+
 onrowDobleClickcotizacion(cotizacion:any){
 console.log('Datos de la fila seleccionada:', cotizacion)
 this.cotizaciones=false
 }
+
+
+onrowDobleClickcotizacion1(cotizacion: any) {
+  console.log('Datos de la fila seleccionada:', cotizacion);
+
+  // Obtén el valor seleccionado del dropdown
+  const serieSeleccionada = this.miFormulario.value.selectedSeries;
+
+  // Verifica si es una cadena (como 'CULIACAN')
+  let selectedObject = serieSeleccionada;
+  if (typeof serieSeleccionada === 'string') {
+    // Busca el objeto correspondiente en la lista de series
+    selectedObject = this.listaSeries.find(series => series.Code === serieSeleccionada);
+  }
+
+  // Verifica si existe un objeto seleccionado
+  if (selectedObject) {
+    // Verifica la condición deseada
+    if (cotizacion.SeriesName === selectedObject.Code) {
+
+      const opcion = `${cotizacion.SeriesName} - ${cotizacion.DocNum}`;
+      if (!this.opcionesCotizaciones.includes(opcion)) {
+        // Agrega la nueva opción al arreglo
+        this.opcionesCotizaciones.push(opcion);
+  
+        // Asigna el nuevo arreglo de opciones al p-dropdown
+        this.miFormulario.get('dropdownCotizaciones')?.setValue(this.opcionesCotizaciones);
+      }else {
+        console.warn('La opción ya existe en el arreglo.');
+        
+      }
+      // Muestra un mensaje de éxito
+      Swal.fire({
+        title: 'Éxito',
+        text: 'La fila seleccionada coincide con la serie seleccionada.',
+        icon: 'success'
+      });
+      console.log('Éxito: La propiedad SeriesName coincide con el valor de Code.');
+    } else {
+      // Muestra un mensaje de error
+      Swal.fire({
+        title: 'Error',
+        text: 'La propiedad SeriesName no coincide con el valor de Code.',
+        icon: 'error'
+      });
+      console.error('Error: La propiedad SeriesName no coincide con el valor de Code.');
+    }
+  } else {
+    Swal.fire({
+      title: 'Error',
+      text: 'No se ha seleccionado ninguna opción en el dropdown',
+      icon: 'error'
+    });
+    console.error('Error: No se ha seleccionado ninguna opción en el dropdown.');
+  }
+
+  // Cierra el modal u realiza otras acciones si es necesario
+  this.cotizaciones = false;
+}
+
+
 
 
 loadDataToInitialTable() {

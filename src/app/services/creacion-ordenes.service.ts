@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { enviroment } from 'src/enviroments/enviroment';
@@ -36,14 +36,25 @@ seriesAlmacen(serie:any):Observable<any>{
   return this.http.post<any>(`/api/TablasSinObjeto/ObtenerSerieXalmacen?serie=${serie}`, {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
 }
 
+
+traerCotizaciones(codigo:any):Observable<any>{
+  return this.http.post<any>(`/api/TablasSinObjeto/ListarCotizacion?cardcode=${codigo}`, {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+}
 /*
-traerCotizaciones(cardcode:any):Observable<any>{
-  return this.http.post<any>(`/api/TablasSinObjeto/ListarCotizacion?cardcode=${cardcode}`, {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+traerCotizaciones1(params: { cardcode: string, userCode: string, userPassWord: string }): Observable<any> {
+  return this.http.post<any>('/api/TablasSinObjeto/ListarCotizacion', params);
 }*/
 
+
+traerCotizaciones1(cardcode: string): Observable<any> {
+  const params = new HttpParams().set('cardcode', cardcode);
+  return this.http.post<any>('/api/TablasSinObjeto/ListarCotizacion', { UserCode: 'THERNANDEZ', UserPassWord: '12456' }, { params });
+}
+
+/*
 traerCotizaciones():Observable<any>{
   return this.http.post<any>('/api/TablasSinObjeto/ListarCotizacion?cardcode=CLN00099', {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
-}
+}*/
 
 }
 
