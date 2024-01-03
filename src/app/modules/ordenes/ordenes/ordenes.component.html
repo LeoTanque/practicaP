@@ -15,13 +15,6 @@
            (onChange)="onDropdownChange1($event)">
         </p-dropdown>
       </div>
-
-      <!--div class="flex justify-content-center">
-        <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full small" containerStyleClass="w-full" placeholder="Num OT"
-          [options]="listaSeries" optionLabel="U_SerName" optionValue="Code" formControlName="selectedSeries"
-          (onChange)="onSeriesSelectionChange($event)">
-        </p-dropdown>
-      </!--div-->
   
       <div class="flex justify-content-center">
         <input  type="text" pInputText formControlName="otroInput" class="p-inputtext-sm">
@@ -262,6 +255,7 @@ class="text-xs"
                         
                         <div class=" flex justify-content-center">
                             <input type="text" pInputText [(ngModel)]="dAdicionales.Phone1" class="custom-width mt-2" placeholder="Teléfono">
+                            <!--p-button label="Terminar OT" styleClass="p-button-warning" (onClick)="mostrardatos()"></!--p-button-->
                         </div>
                         
                         
@@ -432,6 +426,7 @@ class="text-xs"
                     </!--p-toolbar-->
          <div class="flex col-12 pb-5">
           <div class="col-9  ">
+            
             <p-table 
             
             [value]="elementosTablaRefacciones"
@@ -460,7 +455,7 @@ class="text-xs"
                     <tr>
                         <td>
                             <div class="flex gap-1 align-items-center">
-                                <input type="text" pInputText class="w-4rem" />
+                                <input type="text" pInputText class="w-4rem" [(ngModel)]="orden.NoParte" />
                                 <i class="pi pi-search" style="color: blue;"(click)="openNew3()" ></i>
                             </div>
                            
@@ -468,21 +463,35 @@ class="text-xs"
                        
                         <td>{{ orden.Descripcion }}</td>
                         <td>
-                            <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
+                            <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [(ngModel)]="orden.Cantidad" [min]="0" [max]="" placeholder="0"
                             > </p-inputNumber>
                         </td>
-                        <!--td>{{ordenes.Cantidad}}</!--td-->
+                        
+
                         <td>
-                            <p-radioButton name="tipoExistencia" inputId="ingredient1" [(ngModel)]="ingredient"  value="CC"></p-radioButton>
-                           <label for="ingredient1" class="ml-2"></label>
+                            <!--p-radioButton name="tipoExistencia" inputId="ccRadio" [(ngModel)]="TipoExistencia"  value="CC"></!--p-radioButton>
+                           <label-- for="ingredient1" class="ml-2"></label-->
+
+                           <!--p-checkbox name="tipoExistencia" value="CC" label="" [(ngModel)]="TipoExistencia1" [binary]="true" inputId="binary"></!--p-checkbox-->
+                           <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="CC" label="" [binary]="true" inputId="binary"  [disabled]="true" ></p-checkbox>
+                           <div *ngIf="!orden.original">
+                            <p-checkbox name="tipoExistencia" value="CC" label="" [binary]="true" inputId="binary" [(ngModel)]="TipoExistencia1"  ></p-checkbox>
+                        </div>
                         </td>
+
                         <td>
-                            <p-radioButton name="tipoExistencia" inputId="ingredient2" [(ngModel)]="ingredient" value="SC"></p-radioButton>
-                          <label for="ingredient2" class="ml-2"></label>
+                            <!--p-radioButton name="tipoExistencia" inputId="scRadio" [(ngModel)]="TipoExistencia" value="SC"></!--p-radioButton>
+                          <label-- for="ingredient2" class="ml-2"></label-->
+                          <!--p-checkbox name="tipoExistencia" value="SC" label="" [(ngModel)]="checked" [binary]="true" inputId="binary"></!--p-checkbox-->
+                          <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="SC" label="" [binary]="true" inputId="binary" [(ngModel)]="checked" ></p-checkbox>
+                            <div *ngIf="!orden.original">
+                                <p-checkbox name="tipoExistencia" value="SC" label="" [binary]="true" inputId="binary" [disabled]="true" ></p-checkbox>
+                            </div>
                         </td>
-                        <td>
-                             <!--input type="text" pInputText [(ngModel)]="selectedU_NReparto" class="w-6rem"/-->
-                             
+ 
+
+                        
+                        <td>   
                              <p-dropdown [options]="[selectedU_NReparto]"  placeholder="" appendTo="body" ></p-dropdown>
                         </td>
                      
@@ -502,17 +511,21 @@ class="text-xs"
                 </ng-template>
             </p-table>
                  </div>
-
+                
                  <div class="col-3">
+                    
                     <div class=" flex justify-content-center  mt-3">
-                        <p-dropdown [style]="{'width': dropdownWidth1}" [options]="opcionesCotizaciones"  containerStyleClass="w-full"  placeholder="Cotizaciones" appendTo="body"></p-dropdown>
+                        <p-dropdown [style]="{'width': dropdownWidth1}" [options]="opcionesCotizaciones"  
+                        containerStyleClass="w-full"  placeholder="Cotizaciones" appendTo="body" (onChange)="onDropdownChange($event)"></p-dropdown>
                     </div>
         
                     <div class="flex gap-2 mt-4 justify-content-center ">
-                        <p-button label="+Cotizacion" styleClass="p-button-warning"  (click)="cargarDatosCotizaciones('CLN00099')"></p-button>
-                        <p-button label="-Cotizacion" styleClass="p-button-warning"></p-button>
+                        <p-button label="+Cotizacion" styleClass="p-button-warning"  (click)="cargarDatosCotizaciones1(dAdicionales.CardCode)"></p-button>
+                        <p-button label="-Cotizacion" styleClass="p-button-warning" (click)="onBotonMenosCotizacionClick1()" ></p-button>
                     </div>
+                     
                  </div>
+               
             </div>
             
             <div class="flex justify-content-center col-12">
@@ -547,17 +560,6 @@ class="text-xs"
               [globalFilterFields]="['WhsName', 'ItemCode', 'ItemName', 'stocktotal']"
               >
 
-              <!--ng-template pTemplate="caption">
-                <div class="flex">
-                    
-                    <span class="p-input-icon-left ml-auto">
-                      <i class="pi pi-search"></i>
-                      <input  pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
-                      (ngModelChange)="onFilterChange()"  placeholder="Buscar " />
-                       
-                    </span>
-                  </div>
-              </!--ng-template-->
                 <ng-template pTemplate="header">
                   <tr >
                     <th scope="col">Almacen</th>

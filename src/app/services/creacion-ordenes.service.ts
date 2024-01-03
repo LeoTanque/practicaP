@@ -56,6 +56,10 @@ traerCotizaciones():Observable<any>{
   return this.http.post<any>('/api/TablasSinObjeto/ListarCotizacion?cardcode=CLN00099', {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
 }*/
 
+traerDescripcionCotizaciones(docentry:any):Observable<any>{
+  return this.http.post<any>(`/api/TablasSinObjeto/ListarDetalleCotizacion?docentry=${docentry}`,{UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+}
+
 }
 
 
