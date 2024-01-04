@@ -513,17 +513,19 @@ class="text-xs"
                  </div>
                 
                  <div class="col-3">
-                    
+                    <form [formGroup]="miFormulario">
                     <div class=" flex justify-content-center  mt-3">
-                        <p-dropdown [style]="{'width': dropdownWidth1}" [options]="opcionesCotizaciones"  
-                        containerStyleClass="w-full"  placeholder="Cotizaciones" appendTo="body" (onChange)="onDropdownChange($event)"></p-dropdown>
+                        <p-dropdown [style]="{'width': dropdownWidth1}" [options]="opcionesCotizaciones"  formControlName="dropdownCotizaciones"
+                        containerStyleClass="w-full"  placeholder="" appendTo="body" (onChange)="onDropdownChange2($event)"></p-dropdown>
                     </div>
-        
+               
                     <div class="flex gap-2 mt-4 justify-content-center ">
                         <p-button label="+Cotizacion" styleClass="p-button-warning"  (click)="cargarDatosCotizaciones1(dAdicionales.CardCode)"></p-button>
-                        <p-button label="-Cotizacion" styleClass="p-button-warning" (click)="onBotonMenosCotizacionClick1()" ></p-button>
+              
+                        <p-button label="-Cotizacion" styleClass="p-button-warning" (click)="eliminarCotizacionYDetalles2(cotizacion)"></p-button>
+
                     </div>
-                     
+                </form>
                  </div>
                
             </div>

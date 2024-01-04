@@ -138,6 +138,8 @@ compararAlmacen:any
 //almacenSeleccionado:any[]=[]
 cardcode: string = '';
 
+cotizacionSeleccionadaDocEntry: number | undefined;
+
 constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: FormBuilder){}
 
 
@@ -300,7 +302,7 @@ cargarDatosCotizaciones(codigo:any){
   cargarDatosCotizaciones1(codigo: any) {
     // Obtén el CardName del input dAdicionales
     const cardNameInput = this.dAdicionales?.CardName || '';
-    console.log('Este es el datos del input', cardNameInput);
+    console.log('Este es el dato del input', cardNameInput);
   
     // Verifica si el CardName coincide con el valor del CardName en las cotizaciones
     this.creacionOrdenesService.traerCotizaciones(codigo).subscribe(
@@ -1077,6 +1079,7 @@ onrowDobleClickcotizacion1(cotizacion: any) {
                 // Carga los detalles en la tabla solo si no están cargados
                 detallesCotizacion.forEach(detalle => {
                   const nuevaFila = {
+                    id_padre: opcion,
                     NoParte: detalle.ItemCode,
                     Descripcion: detalle.Dscription,
                     Cantidad: detalle.Quantity,
@@ -1199,88 +1202,112 @@ onEliminarFilaRef(elemento: any) {
 }
 
 
-// Agrega este método para manejar el clic en el botón -Cotizacion
 
 
-onEliminarCotizacion() {
-  // Verifica si hay una opción seleccionada
-  if (this.opcionSeleccionada) {
-    // Obtiene el DocEntry de la cotización seleccionada
-    const docEntryCotizacion = parseInt(this.opcionSeleccionada.split(' - ')[1]);
-    console.log('DocEntry', docEntryCotizacion)
-    // Filtra los detalles de cotización asociados al DocEntry de la cotización seleccionada
-    const detallesCotizacionSeleccionada = this.dDetallesCotizaciones.filter(
-      detalle => detalle.DocEntry === docEntryCotizacion
+/*
+onDropdownChange(event: any) { 
+  
+  //this.opcionSeleccionada = event.value;
+  console.log('Opción seleccionada:', event.value);
+
+  const opcionSeleccionada = this.miFormulario.value.dropdownCotizaciones
+  console.log('Esta es la opcion seleccionada', opcionSeleccionada)
+  if (typeof opcionSeleccionada === 'string') {
+    // Extrae los valores de SeriesName y DocNum
+    const [seriesName, docNum,] = opcionSeleccionada.split(' - ');
+
+    // Encuentra la cotización correspondiente en tus datos
+    const cotizacionSeleccionada = this.dCotizaciones.find((cotizacion:any) => 
+      cotizacion.SeriesName === seriesName && cotizacion.DocNum === parseInt(docNum)
     );
 
-    // Imprime los detalles de la cotización seleccionada en la consola
-    console.log('Detalles de la cotización seleccionada:', detallesCotizacionSeleccionada);
+    // Verifica si se encontró la cotización
+    if (cotizacionSeleccionada) {
+      // Imprime en consola los detalles de la cotización seleccionada
+      console.log('Detalles de la cotización seleccionada:', cotizacionSeleccionada);
 
-    // Luego puedes agregar aquí el código para eliminar las filas y la opción del dropdown
+      // Puedes realizar otras acciones aquí según tus necesidades
 
-    // Muestra un mensaje de éxito
-    Swal.fire({
-      title: 'Éxito',
-      text: 'Cotización eliminada con éxito.',
-      icon: 'success'
-    });
-  } else {
-    // Muestra un mensaje de error si no hay opción seleccionada
+      this.cargarDatosDetallesCotizaciones(cotizacionSeleccionada.DocEntry).subscribe(
+        detallesCotizacion => {
+          console.log('Detalles de la cotización seleccionada (desde la tabla):', detallesCotizacion);
+
+          // Aquí puedes realizar otras acciones con los detalles cargados
+        }
+      );
+    } else {
+      console.error('Error: No se encontró la cotización correspondiente en tus datos.');
+    }
+  }
+  
+}
+*/
+
+
+
+onDropdownChange2(event: any) {
+  console.log('Opción seleccionada:', event.value);
+
+  const opcionSeleccionada = this.miFormulario.value.dropdownCotizaciones;
+
+  if (typeof opcionSeleccionada === 'string') {
+    const [seriesName, docNum] = opcionSeleccionada.split(' - ');
+
+    const cotizacionSeleccionada = this.dCotizaciones.find((cotizacion: any) =>
+      cotizacion.SeriesName === seriesName && cotizacion.DocNum === parseInt(docNum)
+    );
+
+    const cotizacionSelect = cotizacionSeleccionada.DocEntry
+    console.log('CTS', cotizacionSelect )
+
+    if (cotizacionSeleccionada) {
+      this.cotizacionSeleccionadaDocEntry = cotizacionSeleccionada.DocEntry;
+      console.log('cotizacion seleccionada docentry', this.cotizacionSeleccionadaDocEntry)
+      this.cargarDatosDetallesCotizaciones(cotizacionSeleccionada.DocEntry).subscribe(
+        detallesCotizacion => {
+          console.log('Detalles de la cotización seleccionada (desde la tabla):', detallesCotizacion);
+          
+          // Puedes realizar otras acciones con los detalles cargados
+        }
+      );
+    } else {
+      console.error('Error: No se encontró la cotización correspondiente en tus datos.');
+    }
+  }
+}
+
+// Método eliminarCotizacionYDetalles
+eliminarCotizacionYDetalles2(cotizacion: any) {
+  const opcionSeleccionada = this.miFormulario.get('dropdownCotizaciones')?.value;
+  console.log('quitar cotizacion')
+  console.log(opcionSeleccionada)
+  console.log(this.elementosTablaRefacciones)
+  if(opcionSeleccionada){
+    this.elementosTablaRefacciones = this.elementosTablaRefacciones.filter(opcion => opcion.id_padre !== opcionSeleccionada);
+    this.opcionesCotizaciones = this.opcionesCotizaciones.filter(opcion => opcion !== opcionSeleccionada);
+    this.miFormulario.get('dropdownCotizaciones')?.setValue(this.opcionesCotizaciones);
+  
+    console.log('Opción eliminada:', opcionSeleccionada);
+    console.log('Nuevas opciones:', this.elementosTablaRefacciones);
+  
+    const cotizacionSelect = this.cotizacionSeleccionada.DocEntry
+    console.log('Valor de la propiedad en el select', cotizacionSelect)
+
+    
+
+  }else{
     Swal.fire({
       title: 'Error',
       text: 'No se ha seleccionado ninguna opción en el dropdown',
       icon: 'error'
     });
-    console.error('Error: No se ha seleccionado ninguna opción en el dropdown.');
+    console.error('No hay opción seleccionada en el dropdown.'); 
   }
+
+
+
 }
 
-
-
-
-onBotonMenosCotizacionClick() {
-  const opcionSeleccionada = this.miFormulario.get('dropdownCotizaciones')?.value;
-
-  if (opcionSeleccionada) {
-    this.opcionSeleccionada = opcionSeleccionada;
-    console.log('Opción seleccionada:', this.opcionSeleccionada);
-    // Resto del código...
-  } else {
-    console.warn('No hay opción seleccionada en el dropdown.');
-    // Puedes mostrar un mensaje o realizar otras acciones si es necesario
-  }
-}
-
-onBotonMenosCotizacionClick1() {
-  // Obtén el valor seleccionado del dropdown
-  const opcionSeleccionada = this.miFormulario.get('dropdownCotizaciones')?.value;
-
-  // Verifica si hay una opción seleccionada
-  if (opcionSeleccionada) {
-    // Asigna el valor de la opción seleccionada
-    this.opcionSeleccionada = opcionSeleccionada;
-
-    // Imprime en consola la opción seleccionada
-    console.log('Opción seleccionada:', this.opcionSeleccionada);
-
-    // Restringe las opciones a solo la seleccionada
-    this.opcionesCotizaciones = [opcionSeleccionada];
-
-    // Resto del código...
-  } else {
-    console.warn('No hay opción seleccionada en el dropdown.');
-    // Puedes mostrar un mensaje o realizar otras acciones si es necesario
-  }
-}
-
-onDropdownChange(event: any) {
-  this.opcionSeleccionada = event.value;
-  console.log('Opción seleccionada:', event.value);
-  // Aquí puedes realizar acciones adicionales con la opción seleccionada si es necesario
-
-  //this.cotizacionSeleccionada = event.value;
-  //console.log('Cotización seleccionada:', this.cotizacionSeleccionada);
-}
 
 
 
