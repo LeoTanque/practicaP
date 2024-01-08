@@ -18,7 +18,7 @@ export class OrdenesComponent implements OnInit {
 
 @ViewChild('tuTabView') tabView: any;
  globalFilterMC01: string = ''; 
- //ingredient!: any;
+ 
  ingredient: any = 'SC';
  TipoExistencia:any = null;
  TipoExistencia1:boolean = true;
@@ -37,6 +37,7 @@ export class OrdenesComponent implements OnInit {
  refacciones: boolean = false;
  cotizaciones:boolean= false
  manoDeObra:boolean = false;
+ manoDeObraTecnicos: boolean = false
  product!: any;
  productos!: any[];
  selectedCity: any;
@@ -57,6 +58,7 @@ dropdownWidth: string = '20rem';
 dropdownWidth1: string = '15rem';
 dropdownWidth2:string = '5rem'
 dropdownWidth3: string='8rem'
+dropdownWidth4: string='10rem'
 selectedSeries: any;
 
 tipoSeleccionado: string | undefined;
@@ -115,19 +117,20 @@ prioridades: any[] = [
 ];
 
 estados:any[]=[
-  {label:'Diagnóstico', value:'D'},
   {label:'Cotización', value: 'C'},
+  {label:'Diagnóstico', value:'D'},
+  
   {label:'Terminar', value:'T'}
 ]
 
 original!: boolean;
 
 indiceActivo: number = 0;
-
+tabIndex!: number;
 diagnosticoHabilitado: boolean = true;
 refaccionesHabilitado: boolean = true;
 manoDeObraHabilitado: boolean = true;
-tercerosHbilitado: boolean = true;
+tercerosHabilitado: boolean = true;
 recomendacionesHbilitado:boolean= true;
 anexosHabilitado:boolean= true
 panelActivo: string = 'diagnosticoPanel';
@@ -135,11 +138,33 @@ panelActivo: string = 'diagnosticoPanel';
 almacenSeleccionado: any | undefined;
 opcionesCotizaciones: string[] = [];
 compararAlmacen:any
-//almacenSeleccionado:any[]=[]
+
 cardcode: string = '';
 
 cotizacionSeleccionadaDocEntry: number | undefined;
 
+
+//Mano de obra 
+dManoDeObra:any[]=[];
+elementosTablaManoDeObra:any[]=[
+  {Articulos:'', Nombres:'', Horas: '', Cantidad:'', Tecnico:'', Nombre:'',Fecha:'', HReales:'', Ejecutada:'' }
+]
+
+ultimaPosicionCreada: number = -1;
+
+dTerceros:any[]=[];
+dProveedores:any[]=[];
+dOrdenCompra:any[]=[];
+ordenesCompraAsociadas:any[]=[]
+ordenCompra: boolean= false
+elementosTablaTerceros:any[]=[
+    {Proveedor:'', Nombre:'', OrdenCompra: '', Total:''}
+]
+
+dRecomendaciones:any[]=[];
+elementosTablaRecomendaciones:any[]=[
+  {NoParte:'', Descripcion:'', Cantidad: ''}
+]
 constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: FormBuilder){}
 
 
@@ -150,6 +175,11 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     this.cargarDatosRefacciones();
     this.selectedSeries = null;
    
+    this.cargarDatosManoDeObra();
+    this.cargarDatosProveedoresTerceros()
+   // this.cargarDatosOrdenTerceros()
+    this.cargarDatosRecomendaciones()
+
 
     this.miFormulario = this.fb.group({
       tipoTrabajo: [''], 
@@ -167,7 +197,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
 
     this.valorActual = this.miFormulario.value.tipoTrabajo;
     this.actualizarIndiceActivo();
-
+    //this.onEstadoSeleccionadoChange1({ value: 'D' });
   }
 
   
@@ -183,6 +213,8 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
           this.listaCordinadores = response.data.listaCordinadores;
           //console.log(response.data.listaCordinadores);
           this.listaTecnicos = response.data.listaTecnicos;
+
+          console.log('Esta es la lista de los tecnicos', this.listaTecnicos)
           this.listaTrabajos = response.data.listaTrabajos;
           this.listaFallos = response.data.listaFallos;
         
@@ -271,30 +303,6 @@ cargarDatosSeriealmacen(serie: any) {
     }
   );
 }
-
-
-
-
-/*
-cargarDatosCotizaciones(codigo:any){
-  
-  this.creacionOrdenesService.traerCotizaciones(codigo).subscribe(
-    (response)=>{
-      if(response.ResultCode === 0 && response.data){
-        this.dCotizaciones = response.data;
-        console.log('Datos de las corizaciones', this.dCotizaciones)
-
-        this.cotizaciones=true
-      }else {
-        console.error('Error al obtener datos de cotizaciones del API');
-      }
-    },
-    (error) => {
-      console.error('Error de conexión al API');
-    
-    }
-    )
-  }*/
 
 
   
@@ -487,56 +495,115 @@ cargarDatosRefacciones(){
 }
 
 
+
+
+cargarDatosManoDeObra(){
+  this.creacionOrdenesService.traerManoDeObra().subscribe(
+    (response)=>{
+      if(response.ResultCode ===0 && response.data){
+        this.dManoDeObra = response.data
+        console.log('Datos Mano de Obra',this.dManoDeObra);
+      }else {
+        console.error('Error al obtener datos del API')
+      }
+    }
+  )
+}
+
+
+cargarDatosProveedoresTerceros(){
+  this.creacionOrdenesService.traerProveedoresTerceros().subscribe(
+    (response)=>{
+      if(response.ResultCode === 0 && response.data){
+        this.dProveedores = response.data
+        console.log('Estos son los proveedores', this.dProveedores);
+      }else{
+        console.error('Error al obtener datos del API')
+      }
+    }
+  )
+}
+
+/*
+cargarDatosOrdenTerceros(){
+  this.creacionOrdenesService.traerOedenCompraTerceros1().subscribe(
+    (response)=>{
+     if(response.ResultCode ===0 && response.data){
+      this.dOrdenCompra = response.data
+      console.log('Estosjsj', this.dOrdenCompra)
+     }else {
+      console.error('Error al obtener datos MC01 del API');
+    }
+  },
+  (error) => {
+    console.error('Error de conexión al API');
+    }
+  )
+}*/
+
+
+cargarDatosRecomendaciones(){
+  this.creacionOrdenesService.traerRecomendaciones().subscribe(
+    (response)=>{
+      if(response.ResultCode ===0 && response.data){
+        this.dRecomendaciones = response.data
+        console.log('Datos Recomendaciones',this.dRecomendaciones);
+      }else {
+        console.error('Error al obtener datos del API')
+      }
+    }
+  )
+}
+
+/*
+cargarDatosOrdenTerceros1(codigo:any):Observable<any[]>{
+  return this.creacionOrdenesService.traerOedenCompraTerceros(codigo).pipe(
+    map(response => {
+      if (response.ResultCode === 0 && response.data) {
+      this.dOrdenCompra= response.data
+      console.log('Datos detalles de cotizaciones', this.dOrdenCompra);
+     
+      return response.data;
+    
+       
+      } else {
+        console.error('Error al obtener datos  del API');
+        return [];
+      }
+    }),
+    catchError(error => {
+      console.error('Error de conexión al API', error);
+      return [];
+    })
+  );
+}*/
+
+
+/*
+cargarDatosOrdenTerceros21(proveedor: any) {
+  this.creacionOrdenesService.traerOedenCompraTerceros(proveedor.codigo).subscribe(
+    (response) => {
+      if (response.ResultCode === 0 && response.data) {
+        this.dOrdenCompra = response.data;
+        console.log('Ordenes de compra asociadas:', this.dOrdenCompra);
+      } else {
+        console.error('Error al obtener datos del API para el proveedor: ', proveedor.CardCode);
+      }
+    },
+    (error) => {
+      console.error('Error de conexión al API');
+    }
+  );
+}*/
+
+
 onFilterChange() {
   // Puedes agregar lógica adicional aquí si es necesario
   // Filtra la tabla cuando el valor de filtroGlobal cambia
   //dt3.filterGlobal(this.filtroGlobal, 'contains');
 }
 
-  
-  
-/*
-  onDropdownChange(event: any) {
-    //this.cargarDatosSeriealmacen(serie);
-    console.log('Dropdown changed:', event.value);
-    const serieSeleccionada = this.miFormulario.value.selectedSeries;
-    console.log('Esta es la serie eleccionada',serieSeleccionada)
-    let selectedObject = event.value;
-    console.log(event.value);
-    this.select = serieSeleccionada
-    console.log('Esta es la serie',this.select)
-    // Verifica si es una cadena (como 'CULIACAN')
-    if (typeof event.value === 'string') {
-      // Puedes buscar el objeto correspondiente en tu lista de series
-      selectedObject = this.listaSeries.find(series => series.U_SerName === event.value);
-      console.log('Opcion', selectedObject);
-    }
-  
-    if (selectedObject) {
-      const nextNum = selectedObject.U_NextNum;
-  
-      console.log('U_NextNum:', nextNum);
-  
-      if (nextNum !== undefined) {
-        // Asigna el valor de U_NextNum al FormControl correspondiente
-        this.miFormulario.get('selectedSeriesInput')?.setValue(nextNum);
-       
-      }
-      
-    }
-  }*/
 
-
-/*
-  onSeriesSelectionChange(event: any) {
-    let selectedSerie = event.value;
-    console.log(selectedSerie)
-    if (selectedSerie) {
-      // Llama al método para cargar los datos del almacén
-      this.cargarDatosSeriealmacen(selectedSerie);
-    }
-  }*/
-  
 
 
   onDropdownChange1(event: any) {
@@ -574,23 +641,6 @@ onFilterChange() {
   }
   
  
-  /*
- onTipoChange(event: any) {
-    console.log('Tipo changed:', event.value);
-  
-    // Establece las variables en función de la opción seleccionada
-    this.isBT01Selected = event.value === 'BT01';
-    this.isMC01Selected = event.value === 'MC01';
-  
-    if (this.isBT01Selected) {
-      this.visibleBT01Modal = true;
-      
-    
-    } else if (this.isMC01Selected) {
-      this.visibleMC01Modal = true;
-     
-    }
-  }*/
   
 
   onTipoChange(event: any) {
@@ -693,65 +743,6 @@ this.visibleMC01Modal=false
 
 
 
-
-/*
-onrowDobleClickref(orden: any) {
-  // Resto de tu lógica...
-  console.log('Datos de la fila seleccionada:', orden);
-
-  // Verifica si SerieAlmacen tiene al menos un elemento
-  if (this.SerieAlmacen.length > 0) {
-    
-    // Verifica si la serie de la fila seleccionada coincide con alguna entrada en SerieAlmacen
-    const coincideConAlgunAlmacen = this.SerieAlmacen.some(almacen => 
-      orden.WhsName === almacen.WhsName || orden.WhsCode === almacen.WhsCode
-    );
-
-    if (coincideConAlgunAlmacen) {
-      // Desestructura la primera fila de elementosTablaRefacciones
-      const primeraFila = this.elementosTablaRefacciones[0];
-
-      // Asigna los valores de la fila seleccionada a la primera fila de elementosTablaRefacciones
-      primeraFila.NoParte = '';
-      primeraFila.Descripcion = orden.ItemName;
-      primeraFila.Cantidad = '';
-      primeraFila.CC = '';
-      primeraFila.SC = '';
-      primeraFila.U_GoodsSerial = '';
-      primeraFila.Almacen = orden.WhsName;
-      primeraFila.Existencia = '';
-
-      this.refacciones = false;
-
-      // Muestra una alerta de éxito
-      Swal.fire({
-        title: 'Éxito',
-        text: 'La fila seleccionada coincide con uno de los almacenes por serie seleccionado.',
-        icon: 'success'
-      });
-    } else {
-      this.refacciones = false;
-
-      // Si la serie no coincide con ningún almacen, muestra un mensaje de error
-      Swal.fire({
-        title: 'Error',
-        text: 'La fila seleccionada no coincide con ninguno de los almacenes por serie seleccionado.',
-        icon: 'error'
-      });
-    }
-  } else {
-    this.refacciones = false;
-    // Maneja el caso en que SerieAlmacen está vacío
-    Swal.fire({
-      title: 'Error',
-      text: 'El select de Serie Almacen está vacío.',
-      icon: 'error'
-    });
-    console.error('Error: SerieAlmacen está vacío');
-  }
-}*/
-
-
 onrowDobleClickref(orden: any) {
   // Verifica si la opción "Cotización" está seleccionada en el dropdown de estados
   if (this.miFormulario.get('estadoSeleccionado')?.value === 'C') {
@@ -760,58 +751,54 @@ onrowDobleClickref(orden: any) {
 
     // Verifica si SerieAlmacen tiene al menos un elemento
     if (this.SerieAlmacen.length > 0) {
-      if(this.selectedU_NReparto){
+      if (this.selectedU_NReparto) {
         // Verifica si la serie de la fila seleccionada coincide con alguna entrada en SerieAlmacen
-      const coincideConAlgunAlmacen = this.SerieAlmacen.some(almacen => 
-        orden.WhsName === almacen.WhsName || orden.WhsCode === almacen.WhsCode
-      );
+        const coincideConAlgunAlmacen = this.SerieAlmacen.some(almacen => 
+          orden.WhsName === almacen.WhsName || orden.WhsCode === almacen.WhsCode
+        );
 
-      if (coincideConAlgunAlmacen) {
-        // Desestructura la primera fila de elementosTablaRefacciones
-        const primeraFila = this.elementosTablaRefacciones[0];
+        if (coincideConAlgunAlmacen) {
+          // Crea una nueva fila con los datos de la orden seleccionada
+          const nuevaFila = {
+            NoParte: '',
+            Descripcion: orden.ItemName,
+            Cantidad: '',
+            CC: '',
+            SC: '',
+            U_GoodsSerial: '',
+            Almacen: orden.WhsName,
+            Existencia: '',
+            original: true,
+          };
 
-        // Asigna los valores de la fila seleccionada a la primera fila de elementosTablaRefacciones
-        primeraFila.NoParte = '';
-        primeraFila.Descripcion = orden.ItemName;
-        primeraFila.Cantidad = '';
-        primeraFila.CC = '';
-        primeraFila.SC = '';
-        primeraFila.U_GoodsSerial = '';
-        primeraFila.Almacen = orden.WhsName;
-        primeraFila.Existencia = '';
-        primeraFila.original = true;
-       // this.refacciones = false;
+          // Agrega la nueva fila a elementosTablaRefacciones
+          this.elementosTablaRefacciones.push(nuevaFila);
 
-        // Muestra una alerta de éxito
-        Swal.fire({
-          title: 'Éxito',
-          text: 'La fila seleccionada coincide con uno de los almacenes por serie seleccionado.',
-          icon: 'success'
-        });
+          // Muestra un mensaje de éxito
+          Swal.fire({
+            title: 'Éxito',
+            text: 'La fila seleccionada coincide con uno de los almacenes por serie seleccionado.',
+            icon: 'success'
+          });
+        } else {
+          // Muestra un mensaje de error si la serie no coincide con ningún almacen
+          Swal.fire({
+            title: 'Error',
+            text: 'La fila seleccionada no coincide con ninguno de los almacenes por serie seleccionado.',
+            icon: 'error'
+          });
+        }
       } else {
-        //this.refacciones = false;
-
-        // Si la serie no coincide con ningún almacen, muestra un mensaje de error
+        // Muestra un mensaje de error si el select de Reparto está vacío
         Swal.fire({
           title: 'Error',
-          text: 'La fila seleccionada no coincide con ninguno de los almacenes por serie seleccionado.',
+          text: 'El select de Reparto está vacío.',
           icon: 'error'
         });
+        console.error('Error: N.Reparto está vacío');
       }
-      }else {
-        // this.refacciones = false;
-         // Maneja el caso en que SerieAlmacen está vacío
-         Swal.fire({
-           title: 'Error',
-           text: 'El select de Reparto está vacío.',
-           icon: 'error'
-         });
-         console.error('Error: N.Reparto está vacío');
-        }
-      
     } else {
-     // this.refacciones = false;
-      // Maneja el caso en que SerieAlmacen está vacío
+      // Muestra un mensaje de error si SerieAlmacen está vacío
       Swal.fire({
         title: 'Error',
         text: 'El select de Serie Almacen está vacío.',
@@ -833,200 +820,55 @@ onrowDobleClickref(orden: any) {
 }
 
 
-
 /*
-onrowDobleClickcotizacion(cotizacion: any) {
+onrowDobleClickref(orden: any) {
+  // Verifica si la opción "Cotización" está seleccionada en el dropdown de estados
   if (this.miFormulario.get('estadoSeleccionado')?.value === 'C') {
-  console.log('Datos de la fila seleccionada:', cotizacion);
+    // Resto de tu lógica...
+    console.log('Datos de la fila seleccionada:', orden);
 
-  // Obtén el valor seleccionado del dropdown
-  const serieSeleccionada = this.miFormulario.value.selectedSeries;
- 
-  
-  // Verifica si es una cadena (como 'CULIACAN')
-  let selectedObject = serieSeleccionada;
-  if (typeof serieSeleccionada === 'string') {
-    // Busca el objeto correspondiente en la lista de series
-    selectedObject = this.listaSeries.find(series => series.Code === serieSeleccionada);
-  }
+    // Verifica si SerieAlmacen tiene al menos un elemento
+    if (this.SerieAlmacen.length > 0) {
+      // Verifica si la serie de la fila seleccionada coincide con la serie seleccionada en SerieAlmacen
+      if (this.selectedU_NReparto && (orden.WhsName === this.selectedU_NReparto || orden.WhsCode === this.selectedU_NReparto)) {
+        // Crea una nueva fila con los datos de la orden seleccionada
+        const nuevaFila = {
+          NoParte: '',
+          Descripcion: orden.ItemName,
+          Cantidad: '',
+          CC: '',
+          SC: '',
+          U_GoodsSerial: '',
+          Almacen: orden.WhsName,
+          Existencia: '',
+          original: true,
+        };
 
-  // Verifica si existe un objeto seleccionado
-  if (selectedObject) {
-    // Verifica la condición deseada
-    if (cotizacion.SeriesName === selectedObject.Code) {
-      this.cargarDatosDetallesCotizaciones(cotizacion.DocEntry).subscribe(
-        
-        detallesCotizacion => {
-          // Iterar sobre los detalles y agregar una fila por cada uno
-          detallesCotizacion.forEach(detalle => {
-           //this.ingredient = 'CC';
-            const nuevaFila = {
-              NoParte: detalle.ItemCode,
-              Descripcion: detalle.Dscription,
-              Cantidad: detalle.Quantity,
-              CC: 'CC',
-              SC: '',
-              U_GoodsSerial: '',
-              Almacen: cotizacion.SeriesName,
-              Existencia: '',
-              original: false,
-              cotizacionAsociada: true,
-            };
-           
-            // Agregar la nueva fila a la tabla
-            this.elementosTablaRefacciones.push(nuevaFila);
-
-            
-            this.elementosTablaRefacciones = [...this.elementosTablaRefacciones];
-            
-            //console.log('Esta es la tabla con los detalles de cotizacion', this.elementosTablaRefacciones)
-          });
-        }
-      );
-
-      const opcion = `${cotizacion.SeriesName} - ${cotizacion.DocNum}`;
-      if (!this.opcionesCotizaciones.includes(opcion)) {
-        // Agrega la nueva opción al arreglo
-        this.opcionesCotizaciones.push(opcion);
-
-        // Asigna el nuevo arreglo de opciones al p-dropdown
-        this.miFormulario.get('dropdownCotizaciones')?.setValue(this.opcionesCotizaciones);
-
-        
-      } else {
-       
-        console.warn('La opción ya existe en el arreglo.');
-      }
-
-      // Muestra un mensaje de éxito
-      Swal.fire({
-        title: 'Éxito',
-        text: 'La fila seleccionada coincide con la serie seleccionada.',
-        icon: 'success'
-      });
-      console.log('Éxito: La propiedad SeriesName coincide con el valor de Code.');
-    } else {
-      // Muestra un mensaje de error
-      Swal.fire({
-        title: 'Error',
-        text: 'La propiedad SeriesName no coincide con el valor de Code.',
-        icon: 'error'
-      });
-      console.error('Error: La propiedad SeriesName no coincide con el valor de Code.');
-    }
-  } else {
-    Swal.fire({
-      title: 'Error',
-      text: 'No se ha seleccionado ninguna opción en el dropdown',
-      icon: 'error'
-    });
-    console.error('Error: No se ha seleccionado ninguna opción en el dropdown.');
-  }
-
-  // Cierra el modal u realiza otras acciones si es necesario
-  
-} else {
-  // Si la opción "Cotización" no está seleccionada, muestra un mensaje de error
-  Swal.fire({
-    title: 'Error',
-    text: 'La opción "Cotización" no está seleccionada.',
-    icon: 'error'
-  });
-  console.error('Error: La opción "Cotización" no está seleccionada en el select de estados.');
-}
-this.cotizaciones = false;
-}*/
-
-/*
-onrowDobleClickcotizacion0(cotizacion: any) {
-  if (this.miFormulario.get('estadoSeleccionado')?.value === 'C') {
-    console.log('Datos de la fila seleccionada:', cotizacion);
-
-    // Obtén el valor seleccionado del dropdown
-    const serieSeleccionada = this.miFormulario.value.selectedSeries;
-
-    // Verifica si es una cadena (como 'CULIACAN')
-    let selectedObject = serieSeleccionada;
-    if (typeof serieSeleccionada === 'string') {
-      // Busca el objeto correspondiente en la lista de series
-      selectedObject = this.listaSeries.find(series => series.Code === serieSeleccionada);
-    }
-
-    // Verifica si existe un objeto seleccionado
-    if (selectedObject) {
-      // Verifica la condición deseada
-      if (cotizacion.SeriesName === selectedObject.Code) {
-        this.cargarDatosDetallesCotizaciones(cotizacion.DocEntry).subscribe(
-          detallesCotizacion => {
-            // Iterar sobre los detalles y agregar una fila por cada uno
-            detallesCotizacion.forEach(detalle => {
-              const nuevaFila = {
-                NoParte: detalle.ItemCode,
-                Descripcion: detalle.Dscription,
-                Cantidad: detalle.Quantity,
-                CC: 'CC',
-                SC: '',
-                U_GoodsSerial: '',
-                Almacen: cotizacion.SeriesName,
-                Existencia: '',
-                original: false,
-                cotizacionAsociada: true,
-              };
-
-              // Agregar la nueva fila a la tabla
-              this.elementosTablaRefacciones.push(nuevaFila);
-              this.elementosTablaRefacciones = [...this.elementosTablaRefacciones];
-            });
-          }
-        );
-
-        const opcion = `${cotizacion.SeriesName} - ${cotizacion.DocNum}`;
-
-        // Verifica si la opción ya existe en el arreglo
-        const existeEnArreglo = this.opcionesCotizaciones.some(op => op === opcion);
-
-        if (!existeEnArreglo) {
-          // Agrega la nueva opción al arreglo
-          
-          this.opcionesCotizaciones.push(opcion);
-
-          // Asigna el nuevo arreglo de opciones al p-dropdown
-          this.miFormulario.get('dropdownCotizaciones')?.setValue(this.opcionesCotizaciones);
-
-
-        } else {
-          // Muestra un mensaje de error si la opción ya existe
-          Swal.fire({
-            title: 'Error',
-            text: 'La cotización ya está cargada.',
-            icon: 'error'
-          });
-          console.error('Error: La cotización ya está cargada.');
-        }
+        // Agrega la nueva fila a elementosTablaRefacciones
+        this.elementosTablaRefacciones.push(nuevaFila);
 
         // Muestra un mensaje de éxito
         Swal.fire({
           title: 'Éxito',
-          text: 'La fila seleccionada coincide con la serie seleccionada.',
+          text: 'La fila seleccionada coincide con la serie por reparto seleccionada.',
           icon: 'success'
         });
-        console.log('Éxito: La propiedad SeriesName coincide con el valor de Code.');
       } else {
-        // Muestra un mensaje de error
+        // Muestra un mensaje de error si la serie no coincide con la seleccionada
         Swal.fire({
           title: 'Error',
-          text: 'La propiedad SeriesName no coincide con el valor de Code.',
+          text: 'La fila seleccionada no coincide con la serie por reparto seleccionada.',
           icon: 'error'
         });
-        console.error('Error: La propiedad SeriesName no coincide con el valor de Code.');
       }
     } else {
+      // Muestra un mensaje de error si SerieAlmacen está vacío
       Swal.fire({
         title: 'Error',
-        text: 'No se ha seleccionado ninguna opción en el dropdown',
+        text: 'El select de Serie Almacen está vacío.',
         icon: 'error'
       });
-      console.error('Error: No se ha seleccionado ninguna opción en el dropdown.');
+      console.error('Error: SerieAlmacen está vacío');
     }
   } else {
     // Si la opción "Cotización" no está seleccionada, muestra un mensaje de error
@@ -1037,8 +879,16 @@ onrowDobleClickcotizacion0(cotizacion: any) {
     });
     console.error('Error: La opción "Cotización" no está seleccionada en el select de estados.');
   }
-  this.cotizaciones = false;
+
+  this.refacciones = false;
 }*/
+
+
+onAlmacenSeleccionadoChange(event: any) {
+  console.log('Opción seleccionada:', event.value);
+  // Puedes hacer más cosas aquí según tus necesidades
+}
+
 
 onrowDobleClickcotizacion1(cotizacion: any) {
   if (this.miFormulario.get('estadoSeleccionado')?.value === 'C') {
@@ -1146,6 +996,242 @@ onrowDobleClickcotizacion1(cotizacion: any) {
 }
 
 
+onrowDobloClickManoDeObra1(mano: any) {
+  // Crea un nuevo objeto para la nueva posición en la tabla
+  const nuevaManoDeObra = {
+    Articulo: mano.ItemCode,
+    Nombres: mano.ItemName,
+    Horas: mano.stocktotal,
+    Cantidad: '',
+    Tecnico: '',   
+    Nombre: '',    
+    Fecha: '',   
+    HReales: '', 
+    Ejecutada: '',
+  
+  };
+
+  this.elementosTablaManoDeObra.push(nuevaManoDeObra);
+
+  this.ultimaPosicionCreada = this.elementosTablaManoDeObra.length - 1;
+
+  this.manoDeObra = false
+  this.elementosTablaManoDeObra = [...this.elementosTablaManoDeObra];
+  // Limpia el formulario si es necesario
+  this.miFormulario.reset();
+}
+
+/*
+onrowDobloClickTecnico(manoTecnicos: any) {
+  // Busca la posición de nuevaManoDeObra
+  const nuevaManoDeObraIndex = this.elementosTablaManoDeObra.findIndex((item) => item.Articulo);
+
+  if (nuevaManoDeObraIndex !== -1) {
+    // Actualiza las propiedades "Técnico" y "Nombre" en la misma posición de nuevaManoDeObra
+   this.elementosTablaManoDeObra[nuevaManoDeObraIndex].Tecnico = manoTecnicos.Code;
+   this.elementosTablaManoDeObra[nuevaManoDeObraIndex].Nombre = manoTecnicos.Name;
+    
+  } else {
+    // Si nuevaManoDeObra no está creada, muestra un mensaje o realiza alguna acción necesaria
+    Swal.fire({
+      title: 'Error',
+      text: 'La posicion nuevaManoDeObra no está creada.',
+      icon: 'error'
+    });
+    console.error("Error: nuevaManoDeObra no está creada");
+
+  }
+  this.manoDeObraTecnicos = false;
+}*/
+
+onrowDobloClickTecnico(manoTecnicos: any) {
+  // Verifica si hay una posición creada
+  if (this.ultimaPosicionCreada !== -1) {
+    // Actualiza las propiedades "Técnico" y "Nombre" en la última posición de nuevaManoDeObra
+    this.elementosTablaManoDeObra[this.ultimaPosicionCreada].Tecnico = manoTecnicos.Code;
+    this.elementosTablaManoDeObra[this.ultimaPosicionCreada].Nombre = manoTecnicos.Name;
+  } else {  
+    // Si nuevaManoDeObra no está creada, muestra un mensaje o realiza alguna acción necesaria
+    Swal.fire({
+      title: 'Error',
+      text: 'La posición nuevaManoDeObra no está creada.',
+      icon: 'error'
+    });
+    console.error("Error: nuevaManoDeObra no está creada");
+  }
+
+  this.manoDeObraTecnicos = false;
+}
+
+/*
+onrowDobloClickProveedoresTerceros(proveedor: any) {
+  // Crea un nuevo objeto para la nueva posición en la tabla
+  console.log('Datos de la fila seleccionada:', proveedor);
+
+  const nuevaProveedores = {
+    Proveedor: proveedor.CardCode,
+    Nombre: proveedor.CardName,
+    OrdenCompra: '',
+    Total:''
+    
+  };
+
+  this.elementosTablaTerceros.push(nuevaProveedores);
+  this.terceros = false
+  this.elementosTablaTerceros = [...this.elementosTablaTerceros];
+  // Limpia el formulario si es necesario
+  this.miFormulario.reset();
+}*/
+
+
+/*
+onrowDobloClickProveedoresTerceros(proveedor: any) {
+  // Llamada al servicio para obtener las órdenes de compra asociadas
+  this.creacionOrdenesService.traerOedenCompraTerceros(proveedor.CardCode).subscribe(
+    (ordenesCompra) => {
+      // Asigna las órdenes de compra a la variable correspondiente
+      this.ordenesCompraAsociadas = ordenesCompra;
+
+      // Puedes imprimir las órdenes de compra para verificar en consola
+      console.log('Órdenes de compra asociadas:', this.ordenesCompraAsociadas);
+      console.log(proveedor.CardCode)
+    },
+    (error) => {
+      console.error('Error al cargar órdenes de compra:', error);
+    }
+  );
+
+  // Resto del código para agregar la fila a la tabla
+  const nuevaProveedores = {
+    Proveedor: proveedor.CardCode,
+    Nombre: proveedor.CardName,
+    OrdenCompra: '',
+    Total: ''
+  };
+
+  this.elementosTablaTerceros.push(nuevaProveedores);
+  this.terceros = false;
+  this.elementosTablaTerceros = [...this.elementosTablaTerceros];
+  // Limpia el formulario si es necesario
+  this.miFormulario.reset();
+}*/
+
+// tu-componente.component.ts
+/*
+onrowDobloClickProveedoresTerceros(proveedor: any) {
+  // Imprime el CardCode en la consola para verificar que es correcto
+  console.log('CardCode del proveedor:', proveedor.CardCode);
+
+  // Llamada al servicio para obtener las órdenes de compra asociadas
+  this.creacionOrdenesService.traerOedenCompraTerceros2(proveedor.CardCode).subscribe(
+    (ordenesCompra) => {
+      // Asigna las órdenes de compra a la variable correspondiente
+      this.ordenesCompraAsociadas = ordenesCompra;
+
+      
+      // Puedes imprimir las órdenes de compra para verificar en consola
+      console.log('Órdenes de compra asociadas:', this.ordenesCompraAsociadas);
+     
+
+    },
+    (error) => {
+      console.error('Error al cargar órdenes de compra:', error);
+    }
+  );
+
+  // Resto del código para agregar la fila a la tabla
+  const nuevaProveedores = {
+    Proveedor: proveedor.CardCode,
+    Nombre: proveedor.CardName,
+    OrdenCompra: '',
+    Total: ''
+  };
+
+  this.elementosTablaTerceros.push(nuevaProveedores);
+  this.terceros = false;
+  this.elementosTablaTerceros = [...this.elementosTablaTerceros];
+  // Limpia el formulario si es necesario
+  this.miFormulario.reset();
+}*/
+
+onrowDobloClickProveedoresTerceros(proveedor: any) {
+  // Imprime el CardCode en la consola para verificar que es correcto
+  console.log('CardCode del proveedor:', proveedor.CardCode);
+
+  // Llamada al servicio para obtener las órdenes de compra asociadas
+  this.creacionOrdenesService.traerOedenCompraTerceros2(proveedor.CardCode).subscribe(
+    (response: any) => {
+      // Verifica que la respuesta tenga el código de resultado y data antes de procesarla
+      if (response && response.ResultCode === 0 && response.data) {
+        // Convierte el objeto 'data' en un array si no es un array ya
+        this.ordenesCompraAsociadas = Array.isArray(response.data) ? response.data : [response.data];
+      } else {
+        // Si no hay datos o el código de resultado no es 0, asigna un array vacío
+        this.ordenesCompraAsociadas = [];
+        console.error('Error al cargar órdenes de compra:', response.Resultmensaje);
+      }
+
+      console.log('Órdenes de compra asociadas:', this.ordenesCompraAsociadas);
+    },
+    (error) => {
+      console.error('Error al cargar órdenes de compra:', error);
+    }
+  );
+
+  // Resto del código para agregar la fila a la tabla
+  const nuevaProveedores = {
+    Proveedor: proveedor.CardCode,
+    Nombre: proveedor.CardName,
+    OrdenCompra: '',
+    Total: ''
+  };
+
+  this.elementosTablaTerceros.push(nuevaProveedores);
+  this.ultimaPosicionCreada = this.elementosTablaTerceros.length - 1;
+  this.terceros = false;
+  this.elementosTablaTerceros = [...this.elementosTablaTerceros];
+  // Limpia el formulario si es necesario
+  this.miFormulario.reset();
+}
+
+
+onrowDobloClickOrdenCompraProveedor(ordenCompra: any) {
+  // Verifica si hay una posición creada
+  if (this.ultimaPosicionCreada !== -1) {
+    // Actualiza las propiedades "Técnico" y "Nombre" en la última posición de nuevaManoDeObra
+    this.elementosTablaTerceros[this.ultimaPosicionCreada].OrdenCompra = ordenCompra.CardName;
+    this.elementosTablaTerceros[this.ultimaPosicionCreada].Total = ordenCompra.DocTotal;
+  } else { 
+    // Si nuevaManoDeObra no está creada, muestra un mensaje o realiza alguna acción necesaria
+    Swal.fire({
+      title: 'Error',
+      text: 'La posición nuevaManoDeObra no está creada.',
+      icon: 'error'
+    });
+    console.error("Error: nuevaManoDeObra no está creada");
+  }
+
+  this.ordenCompra = false;
+}
+
+
+
+onrowDobloClickREcomendaciones(recomendacion: any) {
+  // Crea un nuevo objeto para la nueva posición en la tabla
+  const nuevaRecomendacion = {
+    NoParte: recomendacion.ItemCode,
+    Descripcion: recomendacion.ItemName,
+    Cantidad: '',
+    
+  };
+
+  this.elementosTablaRecomendaciones.push(nuevaRecomendacion);
+  this.recomendaciones = false
+  this.elementosTablaRecomendaciones = [...this.elementosTablaRecomendaciones];
+  // Limpia el formulario si es necesario
+  this.miFormulario.reset();
+}
+
 
 loadDataToInitialTable() {
   // Lógica para cargar datos BT01 y asignarlos a bt01DataArray
@@ -1171,21 +1257,63 @@ onEliminarFila(elemento: any) {
   }
 }
 
-
-/*
-onEliminarFilaRef(elemento:any){
-  const indice = this.elementosTablaRefacciones.indexOf(elemento);
-  if (indice !== -1) {
-    this.elementosTablaRefacciones.splice(indice, 1);
+onEliminarFilaterceros(elemento: any) {
+  
+  if (elemento) {
+    const indice = this.elementosTablaTerceros.indexOf(elemento);
+    
+    if (indice !== -1) {
+      this.elementosTablaTerceros.splice(indice, 1);
+    }
+  } else {
+    // Muestra un mensaje de error ya que la fila está asociada a una cotización
+    Swal.fire({
+      title: 'Error',
+      text: 'No se pudo eliminar.',
+      icon: 'error'
+    });
   }
-}*/
+}
+
+onEliminarFilaRecomendacion(elemento: any) {
+  
+  if (elemento) {
+    const indice = this.elementosTablaRecomendaciones.indexOf(elemento);
+    
+    if (indice !== -1) {
+      this.elementosTablaRecomendaciones.splice(indice, 1);
+    }
+  } else {
+    // Muestra un mensaje de error ya que la fila está asociada a una cotización
+    Swal.fire({
+      title: 'Error',
+      text: 'No se pudo eliminar.',
+      icon: 'error'
+    });
+  }
+}
+
+onEliminarFilaMano(elemento: any) {
+  
+  if (elemento) {
+    const indice = this.elementosTablaManoDeObra.indexOf(elemento);
+    
+    if (indice !== -1) {
+      this.elementosTablaManoDeObra.splice(indice, 1);
+    }
+  } else {
+    // Muestra un mensaje de error ya que la fila está asociada a una cotización
+    Swal.fire({
+      title: 'Error',
+      text: 'No se pudo eliminar.',
+      icon: 'error'
+    });
+  }
+}
 
 onEliminarFilaRef(elemento: any) {
-  // Obtén la fila original
-  const filaOriginal = this.elementosTablaRefacciones.find(fila => fila.original);
-
-  // Verifica si la fila a eliminar es la fila original
-  if (elemento === filaOriginal) {
+  // Verifica si la fila a eliminar es una fila original
+  if (elemento.original) {
     const indice = this.elementosTablaRefacciones.indexOf(elemento);
     
     if (indice !== -1) {
@@ -1201,47 +1329,6 @@ onEliminarFilaRef(elemento: any) {
   }
 }
 
-
-
-
-/*
-onDropdownChange(event: any) { 
-  
-  //this.opcionSeleccionada = event.value;
-  console.log('Opción seleccionada:', event.value);
-
-  const opcionSeleccionada = this.miFormulario.value.dropdownCotizaciones
-  console.log('Esta es la opcion seleccionada', opcionSeleccionada)
-  if (typeof opcionSeleccionada === 'string') {
-    // Extrae los valores de SeriesName y DocNum
-    const [seriesName, docNum,] = opcionSeleccionada.split(' - ');
-
-    // Encuentra la cotización correspondiente en tus datos
-    const cotizacionSeleccionada = this.dCotizaciones.find((cotizacion:any) => 
-      cotizacion.SeriesName === seriesName && cotizacion.DocNum === parseInt(docNum)
-    );
-
-    // Verifica si se encontró la cotización
-    if (cotizacionSeleccionada) {
-      // Imprime en consola los detalles de la cotización seleccionada
-      console.log('Detalles de la cotización seleccionada:', cotizacionSeleccionada);
-
-      // Puedes realizar otras acciones aquí según tus necesidades
-
-      this.cargarDatosDetallesCotizaciones(cotizacionSeleccionada.DocEntry).subscribe(
-        detallesCotizacion => {
-          console.log('Detalles de la cotización seleccionada (desde la tabla):', detallesCotizacion);
-
-          // Aquí puedes realizar otras acciones con los detalles cargados
-        }
-      );
-    } else {
-      console.error('Error: No se encontró la cotización correspondiente en tus datos.');
-    }
-  }
-  
-}
-*/
 
 
 
@@ -1320,6 +1407,26 @@ openNew3() {
   this.cotizaciones = true;
  }
 
+ openNewMano(){
+  this.manoDeObra = true
+ }
+
+ openTerceros(){
+  this.terceros = true
+ }
+
+ openOrdenCompra(){
+  this.ordenCompra = true
+ }
+
+recomendacionesModal(){
+  this.recomendaciones = true
+}
+
+openManoTecnico(){
+  this.manoDeObraTecnicos = true
+}
+
   hideBT01Modal() {
     this.visibleBT01Modal = false;
   }
@@ -1328,8 +1435,15 @@ openNew3() {
     this.visibleMC01Modal = false;
   }
 
-  onEstadoSeleccionadoChange() {
+  
+  onEstadoSeleccionadoChange(event:any) {
+    console.log('Opción seleccionada:', event.value);
+
+    const estadoSeleccionado = this.miFormulario.value.estadoSeleccionado;
+    console.log('Este es el estado Seleccionado', estadoSeleccionado)
     // Lógica según tus necesidades
+
+
     this.actualizarIndiceActivo();
   }
 
@@ -1339,7 +1453,7 @@ openNew3() {
     this.diagnosticoHabilitado = estadoSeleccionado === 'D';
     this.refaccionesHabilitado = estadoSeleccionado !== 'D';
     this.manoDeObraHabilitado = estadoSeleccionado !== 'D';
-    this.tercerosHbilitado = estadoSeleccionado !== 'D';
+    this.tercerosHabilitado = estadoSeleccionado !== 'D';
     this.recomendacionesHbilitado = estadoSeleccionado !== 'D';
     this.anexosHabilitado = estadoSeleccionado !== 'D';
 
@@ -1368,6 +1482,70 @@ openNew3() {
       }
     }
   }
+  
+  
+  onEstadoSeleccionadoChange1(event: any) {
+    console.log('Opción seleccionada:', event.value);
+  
+    const estadoSeleccionado = this.miFormulario.value.estadoSeleccionado;
+    console.log('Este es el estado Seleccionado', estadoSeleccionado);
+  
+    /*
+    // Lógica para actualizar los índices y deshabilitar paneles según la opción seleccionada
+    switch (estadoSeleccionado) {
+      case 'D':
+        this.tabIndex = 0; // Índice del panel "Diagnóstico Real"
+        this.diagnosticoHabilitado = true;
+        this.refaccionesHabilitado = false;
+        this.manoDeObraHabilitado = false;
+        this.tercerosHabilitado = false;
+        this.recomendacionesHbilitado = false;
+        this.anexosHabilitado = false;
+        break;
+      case 'C':
+        this.tabIndex = 1;
+      this.diagnosticoHabilitado = true;
+        this.refaccionesHabilitado = true;
+        this.manoDeObraHabilitado = true;
+        this.tercerosHabilitado = true;
+        this.recomendacionesHbilitado = true;
+        this.anexosHabilitado = true;
+       
+        break;
+      case 'T':
+        this.tabIndex = 1;
+      this.diagnosticoHabilitado = true;
+        this.refaccionesHabilitado = true;
+        this.manoDeObraHabilitado = true;
+        this.tercerosHabilitado = true;
+        this.recomendacionesHbilitado = true;
+        this.anexosHabilitado = true;
+        // Lógica para otras opciones si es necesario
+        break;
+      default:
+        
+    }*/
+
+    //tabIndex=0
+
+if(estadoSeleccionado === 'D'){
+  this.tabIndex = 0; // Índice del panel "Diagnóstico Real"
+  this.diagnosticoHabilitado = true;
+  this.refaccionesHabilitado = false;
+  this.manoDeObraHabilitado = false;
+  this.tercerosHabilitado = false;
+  this.recomendacionesHbilitado = false;
+  this.anexosHabilitado = false;
+}else{
+  this.diagnosticoHabilitado = true;
+    this.refaccionesHabilitado = true;
+    this.manoDeObraHabilitado = true;
+    this.tercerosHabilitado = true;
+    this.recomendacionesHbilitado = true;
+    this.anexosHabilitado = true;
+}
+  }
+  
   
 
 
@@ -1407,6 +1585,8 @@ hideDialog() {
   this.refacciones = false;
   this.recomendaciones = false;
   this.cotizaciones = false;
+  this.manoDeObraTecnicos = false
+  this.ordenCompra = false
 }
 
 mTerceros() {

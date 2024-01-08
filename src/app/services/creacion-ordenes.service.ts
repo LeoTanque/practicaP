@@ -40,24 +40,77 @@ seriesAlmacen(serie:any):Observable<any>{
 traerCotizaciones(codigo:any):Observable<any>{
   return this.http.post<any>(`/api/TablasSinObjeto/ListarCotizacion?cardcode=${codigo}`, {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
 }
-/*
-traerCotizaciones1(params: { cardcode: string, userCode: string, userPassWord: string }): Observable<any> {
-  return this.http.post<any>('/api/TablasSinObjeto/ListarCotizacion', params);
-}*/
 
 
-traerCotizaciones1(cardcode: string): Observable<any> {
-  const params = new HttpParams().set('cardcode', cardcode);
-  return this.http.post<any>('/api/TablasSinObjeto/ListarCotizacion', { UserCode: 'THERNANDEZ', UserPassWord: '12456' }, { params });
-}
-
-/*
-traerCotizaciones():Observable<any>{
-  return this.http.post<any>('/api/TablasSinObjeto/ListarCotizacion?cardcode=CLN00099', {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
-}*/
 
 traerDescripcionCotizaciones(docentry:any):Observable<any>{
   return this.http.post<any>(`/api/TablasSinObjeto/ListarDetalleCotizacion?docentry=${docentry}`,{UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+}
+
+
+traerManoDeObra():Observable<any>{
+  return this.http.post<any>('api/TablasSinObjeto/ListarArticulos?manoobra=Y', {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+  }
+
+traerRecomendaciones():Observable<any>{
+return this.http.post<any>('/api/TablasSinObjeto/ListarArticulos?typeinv={typeinv}&manoobra={manoobra}&cadena={cadena}', {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
+}
+
+
+
+traerProveedoresTerceros():Observable<any>{
+return this.http.post<any>('api/TablasSinObjeto/ListarClientes?cardcode=&type=S', { UserCode: 'THERNANDEZ', UserPassWord: '12456', type: 'S' })
+}
+
+
+traerOedenCompraTerceros1():Observable<any>{
+  return this.http.post<any>('api/TablasSinObjeto/ListarOrdenesdeCompra?cardcode=PHMO1013', {UserCode:"THERNANDEZ", UserPassWord: "12456"})
+}
+
+traerOedenCompraTerceros(cardCode:any):Observable<any[]>{
+  return this.http.post<any[]>(`api/TablasSinObjeto/ListarOrdenesdeCompra?cardcode= ${cardCode}`, {UserCode:"THERNANDEZ", UserPassWord: "12456", CardCode: cardCode})
+}
+
+// creacion-ordenes.service.ts
+
+traerOedenCompraTerceros2(cardCode: string): Observable<any[]> {
+  return this.http.post<any[]>(`api/TablasSinObjeto/ListarOrdenesdeCompra?cardcode=${cardCode}`, {
+    UserCode: "THERNANDEZ",
+    UserPassWord: "12456", 
+    CardCode: cardCode
+  }) ;
+}
+
+
+procesarOrdenesCompra(data: any[]): any[] {
+  // Realiza el procesamiento necesario aquí
+  // Puedes modificar esta función según tus necesidades
+
+  return data.map(orden => ({
+    DocNum: orden.DocNum,
+    docdate: new Date(orden.docdate).toLocaleDateString(),
+    Comments: orden.Comments,
+    DocDueDate: new Date(orden.DocDueDate).toLocaleDateString(),
+    DocTotal: orden.DocTotal
+  }));
+}
+
+traerOdenCompraTerceros(cardCode: string): Observable<any> {
+  const requestBody = {
+    UserCode: "THERNANDEZ",
+    UserPassWord: "12456",
+    CardCode: cardCode
+  };
+
+  return this.http.post<any>('api/TablasSinObjeto/ListarOrdenesdeCompra', requestBody);
+}
+
+traerOrdenesCompraPorProveedor(cardCode: string): Observable<any[]> {
+  return this.http.post<any[]>('api/TablasSinObjeto/ListarOrdenesdeCompra', {
+    cardcode: cardCode,
+    UserCode: "THERNANDEZ",
+    UserPassWord: "12456"
+  });
 }
 
 }
