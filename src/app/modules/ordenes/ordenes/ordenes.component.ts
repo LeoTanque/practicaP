@@ -188,7 +188,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       selectedSeriesInput: [''],
       fueraDeServicio: [''],
       prioridadSeleccionada:[''],
-      estadoSeleccionado:[''],
+      estadoSeleccionado:['C'],
       seleccionTecnico: [''],
       seleccionCoordinador: [''],
       seleccionarFormato: [''],
@@ -197,7 +197,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
 
     this.valorActual = this.miFormulario.value.tipoTrabajo;
     this.actualizarIndiceActivo();
-    //this.onEstadoSeleccionadoChange1({ value: 'D' });
+    this.onEstadoSeleccionadoChange1({ value: 'R' });
   }
 
   
@@ -1154,6 +1154,7 @@ onrowDobloClickProveedoresTerceros(proveedor: any) {
   this.miFormulario.reset();
 }*/
 
+
 onrowDobloClickProveedoresTerceros(proveedor: any) {
   // Imprime el CardCode en la consola para verificar que es correcto
   console.log('CardCode del proveedor:', proveedor.CardCode);
@@ -1198,7 +1199,6 @@ onrowDobloClickProveedoresTerceros(proveedor: any) {
 onrowDobloClickOrdenCompraProveedor(ordenCompra: any) {
   // Verifica si hay una posición creada
   if (this.ultimaPosicionCreada !== -1) {
-    // Actualiza las propiedades "Técnico" y "Nombre" en la última posición de nuevaManoDeObra
     this.elementosTablaTerceros[this.ultimaPosicionCreada].OrdenCompra = ordenCompra.CardName;
     this.elementosTablaTerceros[this.ultimaPosicionCreada].Total = ordenCompra.DocTotal;
   } else { 
@@ -1490,44 +1490,7 @@ openManoTecnico(){
     const estadoSeleccionado = this.miFormulario.value.estadoSeleccionado;
     console.log('Este es el estado Seleccionado', estadoSeleccionado);
   
-    /*
-    // Lógica para actualizar los índices y deshabilitar paneles según la opción seleccionada
-    switch (estadoSeleccionado) {
-      case 'D':
-        this.tabIndex = 0; // Índice del panel "Diagnóstico Real"
-        this.diagnosticoHabilitado = true;
-        this.refaccionesHabilitado = false;
-        this.manoDeObraHabilitado = false;
-        this.tercerosHabilitado = false;
-        this.recomendacionesHbilitado = false;
-        this.anexosHabilitado = false;
-        break;
-      case 'C':
-        this.tabIndex = 1;
-      this.diagnosticoHabilitado = true;
-        this.refaccionesHabilitado = true;
-        this.manoDeObraHabilitado = true;
-        this.tercerosHabilitado = true;
-        this.recomendacionesHbilitado = true;
-        this.anexosHabilitado = true;
-       
-        break;
-      case 'T':
-        this.tabIndex = 1;
-      this.diagnosticoHabilitado = true;
-        this.refaccionesHabilitado = true;
-        this.manoDeObraHabilitado = true;
-        this.tercerosHabilitado = true;
-        this.recomendacionesHbilitado = true;
-        this.anexosHabilitado = true;
-        // Lógica para otras opciones si es necesario
-        break;
-      default:
-        
-    }*/
-
-    //tabIndex=0
-
+    
 if(estadoSeleccionado === 'D'){
   this.tabIndex = 0; // Índice del panel "Diagnóstico Real"
   this.diagnosticoHabilitado = true;
@@ -1537,6 +1500,8 @@ if(estadoSeleccionado === 'D'){
   this.recomendacionesHbilitado = false;
   this.anexosHabilitado = false;
 }else{
+  this.tabIndex = 1;
+  
   this.diagnosticoHabilitado = true;
     this.refaccionesHabilitado = true;
     this.manoDeObraHabilitado = true;
