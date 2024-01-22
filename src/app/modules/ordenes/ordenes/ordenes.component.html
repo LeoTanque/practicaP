@@ -1,4 +1,4 @@
-<form [formGroup]="miFormulario">
+<form [formGroup]="miFormulario" (ngSubmit)="onSubmit()">
 
     <div class="md:flex card md:gap-2 md:justify-content-between md:align-items-center">
   
@@ -28,7 +28,7 @@
   
     </div>
   
-  </form>
+  
   
   
 
@@ -36,16 +36,7 @@
 
     <div class="col-8 md:col-8 lg:col-8 pr-2">
      <div class="pb-4">
-        <!--p-toolbar styleClass="mt-3 gap-2">
-            <ng-template pTemplate="left">
-                <button pButton label="Agregar Nueva Fila" (click)="agregarNuevaFila()" class="p-button-success"></!--button>
-                <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></!--button>
-                <p-dropdown  containerStyleClass="w-full" class="md:w-15rem w-full "  placeholder="Tipo"
-                [options]="listaTrabajos" optionLabel="Name" optionValue="Code" (onChange)="onTipoChange($event)"
-                [(ngModel)]="selectedTipo"
-                ></p-dropdown>
-            </ng-template>
-        </!--p-toolbar-->
+       
        
 <p-table 
 [value]="elementosTabla"
@@ -74,8 +65,8 @@ class="text-xs"
   <tr>
     <td>
         <p-dropdown [style]="{'width': dropdownWidth2}" containerStyleClass="w-full" class="md:w-15rem w-full "  placeholder="Tipo"
-        [options]="listaTrabajos" optionLabel="Name" optionValue="Code" (onChange)="onTipoChange($event)"
-         appendTo="body"
+        [options]="listaTrabajos" optionLabel="Name" optionValue="Code" (onChange)="onTipoChange($event)" formControlName="U_TipEqu"
+         appendTo="body" 
         ></p-dropdown>
     </td>
     <td>{{ rowData.U_NReparto }}</td>
@@ -85,9 +76,9 @@ class="text-xs"
     <td>{{ rowData.U_GoodsSerial }}</td>
     <td>{{ rowData.U_OdoAct }}</td>
     <td>
-        <p-inputNumber [size]=2 inputId="minmax" mode="decimal" [min]="rowData.U_OdoAct" [max]="" 
+        <p-inputNumber [size]=2 inputId="minmax" mode="decimal" [min]="rowData.U_OdoAct" [max]="" formControlName="U_OdomNue"
         > </p-inputNumber>
-        <!--input type="text" pInputText class="w-4rem" /-->
+        
     </td>
     <td>
         <!--p-button type="button" label="B"  styleClass="p-button-danger" ></!--p-button-->
@@ -101,129 +92,9 @@ class="text-xs"
      </div>
 
 
-     <div class="flex justify-content-center" *ngIf="isBT01Selected">
-       <p-dialog header="Lista de Equipos BT01" 
-        [(visible)]="visibleBT01Modal" 
-        [style]="{ width: '800px' }"
-        [modal]="true" 
-        styleClass="p-fluid">
-       <div class="flex ">
-    <!--button-- pButton label="Limpiar" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt)"></!--button-->
-    <span class="p-input-icon-left ml-auto">
-      <i class="pi pi-search"></i>
       
-      <input pInputText type="text" (input)="dt1?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
-      (ngModelChange)="onFilterChange()" placeholder="Buscar..." />
-    </span>
-  </div>
-
-  <p-table 
-  #dt1 
-  [value]="bt01Data" 
-  [paginator]="true" 
-  [rows]="5" 
-  [rowsPerPageOptions]="[5, 10, 15]"
-  dataKey="id"
-  [globalFilterFields]="['U_NumEcon', 'U_NReparto', 'U_GoodsBrand', 'U_GoodsModel','U_GoodsSerial','U_OdoAct','U_CliProp']"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        
-        <th scope="col">#.Econ</th>
-        <th scope="col">N.Reparto</th>
-        <th scope="col">Marca</th>
-        <th scope="col">Modelo</th>
-        <th scope="col">Serie</th>
-        <th scope="col">Hodometro Actual</th>
-        <th scope="col">CardCode</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-rowData>
-      <tr  [pSelectableRow]="rowData" (dblclick)="onRowDoubleClick($event, rowData, 'BT01',rowData.U_CliProp )">
-        <td>{{ rowData.U_NumEcon }}</td>
-        <td>{{ rowData.U_NReparto }}</td>
-        <td>{{ rowData.U_GoodsBrand }}</td>
-        <td>{{ rowData.U_GoodsModel }}</td>
-        <td>{{ rowData.U_GoodsSerial }}</td>
-        <td>{{ rowData.U_OdoAct }}</td>
-        <td>{{ rowData.U_CliProp }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
-
-  <div class="flex justify-content-center mt-5 me-4">
-    <p-button label="Cerrar" (click)="hideBT01Modal()" styleClass="p-button-danger" class="me-4"></p-button>
-  </div>
-</p-dialog>
-
-      </div>
-      
-      <div class="flex justify-content-center" *ngIf="isMC01Selected">
-       
-        <p-dialog 
-        header="Lista de equipos MC01" 
-        [(visible)]="visibleMC01Modal" 
-        [modal]="true" 
-        [style]="{ width: '800px' }" 
-        styleClass="p-fluid">
-            <div class="flex">
-              <!--button pButton label="Limpiar" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear1(dt)"></!--button-->
-              <span class="p-input-icon-left ml-auto">
-                <i class="pi pi-search"></i>
-                <input pInputText type="text" 
-                (input)="dt2?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
-                      (ngModelChange)="onFilterChange()"
-                placeholder="Buscar..." />
-              </span>
-            </div>
-          
-            <p-table 
-            #dt2 
-            [value]="mc01Data" 
-            [paginator]="true" 
-            [rows]="5" 
-            [rowsPerPageOptions]="[5, 10, 15]"
-            dataKey="id"
-            [globalFilterFields]="['U_NumEcon', 'U_NReparto', 'U_GoodsBrand', 'U_GoodsModel','U_GoodsSerial','U_OdoAct','U_CliProp']"
-            >
-              <ng-template pTemplate="header">
-                <tr >
-                  <th scope="col">#.Econ</th>
-                  <th scope="col">N.Reparto</th>
-                  <th scope="col">Marca</th>
-                  <th scope="col">Modelo</th>
-                  <th scope="col">Serie</th>
-                  <th scope="col">Hodometro Actual</th>
-                  <th scope="col">CardCode</th>
-                 
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-rowData>
-                <tr [pSelectableRow]="rowData" (dblclick)="onRowDoubleClick($event, rowData, 'MC01', rowData.U_CliProp)">
-                  <td>{{ rowData.U_NumEcon }}</td>
-                  <td>{{ rowData.U_NReparto }}</td>
-                  <td>{{ rowData.U_GoodsBrand }}</td>
-                  <td>{{ rowData.U_GoodsModel }}</td>
-                  <td>{{ rowData.U_GoodsSerial }}</td>
-                  <td>{{ rowData.U_OdoAct }}</td>
-                  <td>{{ rowData.U_CliProp }}</td>
-                  
-                </tr>
-              </ng-template>
-            </p-table>
-          
-            <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
-              <p-button type="button" label="Cerrar" (click)="hideMC01Modal()" styleClass="p-button-danger" class="me-4"></p-button>
-            </div>
-          </p-dialog>
-          
-  
-
-      </div>
-
-   
-
         <div class="card ">
+          
             <div class=" flex justify-content-center">
                 <p-fieldset legend="Datos del cliente">
                    <div class="grid ">
@@ -233,29 +104,32 @@ class="text-xs"
                            <span class="p-input-icon-left w-30rem ">
                                 <i class="pi pi-search"></i>
                                
-                                <input type="text" pInputText [(ngModel)]="dAdicionales.CardCode"  class="custom-width w-full" placeholder="Cliente" />
+                                <input type="text" pInputText formControlName="cliente"  class="custom-width w-full" placeholder="Cliente" />
                             </span>
                         </div>
                         
                         <div class=" flex justify-content-center">
                            
-                            <input type="text" pInputText [(ngModel)]="dAdicionales.CardName"  class="custom-width w-full mt-2" placeholder="Nombre">
+                            <input type="text" pInputText formControlName="nombre"  class="custom-width w-full mt-2" placeholder="Nombre">
                         </div>
                         
                         
                         <div class=" flex justify-content-center">
                            
-                            <input type="text" pInputText [(ngModel)]="dAdicionales.Street"  class="custom-width w-full mt-2" placeholder="Dirección">
+                            <!--input type="text" pInputText [(ngModel)]="dAdicionales.Street"  class="custom-width w-full mt-2" placeholder="Dirección"-->
+                            <input type="text" pInputText formControlName="direccion"  class="custom-width w-full mt-2" placeholder="Dirección">
                         </div>
                     </div>
                     <div class="col-6  flex justify-content-end flex-wrap">
                         <div class=" flex justify-content-center ">
-                            <input type="text" pInputText [(ngModel)]="dAdicionales.City"  class="custom-width" placeholder="Ciudad">
+                            <!--input type="text" pInputText [(ngModel)]="dAdicionales.City"  class="custom-width" placeholder="Ciudad"-->
+                            <input type="text" pInputText formControlName="ciudad"  class="custom-width" placeholder="Ciudad">
                         </div>
                         
                         <div class=" flex justify-content-center">
-                            <input type="text" pInputText [(ngModel)]="dAdicionales.Phone1" class="custom-width mt-2" placeholder="Teléfono">
-                            <!--p-button label="Terminar OT" styleClass="p-button-warning" (onClick)="mostrardatos()"></!--p-button-->
+                            <!--input type="text" pInputText [(ngModel)]="dAdicionales.Phone1" class="custom-width mt-2" placeholder="Teléfono"-->
+                            <input type="text" pInputText formControlName="telefono" class="custom-width mt-2" placeholder="Teléfono">
+                            
                         </div>
                         
                         
@@ -271,13 +145,13 @@ class="text-xs"
                 </p-fieldset>
             </div>
 
-
+            
             <div class=" flex justify-content-center mt-5">
                 <p-fieldset legend="Reporte del cliente">
                    <div class="grid">
                     <div class="col-8 md:col-8 pr-4 lg:col-8 ">
                         <div class="flex col-12">
-                            <textarea rows="5" cols="30" pInputTextarea class="md:w-25rem w-full" placeholder="Problema Reportado"></textarea>
+                            <textarea rows="5" cols="30" pInputTextarea class="md:w-25rem w-full" formControlName="U_ProRep" placeholder="Problema Reportado"></textarea>
                         </div>
                     </div>
                     <div class="col-4 flex justify-content-end flex-wrap">
@@ -285,22 +159,22 @@ class="text-xs"
                         <div class=" flex justify-content-center chiqui">
 
                             <p-dropdown [style]="{'width': dropdownWidth1}" class="md:w-15rem " containerStyleClass="custom-dropdown"  placeholder="Tipo Falla"
-                            [options]="listaFallos" optionLabel="Name" optionValue="Code">
+                            [options]="listaFallos" optionLabel="Name" optionValue="Code" formControlName="selectedFallos">
                             ></p-dropdown>
                         </div>
                         
                         <div class=" flex justify-content-center chiqui ">
-                            <input type="text" pInputText class="chiqui mt-2" placeholder="Reportado por:">
+                            <input type="text" pInputText class="chiqui mt-2" formControlName="reportadoPor" placeholder="Reportado por:">
                         </div>
                         
                         
                         <div class=" flex justify-content-center chiqui">
-                        <input type="text" pInputText class="chiqui mt-2" placeholder="Autorizado por:">
+                        <input type="text" pInputText class="chiqui mt-2" formControlName="autorizadoPor" placeholder="Autorizado por:">
                            
                         </div>
                         
 
-                        <form [formGroup]="miFormulario">
+                        
                             <div class="flex flex-wrap mt-2 align-items-start">
                               <div class="flex align-items-start">
                                 <label for="fueraDeServicio" class="mr-2">Fuera de Servicio </label>
@@ -316,7 +190,7 @@ class="text-xs"
                                 </div>
                               </div>
                             </div>
-                          </form>
+                          
                           
                         
                         
@@ -324,7 +198,9 @@ class="text-xs"
                    </div>
                 </p-fieldset>
             </div>
+          
         </div>
+        
     </div>
 
     
@@ -334,7 +210,7 @@ class="text-xs"
                <p-fieldset legend="Estado OT">
                     <div class="col-12  flex justify-content-center flex-wrap custom-width">
 
-                        <form [formGroup]="miFormulario">
+                        
                             <div class=" flex justify-content-center  mt-4">
                 
                                 <p-dropdown 
@@ -349,7 +225,13 @@ class="text-xs"
                             </div>
                             
                             <div class=" flex justify-content-center mt-5 ">
-                                <p-calendar  [showIcon]="true" containerStyleClass="w-full"   class="w-full" placeholder="dd/mm/aa"></p-calendar>
+                                <p-calendar  
+                                [showIcon]="true" 
+                                containerStyleClass="w-full"   
+                                class="w-full" 
+                                placeholder="dd/mm/aa"
+                                formControlName="fechaSeleccionada"
+                                ></p-calendar>
                               </div>
                             
                             
@@ -358,20 +240,25 @@ class="text-xs"
                                 [style]="{'width': dropdownWidth}" 
                                 class="md:w-20rem w-full " 
                                 containerStyleClass="w-full" 
-                                placeholder="Estado"
+                                placeholder=""
                                 [options]="estados"
                                 formControlName="estadoSeleccionado" 
+                                
                                 (onChange)="onEstadoSeleccionadoChange1($event)"
                                  ></p-dropdown>
                             </div>
                 
-                            <div class=" flex justify-content-center mt-5 ">
+                            <!--div class=" flex justify-content-center mt-5 ">
                                 <span class="p-input-icon-left w-20rem">
                                     <i class="pi pi-search"></i>
                                    
                                     <input type="text" pInputText  class="w-full "  placeholder="Agente de Ventas" />
                                 </span>
-                            </div>
+                            </!--div-->
+                            <div class="flex gap-3 align-items-center mt-5">
+                              <input type="text" pInputText class="w-18rem" placeholder="Agente de Ventas" formControlName="seleccionAgente" />
+                              <i class="pi pi-search" style="color: blue;"(click)="openNew3()" ></i>
+                          </div>
                 
                             <div class=" flex justify-content-center mt-5 ">
                                 <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full " containerStyleClass="w-full"  placeholder="Técnico Responsable"
@@ -395,7 +282,7 @@ class="text-xs"
                                 <p-dropdown [style]="{'width': dropdownWidth}" class="md:w-20rem w-full" 
                                 containerStyleClass="w-full" placeholder="Formatos Impresos" formControlName="seleccionarFormato" ></p-dropdown>
                             </div>
-                        </form>
+                        
               
    
            </div>
@@ -406,24 +293,26 @@ class="text-xs"
     
 </div>
 
+<!--div class="flex gap-2">
+  <p-button type="submit" label="Grabar" [disabled]="isSubmitting"  ></p-button>
+  <p-button label="Regresar" styleClass="p-button-secondary"></p-button>
+  <p-button label="Editar" type="button" [disabled]="isSubmitting" (click)="actualizarOrden()"></p-button>
+</!--div-->
+</form>
 
 <div class="card mt-2">
     <p-tabView  [activeIndex]="tabIndex" >
         <p-tabPanel header="Diagnóstico Real"  >
-          
+          <form [formGroup]="miFormulario">
       <div class="card flex justify-content-center col-12">
-        <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Diagnóstico"  ></textarea>
+        <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Diagnóstico" formControlName="textoDiagnostico"  ></textarea>
            </div>
+          </form>
     </p-tabPanel>
     
           <p-tabPanel header="Refacciones" [disabled]="!refaccionesHabilitado" >
             
-                    <!--p-toolbar styleClass="mb-4 gap-2">
-                        <ng-template pTemplate="left">
-                            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew3()"></button>
-                           
-                        </ng-template>
-                    </!--p-toolbar-->
+                    
          <div class="flex col-12 pb-5">
           <div class="col-9  ">
             
@@ -455,7 +344,7 @@ class="text-xs"
                     <tr>
                         <td>
                             <div class="flex gap-1 align-items-center">
-                                <input type="text" pInputText class="w-4rem" [(ngModel)]="orden.NoParte" />
+                                <input type="text" pInputText class="w-6rem" [(ngModel)]="orden.NoParte" />
                                 <i class="pi pi-search" style="color: blue;"(click)="openNew3()" ></i>
                             </div>
                            
@@ -538,116 +427,7 @@ class="text-xs"
             </div>
 
 
-    <p-dialog 
-    [(visible)]="refacciones" 
-    [style]="{ width: '800px' }" 
-    header="Lista de Artículos" 
-    [modal]="true" 
-    styleClass="p-fluid">
-    
-           <ng-template pTemplate="content">
-            <div class="flex mb-2">
-               
-                <span class="p-input-icon-left ml-auto">
-                  <i class="pi pi-search"></i>
-                  <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
-                      (ngModelChange)="onFilterChange()" placeholder="Buscar..." />
-                </span>
-              </div>
-            
-              <p-table 
-              #dt3 
-              [value]="dRefacciones" 
-              [paginator]="true" 
-              [rows]="5" 
-              [rowsPerPageOptions]="[5, 10, 15]"
-              dataKey="id"
-              [globalFilterFields]="['WhsName', 'ItemCode', 'ItemName', 'stocktotal']"
-              >
-
-                <ng-template pTemplate="header">
-                  <tr >
-                    <th scope="col">Almacen</th>
-                    <th scope="col">Codigo Art</th>
-                    <th scope="col">Descripcion</th>
-                    <th scope="col">Stock</th>
-                  </tr>
-    
-                </ng-template>
-                <ng-template pTemplate="body" let-orden>
-                  <tr  [pSelectableRow]="orden" (dblclick)="onrowDobleClickref(orden)">
-                    <td>{{ orden.WhsName }}</td>
-                    <td>{{ orden.ItemCode}}</td>
-                    <td>{{ orden.ItemName }}</td>
-                    <td>{{ orden.stocktotal }}</td>
-                    
-                    
-                  </tr>
-                </ng-template>
-              </p-table>
-            
-              <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
-                <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
-              </div>
-  </ng-template>
-
-
-    </p-dialog>
-
-    <p-dialog 
-    [(visible)]="cotizaciones" 
-    [style]="{ width: '800px' }" 
-    header="Lista de Cotizaciones" 
-    [modal]="true" 
-    styleClass="p-fluid">
-    
-           <ng-template pTemplate="content">
-            <div class="flex mb-2">
-               
-                <span class="p-input-icon-left ml-auto">
-                  <i class="pi pi-search"></i>
-                  <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
-                      (ngModelChange)="onFilterChange()" placeholder="Buscar..." />
-                </span>
-              </div>
-            
-              <p-table 
-              #dt3 
-              [value]="dCotizaciones" 
-              [paginator]="true" 
-              [rows]="5" 
-              [rowsPerPageOptions]="[5, 10, 15]"
-              dataKey="id"
-              [globalFilterFields]="['DocNum', 'docdate', 'CardName', 'Comments']"
-              >
-                <ng-template pTemplate="header">
-                  <tr >
-                    <th scope="col">DocNum</th>
-                    <th scope="col">Fecha</th>
-                    <th scope="col">Cliente</th>
-                    <th scope="col">Comentarios</th>
-                  </tr>
-    
-                </ng-template>
-                <ng-template pTemplate="body" let-cotizacion>
-                  <tr  [pSelectableRow]="cotizacion" (dblclick)="onrowDobleClickcotizacion1(cotizacion)">
-                    <td>{{ cotizacion.DocNum }}</td>
-                    <td>{{ cotizacion.docdate}}</td>
-                    <td>{{ cotizacion.CardName }}</td>
-                    <td>{{ cotizacion.Comments }}</td>
-                    
-                    
-                  </tr>
-                </ng-template>
-              </p-table>
-            
-              <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
-                <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
-              </div>
-  </ng-template>
-
-
-    </p-dialog>     
+     
             
         </p-tabPanel>
 
@@ -685,7 +465,7 @@ class="text-xs"
                 <tr>
                     <td>
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-4rem" [(ngModel)]="mDeObra.Articulo" />
+                            <input type="text" pInputText class="w-6rem" [(ngModel)]="mDeObra.Articulo" />
                             <i class="pi pi-search" style="color: blue;"(click)="openNewMano()"></i>
                         </div>
                     </td>
@@ -699,14 +479,19 @@ class="text-xs"
                     </td>
                     <td> 
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-4rem" [(ngModel)]="mDeObra.Tecnico" />
+                            <input type="text" pInputText class="w-6rem" [(ngModel)]="mDeObra.Tecnico" />
                             <i class="pi pi-search" style="color: blue;"(click)="openManoTecnico()" ></i>
                         </div>
                     </td>
                     <td>{{ mDeObra.Nombre }}</td>
                     <td>
                         <div class="flex justify-content-center">
-                            <p-calendar  [showIcon]="true" [style]="{'width': dropdownWidth4}" appendTo="body"  ></p-calendar>
+                            <p-calendar  
+                            [showIcon]="true" 
+                            [style]="{'width': dropdownWidth4}" 
+                            appendTo="body" 
+                            [(ngModel)]="fechaSeleccionadatablas"
+                            ></p-calendar>
                         </div>
                     </td>
 
@@ -877,14 +662,14 @@ class="text-xs"
                 <tr>
                     <td>
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-10rem" [(ngModel)]="terceros.Proveedor" />
+                            <input type="text" pInputText class="w-10rem w-full" [(ngModel)]="terceros.Proveedor" />
                             <i class="pi pi-search" style="color: blue;"(click)="openTerceros()"></i>
                         </div>
                     </td>
                     <td> {{terceros.Nombre}} </td>
                     <td>
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-10rem" [(ngModel)]="terceros.OrdenCompra" />
+                            <input type="text" pInputText class="w-full" [(ngModel)]="terceros.OrdenCompra" />
                             <i class="pi pi-search" style="color: blue;"(click)="openOrdenCompra()"></i>
                         </div>
                     </td>
@@ -1045,7 +830,7 @@ class="text-xs"
                 <tr>
                     <td>
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-10rem" [(ngModel)]="recomendacion.NoParte" />
+                            <input type="text" pInputText class="w-full" [(ngModel)]="recomendacion.NoParte" />
                             <i class="pi pi-search" style="color: blue;"(click)="recomendacionesModal()"></i>
                         </div>
                     </td>
@@ -1053,7 +838,7 @@ class="text-xs"
                     {{recomendacion.Descripcion}}
                     </td>
                     <td>
-                        <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
+                        <p-inputNumber  inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
                         > </p-inputNumber>
                     </td>
                     <td>
@@ -1160,8 +945,252 @@ class="text-xs"
         </p-tabPanel>
     </p-tabView>
 </div>
+
+
 <div class="flex gap-2">
-    <p-button label="Grabar"></p-button>
-    <p-button label="Regresar" styleClass="p-button-secondary"></p-button>
+  <form [formGroup]="miFormulario" (ngSubmit)="onSubmit()">
+    <div class="flex gap-2">
+      <p-button type="submit" label="{{ modoEdicion ? 'Actualizar' : 'Grabar' }}"  [disabled]="isSubmitting" ></p-button>
+      <p-button label="Regresar" styleClass="p-button-secondary"></p-button>
+      <!--p-button label="Editar" type="button" [disabled]="isSubmitting" (click)="actualizarOrden()"></!--p-button-->
+    </div>
+    
+  </form>
+    
 </div>
 
+
+
+
+
+<div class="flex justify-content-center" *ngIf="isBT01Selected">
+  <p-dialog header="Lista de Equipos BT01" 
+   [(visible)]="visibleBT01Modal" 
+   [style]="{ width: '800px' }"
+   [modal]="true" 
+   styleClass="p-fluid">
+  <div class="flex ">
+
+<span class="p-input-icon-left ml-auto">
+ <i class="pi pi-search"></i>
+ 
+ <input pInputText type="text" (input)="dt1?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+ (ngModelChange)="onFilterChange()" placeholder="Buscar..." />
+</span>
+</div>
+
+<p-table 
+#dt1 
+[value]="bt01Data" 
+[paginator]="true" 
+[rows]="5" 
+[rowsPerPageOptions]="[5, 10, 15]"
+dataKey="id"
+[globalFilterFields]="['U_NumEcon', 'U_NReparto', 'U_GoodsBrand', 'U_GoodsModel','U_GoodsSerial','U_OdoAct','U_CliProp']"
+>
+<ng-template pTemplate="header">
+ <tr>
+   
+   <th scope="col">#.Econ</th>
+   <th scope="col">N.Reparto</th>
+   <th scope="col">Marca</th>
+   <th scope="col">Modelo</th>
+   <th scope="col">Serie</th>
+   <th scope="col">Hodometro Actual</th>
+   <th scope="col">CardCode</th>
+ </tr>
+</ng-template>
+<ng-template pTemplate="body" let-rowData>
+ <tr  [pSelectableRow]="rowData" (dblclick)="onRowDoubleClick($event, rowData, 'BT01',rowData.U_CliProp )">
+   <td>{{ rowData.U_NumEcon }}</td>
+   <td>{{ rowData.U_NReparto }}</td>
+   <td>{{ rowData.U_GoodsBrand }}</td>
+   <td>{{ rowData.U_GoodsModel }}</td>
+   <td>{{ rowData.U_GoodsSerial }}</td>
+   <td>{{ rowData.U_OdoAct }}</td>
+   <td>{{ rowData.U_CliProp }}</td>
+ </tr>
+</ng-template>
+</p-table>
+
+<div class="flex justify-content-center mt-5 me-4">
+<p-button label="Cerrar" (click)="hideBT01Modal()" styleClass="p-button-danger" class="me-4"></p-button>
+</div>
+</p-dialog>
+
+ </div>
+
+<div class="flex justify-content-center" *ngIf="isMC01Selected">
+       
+  <p-dialog 
+  header="Lista de equipos MC01" 
+  [(visible)]="visibleMC01Modal" 
+  [modal]="true" 
+  [style]="{ width: '800px' }" 
+  styleClass="p-fluid">
+      <div class="flex">
+        <!--button pButton label="Limpiar" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear1(dt)"></!--button-->
+        <span class="p-input-icon-left ml-auto">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" 
+          (input)="dt2?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+                (ngModelChange)="onFilterChange()"
+          placeholder="Buscar..." />
+        </span>
+      </div>
+    
+      <p-table 
+      #dt2 
+      [value]="mc01Data" 
+      [paginator]="true" 
+      [rows]="5" 
+      [rowsPerPageOptions]="[5, 10, 15]"
+      dataKey="id"
+      [globalFilterFields]="['U_NumEcon', 'U_NReparto', 'U_GoodsBrand', 'U_GoodsModel','U_GoodsSerial','U_OdoAct','U_CliProp']"
+      >
+        <ng-template pTemplate="header">
+          <tr >
+            <th scope="col">#.Econ</th>
+            <th scope="col">N.Reparto</th>
+            <th scope="col">Marca</th>
+            <th scope="col">Modelo</th>
+            <th scope="col">Serie</th>
+            <th scope="col">Hodometro Actual</th>
+            <th scope="col">CardCode</th>
+           
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr [pSelectableRow]="rowData" (dblclick)="onRowDoubleClick($event, rowData, 'MC01', rowData.U_CliProp)">
+            <td>{{ rowData.U_NumEcon }}</td>
+            <td>{{ rowData.U_NReparto }}</td>
+            <td>{{ rowData.U_GoodsBrand }}</td>
+            <td>{{ rowData.U_GoodsModel }}</td>
+            <td>{{ rowData.U_GoodsSerial }}</td>
+            <td>{{ rowData.U_OdoAct }}</td>
+            <td>{{ rowData.U_CliProp }}</td>
+            
+          </tr>
+        </ng-template>
+      </p-table>
+    
+      <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
+        <p-button type="button" label="Cerrar" (click)="hideMC01Modal()" styleClass="p-button-danger" class="me-4"></p-button>
+      </div>
+    </p-dialog>
+    
+
+
+</div>
+
+
+<p-dialog 
+[(visible)]="refacciones" 
+[style]="{ width: '800px' }" 
+header="Lista de Artículos" 
+[modal]="true" 
+styleClass="p-fluid">
+
+       <ng-template pTemplate="content">
+        <div class="flex mb-2">
+           
+            <span class="p-input-icon-left ml-auto">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+                  (ngModelChange)="onFilterChange()" placeholder="Buscar..." />
+            </span>
+          </div>
+        
+          <p-table 
+          #dt3 
+          [value]="dRefacciones" 
+          [paginator]="true" 
+          [rows]="5" 
+          [rowsPerPageOptions]="[5, 10, 15]"
+          dataKey="id"
+          [globalFilterFields]="['WhsName', 'ItemCode', 'ItemName', 'stocktotal']"
+          >
+
+            <ng-template pTemplate="header">
+              <tr >
+                <th scope="col">Almacen</th>
+                <th scope="col">Codigo Art</th>
+                <th scope="col">Descripcion</th>
+                <th scope="col">Stock</th>
+              </tr>
+
+            </ng-template>
+            <ng-template pTemplate="body" let-orden>
+              <tr  [pSelectableRow]="orden" (dblclick)="onrowDobleClickref(orden)">
+                <td>{{ orden.WhsName }}</td>
+                <td>{{ orden.ItemCode}}</td>
+                <td>{{ orden.ItemName }}</td>
+                <td>{{ orden.stocktotal }}</td>
+                
+                
+              </tr>
+            </ng-template>
+          </p-table>
+        
+          <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
+            <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
+          </div>
+</ng-template>
+
+
+</p-dialog>
+
+<p-dialog 
+[(visible)]="cotizaciones" 
+[style]="{ width: '800px' }" 
+header="Lista de Cotizaciones" 
+[modal]="true" 
+styleClass="p-fluid">
+
+       <ng-template pTemplate="content">
+        <div class="flex mb-2">
+           
+            <span class="p-input-icon-left ml-auto">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+                  (ngModelChange)="onFilterChange()" placeholder="Buscar..." />
+            </span>
+          </div>
+        
+          <p-table 
+          #dt3 
+          [value]="dCotizaciones" 
+          [paginator]="true" 
+          [rows]="5" 
+          [rowsPerPageOptions]="[5, 10, 15]"
+          dataKey="id"
+          [globalFilterFields]="['DocNum', 'docdate', 'CardName', 'Comments']"
+          >
+            <ng-template pTemplate="header">
+              <tr >
+                <th scope="col">DocNum</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Comentarios</th>
+              </tr>
+
+            </ng-template>
+            <ng-template pTemplate="body" let-cotizacion>
+              <tr  [pSelectableRow]="cotizacion" (dblclick)="onrowDobleClickcotizacion1(cotizacion)">
+                <td>{{ cotizacion.DocNum }}</td>
+                <td>{{ cotizacion.docdate}}</td>
+                <td>{{ cotizacion.CardName }}</td>
+                <td>{{ cotizacion.Comments }}</td>
+                
+                
+              </tr>
+            </ng-template>
+          </p-table>
+        
+          <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
+            <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
+          </div>
+</ng-template>
+
+
+</p-dialog>   

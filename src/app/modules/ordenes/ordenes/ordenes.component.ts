@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Table } from 'primeng/table';
-import { Observable, catchError, map } from 'rxjs';
+import { Observable, catchError, exhaustMap, finalize, map, of, throwError } from 'rxjs';
 import { CreacionOrdenesService } from 'src/app/services/creacion-ordenes.service';
 import Swal from 'sweetalert2';
 
@@ -27,7 +28,7 @@ export class OrdenesComponent implements OnInit {
  cities!: any[];
  searchText: string = '';
 
-
+ isSubmitting: boolean = false;
  
  submitted: boolean = false;
 
@@ -50,6 +51,9 @@ export class OrdenesComponent implements OnInit {
  listaTecnicos:any[]=[];
  listaTrabajos:any[]=[];
  listaFallos:any[]=[];
+
+ datosGrabados:any[]=[];
+
  miFormulario!: FormGroup;
 
  filtroGlobal: string = '';
@@ -99,7 +103,7 @@ otroInput: string = '';
 valorActual: any;
 
 elementosTabla: any[]=[
-  {tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:''},
+  {tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:'', U_OdomNue:''},
 ]
 
 elementosTablaRefacciones:any[]=[
@@ -117,9 +121,9 @@ prioridades: any[] = [
 ];
 
 estados:any[]=[
-  {label:'Cotización', value: 'C'},
-  {label:'Diagnóstico', value:'D'},
   
+  {label:'Diagnóstico', value:'D'},
+  {label:'Cotización', value: 'C'},
   {label:'Terminar', value:'T'}
 ]
 
@@ -165,10 +169,102 @@ dRecomendaciones:any[]=[];
 elementosTablaRecomendaciones:any[]=[
   {NoParte:'', Descripcion:'', Cantidad: ''}
 ]
-constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: FormBuilder){}
+
+
+fechaSeleccionadatablas: Date = new Date();
+datos:any[]=[]
+
+selectedOrden: any; // Definir el tipo adecuado según la estructura de tus órdenes
+ordenes: any[]=[];
+
+modoEdicion = false;
+docEntry: number | null = null;
+constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: FormBuilder, private router: Router, private route: ActivatedRoute){}
 
 
   ngOnInit(): void {
+
+    
+    this.route.params.subscribe(params => {
+      this.docEntry = params['docEntry'];
+    
+      if (this.docEntry) {
+        this.modoEdicion = true;
+        // Estás editando, llama al servicio para obtener detalles y actualiza tu formulario
+/*
+        this.creacionOrdenesService.obtenerDetalleOrden(docEntry).subscribe(
+          (response: any) => {
+            if (response && response.data) {
+              // Actualiza tu formulario con los detalles de la orden
+              const datosMapeados = {
+                tipoTrabajo: response.data.U_TipTra,
+                selectedSeries: response.data.U_Series,
+                otroInput: response.data.U_OtroInput,
+                selectedSeriesInput: response.data.U_DocNum,
+                selectedFallos: response.data.U_CodFall,
+                reportadoPor: response.data.U_PerRep,
+                autorizadoPor: response.data.U_PerAut,
+                fueraDeServicio: response.data.U_FueSer,
+                prioridadSeleccionada: response.data.U_Prior,
+                fechaSeleccionada: new Date(response.data.U_DocDate),
+                estadoSeleccionado: response.data.U_Status,
+                seleccionAgente: response.data.U_AgVent,
+                seleccionTecnico: response.data.U_TecResp,
+                seleccionCoordinador: response.data.U_Coord,
+                seleccionarFormato: response.data.U_ComTra,
+                dropdownCotizaciones: response.data.U_DocCot,
+                U_ProRep: response.data.U_ProRep,
+                cliente: response.data.U_CardCode,
+                nombre: response.data.U_CardName,
+                direccion: response.data.U_Address,
+                ciudad: response.data.U_City,
+                telefono: response.data.U_Phone,
+                contrato: response.data.U_OrdCom,
+                textoDiagnostico: response.data.U_ComTra,
+                // ... continua mapeando las demás propiedades ...
+
+
+              };
+              this.miFormulario.patchValue(datosMapeados);
+   
+               
+              if (response.data.DVP_WOR7Collection && Array.isArray(response.data.DVP_WOR7Collection) && response.data.DVP_WOR7Collection.length > 0) {
+                this.elementosTabla = [{
+                  //tipo: response.data.tipoEquipoNombre,
+                  U_TipEqu: response.U_TipEqu,
+                  U_NumEcon: response.data.DVP_WOR7Collection[0].U_NumEcon,
+                  U_NReparto: response.data.DVP_WOR7Collection[0].U_NorRep,
+                  U_GoodsBrand: response.data.DVP_WOR7Collection[0].U_Marca,
+                  U_GoodsModel: response.data.DVP_WOR7Collection[0].U_Modelo,
+                  U_GoodsSerial: response.data.DVP_WOR7Collection[0].U_Serie,
+                  U_OdoAct: response.data.DVP_WOR7Collection[0].U_OdomAct,
+                  U_OdomNue: response.data.DVP_WOR7Collection[0].U_OdomNue !== undefined ? response.data.DVP_WOR7Collection[0].U_OdomNue : null,
+                }];
+                if (this.elementosTabla.length > 0) {
+                  this.miFormulario.controls['U_OdomNue'].setValue(this.elementosTabla[0].U_OdomNue);
+                }
+              }
+
+              
+              
+
+              console.log('Carga de datos', response.data);
+            } else {
+              console.error('La respuesta no tiene la estructura esperada', response);
+              // Puedes manejar el caso en el que la respuesta no tenga la estructura esperada
+            }
+          },
+          error => {
+            console.error('Error al obtener detalles de la orden para editar', error);
+            // Puedes manejar el error según tus necesidades
+          }
+        );*/
+
+        this.cargarDatosOrden(this.docEntry)
+      }
+    });
+    
+
     this.cargarDatos();
     this.cargarDatosBT01();
     this.cargarDatosMC01();
@@ -186,21 +282,557 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       selectedSeries: [''],
       otroInput: [''],
       selectedSeriesInput: [''],
+      selectedFallos:[''],
+      reportadoPor:[''],
+      autorizadoPor:[''],
       fueraDeServicio: [''],
-      prioridadSeleccionada:[''],
-      estadoSeleccionado:['C'],
+      prioridadSeleccionada:['A'],
+      fechaSeleccionada: [new Date()],
+      estadoSeleccionado:['D'],
+      seleccionAgente:[''],
       seleccionTecnico: [''],
       seleccionCoordinador: [''],
       seleccionarFormato: [''],
-      dropdownCotizaciones: [null],
+      textoDiagnostico:[''],
+      listaTrabajos:[''],
+      dropdownCotizaciones: [''],
+      U_ProRep:[''],
+      cliente: [''],
+      nombre: [''],
+      direccion: [''],
+      ciudad: [''],
+      telefono: [''],
+      contrato: [''],
+     // ocOt: [''],
+     U_OdomNue:[null],
+     U_TipEqu:[''],
+     elementosTabla: this.fb.array([]),
+
+   
     });
 
     this.valorActual = this.miFormulario.value.tipoTrabajo;
     this.actualizarIndiceActivo();
-    this.onEstadoSeleccionadoChange1({ value: 'R' });
+    this.onEstadoSeleccionadoChange1({ value: 'D' });  
+    
   }
 
   
+  private cargarDatosOrden(docEntry: number): void {
+    // Llama al servicio para obtener detalles y actualiza tu formulario
+    this.creacionOrdenesService.obtenerDetalleOrden(docEntry).subscribe(
+      (response: any) => {
+        if (response && response.data) {
+          // Actualiza tu formulario con los detalles de la orden
+          const datosMapeados = {
+            tipoTrabajo: response.data.U_TipTra,
+            selectedSeries: response.data.U_Series,
+            otroInput: response.data.U_OtroInput,
+            selectedSeriesInput: response.data.U_DocNum,
+            selectedFallos: response.data.U_CodFall,
+            reportadoPor: response.data.U_PerRep,
+            autorizadoPor: response.data.U_PerAut,
+            fueraDeServicio: response.data.U_FueSer,
+            prioridadSeleccionada: response.data.U_Prior,
+            fechaSeleccionada: new Date(response.data.U_DocDate),
+            estadoSeleccionado: response.data.U_Status,
+            seleccionAgente: response.data.U_AgVent,
+            seleccionTecnico: response.data.U_TecResp,
+            seleccionCoordinador: response.data.U_Coord,
+            seleccionarFormato: response.data.U_ComTra,
+            dropdownCotizaciones: response.data.U_DocCot,
+            U_ProRep: response.data.U_ProRep,
+            cliente: response.data.U_CardCode,
+            nombre: response.data.U_CardName,
+            direccion: response.data.U_Address,
+            ciudad: response.data.U_City,
+            telefono: response.data.U_Phone,
+            contrato: response.data.U_OrdCom,
+            textoDiagnostico: response.data.U_ComTra,
+            // ... continua mapeando las demás propiedades ...
+
+          };
+          this.miFormulario.patchValue(datosMapeados);
+
+          if (response.data.DVP_WOR7Collection && Array.isArray(response.data.DVP_WOR7Collection) && response.data.DVP_WOR7Collection.length > 0) {
+            this.elementosTabla = [{
+              U_TipEqu: response.data.DVP_WOR7Collection[0].U_TipEqu,
+              U_NumEcon: response.data.DVP_WOR7Collection[0].U_NumEcon,
+              U_NReparto: response.data.DVP_WOR7Collection[0].U_NorRep,
+              U_GoodsBrand: response.data.DVP_WOR7Collection[0].U_Marca,
+              U_GoodsModel: response.data.DVP_WOR7Collection[0].U_Modelo,
+              U_GoodsSerial: response.data.DVP_WOR7Collection[0].U_Serie,
+              U_OdoAct: response.data.DVP_WOR7Collection[0].U_OdomAct,
+              U_OdomNue: response.data.DVP_WOR7Collection[0].U_OdomNue !== undefined ? response.data.DVP_WOR7Collection[0].U_OdomNue : null,
+            }];
+            if (this.elementosTabla.length > 0) {
+              this.miFormulario.controls['U_OdomNue'].setValue(this.elementosTabla[0].U_OdomNue);
+            }
+          }
+
+          console.log('Carga de datos', response.data);
+        } else {
+          console.error('La respuesta no tiene la estructura esperada', response);
+          // Puedes manejar el caso en el que la respuesta no tenga la estructura esperada
+        }
+      },
+      error => {
+        console.error('Error al obtener detalles de la orden para editar', error);
+        // Puedes manejar el error según tus necesidades
+      }
+    );
+  }
+  
+  grabarOrden() {
+    
+    if (this.isSubmitting) {
+      return;
+    }
+  
+    // Deshabilita el botón para evitar múltiples envíos
+    this.isSubmitting = true;
+    // Muestra los valores del formulario en la consola
+    const valoresFormulario = this.miFormulario.value;
+    console.log('Valores del formulario', valoresFormulario);
+  
+    const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
+    const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
+   console.log('nombre del equipo', tipoEquipoNombre)
+
+   const dvpWor7Collection = this.elementosTabla.map((orden, index) => ({
+    LineId: index,
+    U_TipEqu: tipoEquipoNombre,
+    U_NumEcon: orden.U_NumEcon,
+    U_NorRep: orden.U_NReparto,
+    U_Marca: orden.U_GoodsBrand,
+    U_Modelo: orden.U_GoodsModel,
+    U_Serie: orden.U_GoodsSerial,
+    U_OdomAct: orden.U_OdoAct,
+    U_OdomNue: orden.U_OdomNue !== undefined ? orden.U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+    
+  }));
+
+    // Crea el objeto con la estructura requerida para el API
+    const bodyParaAPI = {
+      DocEntry: 64,
+      DocNum: 64,
+      Series: -1,
+      U_LastPref: null,
+      U_ConFlo: null,
+      U_DocNum: valoresFormulario.selectedSeriesInput,
+      U_Series: valoresFormulario.selectedSeries,
+      U_Prefix: null,
+      U_TipTra: valoresFormulario.tipoTrabajo,
+      U_RefOrdTra: null,
+      U_CardCode: valoresFormulario.cliente,
+      U_CardName: valoresFormulario.nombre,
+      U_Address: valoresFormulario.direccion,
+      U_City: valoresFormulario.ciudad,
+      U_Phone: valoresFormulario.telefono,
+      U_OrdCom: null,
+      U_PDFOC: null,
+      U_NomSysOC: null,
+      U_Status: valoresFormulario.estadoSeleccionado,
+      U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
+      U_FecEspPar: null,
+      U_Prior: valoresFormulario.prioridadSeleccionada,
+      U_AgVent: valoresFormulario.seleccionAgente,
+      U_NomAgVent: null, // Ajusta según tu lógica
+      U_PerAut: valoresFormulario.autorizadoPor,
+      U_PerRep: valoresFormulario.reportadoPor,
+      U_CodFall: valoresFormulario.selectedFallos,
+      U_ProRep: valoresFormulario.U_ProRep,
+      U_ComTra: valoresFormulario.textoDiagnostico,
+      U_ComRec: null,
+      U_ComRef: null,
+      U_ComMan: null,
+      U_ComRep: null,
+      U_Com: null,
+      U_ComClosed: null,
+      U_TipEqu: null,
+      U_NumEcon: null,
+      U_Marca: null,
+      U_Modelo: null,
+      U_Serie: null,
+      U_Closed: null,
+      U_Ended: null,
+      U_Odom: null,
+      U_EndRec: null,
+      U_StartD: null,
+      U_EndD: null,
+      U_HasD: null,
+      U_HorasMan: null,
+      U_StartC: null,
+      U_EndC: null,
+      U_HasC: null,
+      U_StartA: null,
+      U_EndA: null,
+      U_HasA: null,
+      U_StartP: null,
+      U_EndP: null,
+      U_HasP: null,
+      U_StartE: null,
+      U_EndE: null,
+      U_HasE: null,
+      U_DocT: null,
+      U_DocR: null,
+      U_DocCot: null,
+      U_DocFac: null,
+      U_EnTras: null,
+      U_FueSer: null,
+      U_NorRep: null,
+      U_TecResp: valoresFormulario.seleccionTecnico,
+      U_Coord: valoresFormulario.seleccionCoordinador,
+      U_ManObrCap: null,
+      DVP_WOR1Collection: null,
+      DVP_WOR2Collection: null,
+      DVP_WOR3Collection: null,
+      DVP_WOR4Collection: null,
+      DVP_WOR5Collection: null,
+      DVP_WOR6Collection: null,
+      //DVP_WOR7Collection: dvpWor7Collection,
+      DVP_WOR7Collection: []= [{
+        LineId: 1, // Asegura que LineId sea único
+        U_TipEqu:tipoEquipoNombre,
+        U_NumEcon: this.elementosTabla[0].U_NumEcon,
+        U_NorRep: this.elementosTabla[0].U_NReparto,
+        U_Marca: this.elementosTabla[0].U_GoodsBrand,
+        U_Modelo: this.elementosTabla[0].U_GoodsModel,
+        U_Serie: this.elementosTabla[0].U_GoodsSerial,
+        U_OdomAct: this.elementosTabla[0].U_OdoAct,
+        U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[0].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+      }],
+    };
+
+   
+    console.log('Valores mandados al api', bodyParaAPI);
+    // Llama al servicio para guardar los datos en el API
+    const jsonBody = JSON.stringify(bodyParaAPI);
+  console.log(jsonBody)
+
+  
+      this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI)
+      .subscribe(
+        response => {
+          console.log('Respuesta del API', response);
+          Swal.fire({
+            title: "Exito",
+            text: "OT Grabado con Exito",
+            icon: "success"
+          });
+        },
+        
+        error => {
+          console.error('Error al llamar al API', error);
+          Swal.fire({
+            title: "Error",
+            text: "Error al llamar al API",
+            icon: "error"
+          });
+        }
+      ) .add(() => {
+        // Habilita el botón después de que la solicitud ha terminado (ya sea con éxito o con error)
+        this.isSubmitting = false;
+
+        //this.miFormulario.reset()
+      });
+    //this.miFormulario.reset()
+
+  }
+  
+
+
+  onSubmit(): void {
+    if (this.modoEdicion) {
+      this.actualizarOrden();
+    } else {
+      this.grabarOrden();
+    }
+  }
+
+
+
+  actualizarOrden() {
+    if (this.docEntry !== null) {
+
+    const valoresFormulario = this.miFormulario.value;
+    //console.log('Valores enviados para edicion', valoresFormulario)
+    const tipoEquipoNombre = this.elementosTabla[0]?.U_TipEqu || '';
+    console.log(tipoEquipoNombre)
+    
+    const bodyParaActualizacion = {
+      DocEntry: this.docEntry,
+      DocNum: this.docEntry,
+      Series: -1,
+      U_LastPref: null,
+      U_ConFlo: null,
+      U_DocNum: valoresFormulario.selectedSeriesInput,
+      U_Series: valoresFormulario.selectedSeries,
+      U_Prefix: null,
+      U_TipTra: valoresFormulario.tipoTrabajo,
+      U_RefOrdTra: null,
+      U_CardCode: valoresFormulario.cliente,
+      U_CardName: valoresFormulario.nombre,
+      U_Address: valoresFormulario.direccion,
+      U_City: valoresFormulario.ciudad,
+      U_Phone: valoresFormulario.telefono,
+      U_OrdCom: null,
+      U_PDFOC: null,
+      U_NomSysOC: null,
+      U_Status: valoresFormulario.estadoSeleccionado,
+      U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
+      U_FecEspPar: null,
+      U_Prior: valoresFormulario.prioridadSeleccionada,
+      U_AgVent: valoresFormulario.seleccionAgente,
+      U_NomAgVent: null, // Ajusta según tu lógica
+      U_PerAut: valoresFormulario.autorizadoPor,
+      U_PerRep: valoresFormulario.reportadoPor,
+      U_CodFall: valoresFormulario.selectedFallos,
+      U_ProRep: valoresFormulario.U_ProRep,
+      U_ComTra: valoresFormulario.textoDiagnostico,
+      U_ComRec: null,
+      U_ComRef: null,
+      U_ComMan: null,
+      U_ComRep: null,
+      U_Com: null,
+      U_ComClosed: null,
+      U_TipEqu: null,
+      U_NumEcon: null,
+      U_Marca: null,
+      U_Modelo: null,
+      U_Serie: null,
+      U_Closed: null,
+      U_Ended: null,
+      U_Odom: null,
+      U_EndRec: null,
+      U_StartD: null,
+      U_EndD: null,
+      U_HasD: null,
+      U_HorasMan: null,
+      U_StartC: null,
+      U_EndC: null,
+      U_HasC: null,
+      U_StartA: null,
+      U_EndA: null,
+      U_HasA: null,
+      U_StartP: null,
+      U_EndP: null,
+      U_HasP: null,
+      U_StartE: null,
+      U_EndE: null,
+      U_HasE: null,
+      U_DocT: null,
+      U_DocR: null,
+      U_DocCot: null,
+      U_DocFac: null,
+      U_EnTras: null,
+      U_FueSer: null,
+      U_NorRep: null,
+      U_TecResp: valoresFormulario.seleccionTecnico,
+      U_Coord: valoresFormulario.seleccionCoordinador,
+      U_ManObrCap: null,
+      DVP_WOR1Collection: null,
+      DVP_WOR2Collection: null,
+      DVP_WOR3Collection: null,
+      DVP_WOR4Collection: null,
+      DVP_WOR5Collection: null,
+      DVP_WOR6Collection: null,
+      //DVP_WOR7Collection: dvpWor7Collection,
+      DVP_WOR7Collection: []= [{
+        LineId: 1, // Asegura que LineId sea único
+        //U_TipEqu:this.elementosTabla[0].U_TipEqu,
+        U_TipEqu:tipoEquipoNombre,
+        U_NumEcon: this.elementosTabla[0].U_NumEcon,
+        U_NorRep: this.elementosTabla[0].U_NReparto,
+        U_Marca: this.elementosTabla[0].U_GoodsBrand,
+        U_Modelo: this.elementosTabla[0].U_GoodsModel,
+        U_Serie: this.elementosTabla[0].U_GoodsSerial,
+        U_OdomAct: this.elementosTabla[0].U_OdoAct,
+        U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[0].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+      }],
+    };
+    
+
+    console.log('body para actualizacion', bodyParaActualizacion)
+    const jsonBody = JSON.stringify(bodyParaActualizacion);
+    console.log(jsonBody)
+    // Llama al servicio para actualizar la orden
+    this.creacionOrdenesService.updateOrden(bodyParaActualizacion).subscribe(
+      response => {
+        console.log('Respuesta del API al actualizar la orden', response);
+        
+        // Puedes mostrar un mensaje de éxito si lo deseas
+        Swal.fire({
+          title: "Exito",
+          text: "OT actualizado con Exito",
+          icon: "success"
+        });
+        
+      },
+      error => {
+        console.error('Error al actualizar la orden', error);
+        // Puedes manejar el error según tus necesidades
+      }
+    );
+    
+  }else {
+    console.error('No se pudo obtener un valor válido de DocEntry');
+    // Puedes manejar el caso en el que no se pueda obtener DocEntry
+  }
+}
+  
+
+
+  actualizarDatosTablaOrdenes(nuevosDatos: any) {
+    // Asegúrate de tener acceso a la lista de órdenes que llena la tabla
+    // Actualiza los datos en la lista (this.ordenes) con los nuevosDatos recibidos del API
+    // Esto dependerá de cómo esté implementada tu lógica para mostrar las órdenes en la tabla
+    // Por ejemplo:
+    const indiceOrden = this.ordenes.findIndex(orden => orden.DocEntry === nuevosDatos.DocEntry);
+    if (indiceOrden !== -1) {
+      this.ordenes[indiceOrden] = nuevosDatos;
+      
+    }
+  }
+
+  /*
+  onSubmit() {
+    if (this.isSubmitting) {
+      return;
+    }
+  
+    this.isSubmitting = true;
+  
+    const valoresFormulario = this.miFormulario.value;
+    console.log('Valores del formulario', valoresFormulario);
+  
+    const bodyParaAPI = {
+      DocEntry: 64,
+      DocNum: 64,
+      Series: -1,
+      U_LastPref: null,
+      U_ConFlo: null,
+      U_DocNum: valoresFormulario.selectedSeriesInput,
+      U_Series: valoresFormulario.selectedSeries,
+      U_Prefix: null,
+      U_TipTra: valoresFormulario.tipoTrabajo,
+      U_RefOrdTra: null,
+      U_CardCode: valoresFormulario.cliente,
+      U_CardName: valoresFormulario.nombre,
+      U_Address: valoresFormulario.direccion,
+      U_City: valoresFormulario.ciudad,
+      U_Phone: valoresFormulario.telefono,
+      U_OrdCom: null,
+      U_PDFOC: null,
+      U_NomSysOC: null,
+      U_Status: valoresFormulario.estadoSeleccionado,
+      U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
+      U_FecEspPar: null,
+      U_Prior: valoresFormulario.prioridadSeleccionada,
+      U_AgVent: valoresFormulario.seleccionAgente,
+      U_NomAgVent: null, // Ajusta según tu lógica
+      U_PerAut: valoresFormulario.autorizadoPor,
+      U_PerRep: valoresFormulario.reportadoPor,
+      U_CodFall: valoresFormulario.selectedFallos,
+      U_ProRep: valoresFormulario.U_ProRep,
+      U_ComTra: null,
+      U_ComRec: null,
+      U_ComRef: null,
+      U_ComMan: null,
+      U_ComRep: null,
+      U_Com: null,
+      U_ComClosed: null,
+      U_TipEqu: null,
+      U_NumEcon: null,
+      U_Marca: null,
+      U_Modelo: null,
+      U_Serie: null,
+      U_Closed: null,
+      U_Ended: null,
+      U_Odom: null,
+      U_EndRec: null,
+      U_StartD: null,
+      U_EndD: null,
+      U_HasD: null,
+      U_HorasMan: null,
+      U_StartC: null,
+      U_EndC: null,
+      U_HasC: null,
+      U_StartA: null,
+      U_EndA: null,
+      U_HasA: null,
+      U_StartP: null,
+      U_EndP: null,
+      U_HasP: null,
+      U_StartE: null,
+      U_EndE: null,
+      U_HasE: null,
+      U_DocT: null,
+      U_DocR: null,
+      U_DocCot: null,
+      U_DocFac: null,
+      U_EnTras: null,
+      U_FueSer: null,
+      U_NorRep: null,
+      U_TecResp: valoresFormulario.seleccionTecnico,
+      U_Coord: valoresFormulario.seleccionCoordinador,
+      U_ManObrCap: null,
+      DVP_WOR1Collection: null,
+      DVP_WOR2Collection: null,
+      DVP_WOR3Collection: null,
+      DVP_WOR4Collection: null,
+      DVP_WOR5Collection: null,
+      DVP_WOR6Collection: null,
+      DVP_WOR7Collection: [
+        {
+          LineId: 1,
+          U_TipEqu: "MC01",
+          U_NumEcon: "bds8888",
+          U_NorRep: "jhgh555",
+          U_Marca: "BOSH",
+          U_Modelo: "BSH547",
+          U_Serie: "557896",
+          U_OdomAct: 21,
+          U_OdomNue: 22
+        }
+      ]
+    };
+  
+    console.log('Valores mandados al API', bodyParaAPI);
+  
+    this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI)
+      .pipe(
+        exhaustMap(response => {
+          console.log('Respuesta del API', response);
+          Swal.fire({
+            title: "Éxito",
+            text: "OT Grabado con Éxito",
+            icon: "success"
+          });
+          // Puedes retornar un observable vacío o con algún valor si es necesario
+          return of(null);
+        }),
+        catchError(error => {
+          console.error('Error al llamar al API', error);
+          Swal.fire({
+            title: "Error",
+            text: "Error al llamar al API",
+            icon: "error"
+          });
+          // Puedes retornar un observable vacío o con algún valor si es necesario
+          return throwError(error);
+        }),
+        finalize(() => {
+          this.isSubmitting = false;
+        })
+      )
+      .subscribe();
+  }*/
+
+
+
+  
+
   cargarDatos() {
     this.creacionOrdenesService.listarCombos().subscribe(
       (response) => {
@@ -270,6 +902,11 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       if(response.ResultCode === 0 && response.data){
         
         this.dAdicionales = response.data[0];
+        this.miFormulario.get('cliente')?.setValue(this.dAdicionales.CardCode);
+        this.miFormulario.get('nombre')?.setValue(this.dAdicionales.CardName);
+        this.miFormulario.get('direccion')?.setValue(this.dAdicionales.Street);
+        this.miFormulario.get('ciudad')?.setValue(this.dAdicionales.City);
+        this.miFormulario.get('telefono')?.setValue(this.dAdicionales.Phone1);
         console.log('Datos dicionales de MC01',this.dAdicionales);
       }else{
         console.error('Error al obtener datos MC01 del API');
@@ -642,7 +1279,7 @@ onFilterChange() {
   
  
   
-
+/*
   onTipoChange(event: any) {
     console.log('Tipo changed:', event.value);
   
@@ -681,6 +1318,90 @@ if (this.isBT01Selected) {
       console.error('Error: Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.');
       // Aquí puedes mostrar un mensaje de error o realizar alguna otra acción.
     }
+  }*/
+
+/*
+  onTipoChange(event: any) {
+    console.log('Tipo changed:', event.value);
+    
+    // Verifica si se ha seleccionado previamente un tipo de trabajo
+    if (this.miFormulario.get('tipoTrabajo')?.value) {
+
+      const tipoSeleccionado = this.listaTrabajos.find(tipo => tipo.Code === event.value);
+      
+      // Asigna el nombre del tipo de equipo seleccionado en el formulario reactivo
+      if (tipoSeleccionado) {
+        this.miFormulario.get('U_TipEqu')?.setValue(tipoSeleccionado);
+  
+        // Resto de tu código...
+        // Establece las variables en función de la opción seleccionada
+        this.isBT01Selected = event.value === 'BT01';
+        this.isMC01Selected = event.value === 'MC01';
+  
+        // Evalúa la opción seleccionada en el segundo p-dropdown
+        if (this.isBT01Selected) {
+          this.visibleBT01Modal = true;
+        } else if (this.isMC01Selected) {
+          this.visibleMC01Modal = true;
+        } else {
+          // Muestra una alerta o realiza alguna acción si la opción no coincide
+          console.error('Error: La opción seleccionada en el segundo p-dropdown no coincide.');
+          // Aquí puedes mostrar un mensaje de error o realizar alguna otra acción.
+        }
+      } else {
+        // Manejar el caso cuando no se encuentra el tipo seleccionado
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo encontrar el tipo de equipo seleccionado.',
+          icon: 'error'
+        });
+        // Puedes mostrar un mensaje de error o realizar otra acción según tu lógica
+      }
+    } else {
+      // Muestra una alerta o realiza alguna acción si no se ha seleccionado un tipo de trabajo
+      Swal.fire({
+        title: 'Error',
+        text: 'Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.',
+        icon: 'error'
+      });
+      console.error('Error: Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.');
+      // Aquí puedes mostrar un mensaje de error o realizar alguna otra acción.
+    }
+  }*/
+  
+  onTipoChange(event: any) {
+    console.log('Tipo changed:', event.value);
+  
+    if (this.miFormulario.get('tipoTrabajo')?.value) {
+      const tipoSeleccionado = this.listaTrabajos.find(tipo => tipo.Code === event.value);
+  
+      if (tipoSeleccionado) {
+        this.miFormulario.get('U_TipEqu')?.setValue(tipoSeleccionado);
+        this.isBT01Selected = event.value === 'BT01';
+        this.isMC01Selected = event.value === 'MC01';
+  
+        if (this.isBT01Selected) {
+          this.visibleBT01Modal = true;
+        } else if (this.isMC01Selected) {
+          this.visibleMC01Modal = true;
+        } else {
+          console.error('Error: La opción seleccionada en el segundo p-dropdown no coincide.');
+        }
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo encontrar el tipo de equipo seleccionado.',
+          icon: 'error'
+        });
+      }
+    } else {
+      Swal.fire({
+        title: 'Error',
+        text: 'Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.',
+        icon: 'error'
+      });
+      console.error('Error: Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.');
+    }
   }
   
   
@@ -693,11 +1414,11 @@ if (this.isBT01Selected) {
       seleccion==='MP2400'|| seleccion==='MP250'|| seleccion==='MP500'|| seleccion==='MP600'){
         this.elementosTabla[this.elementosTabla.length-1]={tipo:1, U_NReparto: rowData.U_NReparto, U_NumEcon:rowData.U_NumEcon,
            U_GoodsBrand:rowData.U_GoodsBrand,
-          U_GoodsModel:rowData.U_GoodsModel, U_GoodsSerial:rowData.U_GoodsSerial, U_OdoAct:rowData.U_OdoAct}
+          U_GoodsModel:rowData.U_GoodsModel, U_GoodsSerial:rowData.U_GoodsSerial, U_OdoAct:rowData.U_OdoAct, U_OdomNue:rowData.U_OdomNue}
           this.visibleBT01Modal= false;
          this.visibleMC01Modal=false;
          
-        this.elementosTabla.push({tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:''})
+        this.elementosTabla.push({tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:'', U_OdomNue:''})
      
         this.selectedRowData = rowData;
         
@@ -722,11 +1443,11 @@ this.visibleMC01Modal=false
    }
    else if(this.elementosTabla.length===1 && this.elementosTabla[0].tipo === null ){
     this.elementosTabla[0]={tipo:1, U_NReparto: rowData.U_NReparto, U_NumEcon:rowData.U_NumEcon, U_GoodsBrand:rowData.U_GoodsBrand,
-       U_GoodsModel:rowData.U_GoodsModel, U_GoodsSerial:rowData.U_GoodsSerial, U_OdoAct:rowData.U_OdoAct}
+       U_GoodsModel:rowData.U_GoodsModel, U_GoodsSerial:rowData.U_GoodsSerial, U_OdoAct:rowData.U_OdoAct, U_OdomNue:rowData.U_OdomNue}
        this.visibleBT01Modal= false;
        this.visibleMC01Modal=false;
 
-       this.elementosTabla.push({tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:''})
+       this.elementosTabla.push({tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:'', U_OdomNue:''})
 
       
 
@@ -998,28 +1719,74 @@ onrowDobleClickcotizacion1(cotizacion: any) {
 
 onrowDobloClickManoDeObra1(mano: any) {
   // Crea un nuevo objeto para la nueva posición en la tabla
-  const nuevaManoDeObra = {
-    Articulo: mano.ItemCode,
-    Nombres: mano.ItemName,
-    Horas: mano.stocktotal,
-    Cantidad: '',
-    Tecnico: '',   
-    Nombre: '',    
-    Fecha: '',   
-    HReales: '', 
-    Ejecutada: '',
   
-  };
-
-  this.elementosTablaManoDeObra.push(nuevaManoDeObra);
-
-  this.ultimaPosicionCreada = this.elementosTablaManoDeObra.length - 1;
-
+    const nuevaManoDeObra = {
+      Articulo: mano.ItemCode,
+      Nombres: mano.ItemName,
+      Horas: mano.stocktotal,
+      Cantidad: '',
+      Tecnico: '',   
+      Nombre: '',    
+      Fecha: '',   
+      HReales: '', 
+      Ejecutada: '',
+    
+    };
+  
+    this.elementosTablaManoDeObra.push(nuevaManoDeObra);
+  
+    this.ultimaPosicionCreada = this.elementosTablaManoDeObra.length - 1;
+  
+    //this.manoDeObra = false
+    this.elementosTablaManoDeObra = [...this.elementosTablaManoDeObra];
+    // Limpia el formulario si es necesario
+    this.miFormulario.reset();
+  
   this.manoDeObra = false
-  this.elementosTablaManoDeObra = [...this.elementosTablaManoDeObra];
-  // Limpia el formulario si es necesario
-  this.miFormulario.reset();
 }
+
+/*
+onrowDobloClickManoDeObra1(mano: any) {
+  // Verifica si los campos de los selects no están vacíos
+  if (this.miFormulario.get('tipoTrabajo')?.value &&
+      this.miFormulario.get('selectedSeries')?.value) {
+
+    // Crea un nuevo objeto para la nueva posición en la tabla
+    const nuevaManoDeObra = {
+      Articulo: mano.ItemCode,
+      Nombres: mano.ItemName,
+      Horas: mano.stocktotal,
+      Cantidad: '',
+      Tecnico: '',   
+      Nombre: '',    
+      Fecha: '',   
+      HReales: '', 
+      Ejecutada: '',
+    };
+  
+    this.elementosTablaManoDeObra.push(nuevaManoDeObra);
+  
+    this.ultimaPosicionCreada = this.elementosTablaManoDeObra.length - 1;
+  
+    this.elementosTablaManoDeObra = [...this.elementosTablaManoDeObra];
+  
+    // Limpia el formulario si es necesario
+    this.miFormulario.reset();
+    
+
+  } else {
+    // Muestra un mensaje de error si la validación no se cumple
+    Swal.fire({
+      title: 'Error',
+      text: 'Debe llenar los campos de Tipo de trabajo y Num OT',
+      icon: 'error'
+    });
+
+    console.error('Error: Alguno de los campos de los selects está vacío.');
+  }
+  this.manoDeObra = false;
+}*/
+
 
 /*
 onrowDobloClickTecnico(manoTecnicos: any) {
@@ -1054,7 +1821,7 @@ onrowDobloClickTecnico(manoTecnicos: any) {
     // Si nuevaManoDeObra no está creada, muestra un mensaje o realiza alguna acción necesaria
     Swal.fire({
       title: 'Error',
-      text: 'La posición nuevaManoDeObra no está creada.',
+      text: 'Nose ha seleccionado ningun estado para mano de obra.',
       icon: 'error'
     });
     console.error("Error: nuevaManoDeObra no está creada");
@@ -1157,42 +1924,45 @@ onrowDobloClickProveedoresTerceros(proveedor: any) {
 
 onrowDobloClickProveedoresTerceros(proveedor: any) {
   // Imprime el CardCode en la consola para verificar que es correcto
-  console.log('CardCode del proveedor:', proveedor.CardCode);
+  
+    console.log('CardCode del proveedor:', proveedor.CardCode);
 
-  // Llamada al servicio para obtener las órdenes de compra asociadas
-  this.creacionOrdenesService.traerOedenCompraTerceros2(proveedor.CardCode).subscribe(
-    (response: any) => {
-      // Verifica que la respuesta tenga el código de resultado y data antes de procesarla
-      if (response && response.ResultCode === 0 && response.data) {
-        // Convierte el objeto 'data' en un array si no es un array ya
-        this.ordenesCompraAsociadas = Array.isArray(response.data) ? response.data : [response.data];
-      } else {
-        // Si no hay datos o el código de resultado no es 0, asigna un array vacío
-        this.ordenesCompraAsociadas = [];
-        console.error('Error al cargar órdenes de compra:', response.Resultmensaje);
+    // Llamada al servicio para obtener las órdenes de compra asociadas
+    this.creacionOrdenesService.traerOedenCompraTerceros2(proveedor.CardCode).subscribe(
+      (response: any) => {
+        // Verifica que la respuesta tenga el código de resultado y data antes de procesarla
+        if (response && response.ResultCode === 0 && response.data) {
+          // Convierte el objeto 'data' en un array si no es un array ya
+          this.ordenesCompraAsociadas = Array.isArray(response.data) ? response.data : [response.data];
+        } else {
+          // Si no hay datos o el código de resultado no es 0, asigna un array vacío
+          this.ordenesCompraAsociadas = [];
+          console.error('Error al cargar órdenes de compra:', response.Resultmensaje);
+        }
+  
+        console.log('Órdenes de compra asociadas:', this.ordenesCompraAsociadas);
+      },
+      (error) => {
+        console.error('Error al cargar órdenes de compra:', error);
       }
-
-      console.log('Órdenes de compra asociadas:', this.ordenesCompraAsociadas);
-    },
-    (error) => {
-      console.error('Error al cargar órdenes de compra:', error);
-    }
-  );
-
-  // Resto del código para agregar la fila a la tabla
-  const nuevaProveedores = {
-    Proveedor: proveedor.CardCode,
-    Nombre: proveedor.CardName,
-    OrdenCompra: '',
-    Total: ''
-  };
-
-  this.elementosTablaTerceros.push(nuevaProveedores);
-  this.ultimaPosicionCreada = this.elementosTablaTerceros.length - 1;
+    );
+  
+    // Resto del código para agregar la fila a la tabla
+    const nuevaProveedores = {
+      Proveedor: proveedor.CardCode,
+      Nombre: proveedor.CardName,
+      OrdenCompra: '',
+      Total: ''
+    };
+  
+    this.elementosTablaTerceros.push(nuevaProveedores);
+    this.ultimaPosicionCreada = this.elementosTablaTerceros.length - 1;
+    
+    this.elementosTablaTerceros = [...this.elementosTablaTerceros];
+    // Limpia el formulario si es necesario
+    this.miFormulario.reset();
+  
   this.terceros = false;
-  this.elementosTablaTerceros = [...this.elementosTablaTerceros];
-  // Limpia el formulario si es necesario
-  this.miFormulario.reset();
 }
 
 
@@ -1218,18 +1988,28 @@ onrowDobloClickOrdenCompraProveedor(ordenCompra: any) {
 
 onrowDobloClickREcomendaciones(recomendacion: any) {
   // Crea un nuevo objeto para la nueva posición en la tabla
-  const nuevaRecomendacion = {
-    NoParte: recomendacion.ItemCode,
-    Descripcion: recomendacion.ItemName,
-    Cantidad: '',
-    
-  };
-
-  this.elementosTablaRecomendaciones.push(nuevaRecomendacion);
+  if (this.miFormulario.get('estadoSeleccionado')?.value === 'C'){
+    const nuevaRecomendacion = {
+      NoParte: recomendacion.ItemCode,
+      Descripcion: recomendacion.ItemName,
+      Cantidad: '',
+      
+    };
+  
+    this.elementosTablaRecomendaciones.push(nuevaRecomendacion);
+   
+    this.elementosTablaRecomendaciones = [...this.elementosTablaRecomendaciones];
+    // Limpia el formulario si es necesario
+    this.miFormulario.reset();
+  }else{
+    Swal.fire({
+      title: 'Error',
+      text: 'La opción "Cotización" no está seleccionada.',
+      icon: 'error'
+    });
+    console.error('Error: La opción "Cotización" no está seleccionada en el select de estados.');
+  }
   this.recomendaciones = false
-  this.elementosTablaRecomendaciones = [...this.elementosTablaRecomendaciones];
-  // Limpia el formulario si es necesario
-  this.miFormulario.reset();
 }
 
 
@@ -1493,6 +2273,7 @@ openManoTecnico(){
     
 if(estadoSeleccionado === 'D'){
   this.tabIndex = 0; // Índice del panel "Diagnóstico Real"
+  
   this.diagnosticoHabilitado = true;
   this.refaccionesHabilitado = false;
   this.manoDeObraHabilitado = false;
