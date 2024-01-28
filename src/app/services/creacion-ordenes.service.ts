@@ -132,14 +132,6 @@ obtenerOrdenes(body:any): Observable<any> {
 }
 
 
-/*
-obtenerOrdenPorDocEntry(docEntry: number): Observable<any> {
-  const body = { DocEntry: docEntry,
-    U_DocDatedesde: "2024-01-16T16:43:50.3414569-05:00",
-    U_DocDatehasta: "2024-01-16T16:43:50.3414569-22:41"
-  };
-  return this.http.post<any>('/api/TablasSinObjeto/ListarGetUdo', body);
-}*/
 
 
 obtenerDetalleOrden(docEntry: number): Observable<any> {
@@ -154,105 +146,11 @@ eliminarOrden(DocEntry: number): Observable<any> {
   return this.http.delete(url);
  
 }
-/*
-grabarOrdenTrabajo(Body: any): Observable<any> {
-  const requestBody = {
-    UserCode: "THERNANDEZ",
-    UserPassWord: "12456",
-    datos: Body
-  };
 
-  return this.http.post<any>('/api/TablasSinObjeto/GrabarOrdenTrabajo', requestBody);
-}*/
 
-/*
-grabarOrdenTrabajo(datos: any): Observable<any> {
-  const requestBody = {
-    UserCode: "THERNANDEZ",
-    UserPassWord: "12456",
-    datos: datos
-  };
-
-  return this.http.post<any>('/api/TablasSinObjeto/GrabarOrdenTrabajo', requestBody).pipe(
-    catchError(this.handleHttpError)
-  );
-}
-
-private handleHttpError(error: HttpErrorResponse): Observable<never> {
-  if (error.error instanceof ErrorEvent) {
-    // Error del cliente
-    console.error('Error del cliente:', error.error.message);
-  } else {
-    // El servidor devolvió un código de error
-    console.error(`Código de error ${error.status}, ` + `mensaje: ${error.error}`);
+traerAgenteVentas():Observable<any>{
+  return this.http.post<any>('/api/TablasSinObjeto/ListarAgentedeVentas', {UserCode:"THERNANDEZ", UserPassWord: "12456"} )
   }
-  // Devuelve un observable con un mensaje de error
-  return throwError('Hubo un problema con la solicitud. Por favor, intenta nuevamente.');
-}*/
-
-/*
-grabarOrdenTrabajo(Body: any): Observable<any> {
-  return this.http.post<any>('/api/TablasSinObjeto/GrabarOrdenTrabajo',{
-    UserCode: "THERNANDEZ",
-    UserPassWord: "12456",
-    datos: this.mapearDatos(Body)
-  });
-
-
-}*/
-
-private mapearDatos(valoresFormulario: any): any {
-  const mapeoPropiedades: Record<string, string> = {
-    autorizadoPor: "U_PerAut",
-    ciudad: "U_City",
-    cliente: "U_CardCode",
-    contrato: "U_OrdCom",
-    direccion: "U_Address",
-    estadoSeleccionado: "U_Status",
-    fechaSeleccionada: "U_DocDate",
-    fueraDeServicio: "U_FueSer",
-    nombre: "U_CardName",
-    ocOt: "U_DocNum",
-    otroInput: "U_OrdCom",
-    prioridadSeleccionada: "U_Prior",
-    reportadoPor: "U_PerRep",
-    seleccionAgente: "U_AgVent",
-    seleccionCoordinador: "U_Coord",
-    seleccionTecnico: "U_TecResp",
-    seleccionarFormato: "U_NomSysOC",
-    selectedFallos: "U_CodFall",
-    selectedSeries: "U_Series",
-    selectedSeriesInput: "U_SeriesInput",
-    telefono: "U_Phone",
-    textoDiagnostico: "U_ComTra",
-    tipoTrabajo: "U_TipTra"
-    // Agrega más propiedades según sea necesario
-  };
-
-  return Object.fromEntries(
-    Object.entries(valoresFormulario).map(([clave, valor]) => [mapeoPropiedades[clave] || clave, valor])
-  );
-}
-
-/*
-grabarOrdenTrabajo(valoresFormulario: any): Observable<any> {
-  const requestBody = {
-    UserCode: "THERNANDEZ",
-    UserPassWord: "12456",
-    datos: this.mapearDatos(valoresFormulario)
-  };
-
-  const jsonString = JSON.stringify(requestBody);
-
-  return this.http.post<any>('/api/TablasSinObjeto/GrabarOrdenTrabajo', jsonString, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-}*/
-
-
-
 
 
 }

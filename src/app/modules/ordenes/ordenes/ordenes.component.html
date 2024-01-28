@@ -65,7 +65,7 @@ class="text-xs"
   <tr>
     <td>
         <p-dropdown [style]="{'width': dropdownWidth2}" containerStyleClass="w-full" class="md:w-15rem w-full "  placeholder="Tipo"
-        [options]="listaTrabajos" optionLabel="Name" optionValue="Code" (onChange)="onTipoChange($event)" formControlName="U_TipEqu"
+        [options]="listaTrabajos" optionLabel="Name" optionValue="Code" (onChange)="onTipoChange($event)"  formControlName="U_TipEqu"
          appendTo="body" 
         ></p-dropdown>
     </td>
@@ -78,7 +78,7 @@ class="text-xs"
     <td>
         <p-inputNumber [size]=2 inputId="minmax" mode="decimal" [min]="rowData.U_OdoAct" [max]="" formControlName="U_OdomNue"
         > </p-inputNumber>
-        
+       
     </td>
     <td>
         <!--p-button type="button" label="B"  styleClass="p-button-danger" ></!--p-button-->
@@ -222,6 +222,7 @@ class="text-xs"
                                 formControlName="prioridadSeleccionada" 
                                 
                                 ></p-dropdown>
+                               
                             </div>
                             
                             <div class=" flex justify-content-center mt-5 ">
@@ -257,7 +258,7 @@ class="text-xs"
                             </!--div-->
                             <div class="flex gap-3 align-items-center mt-5">
                               <input type="text" pInputText class="w-18rem" placeholder="Agente de Ventas" formControlName="seleccionAgente" />
-                              <i class="pi pi-search" style="color: blue;"(click)="openNew3()" ></i>
+                              <i class="pi pi-search" style="color: blue;"(click)="agenteV()" ></i>
                           </div>
                 
                             <div class=" flex justify-content-center mt-5 ">
@@ -335,6 +336,7 @@ class="text-xs"
                         <th scope="col" style="width:5%">CC</th>
                         <th scope="col" style="width:5%">SC</th>
                         <th scope="col" style="width:30%">N.Reparto</th>
+                        <th scope="col" style="width:30%">Solicitado</th>
                         <th scope="col" style="width:30%">Almacen</th>
                         <th scope="col" style="width:5%">Exist</th>
                         <th  style="width:5%">Eliminar</th>
@@ -383,6 +385,11 @@ class="text-xs"
                         <td>   
                              <p-dropdown [options]="[selectedU_NReparto]"  placeholder="" appendTo="body" ></p-dropdown>
                         </td>
+
+                        <td>   
+                          
+                          <p-dropdown [options]="Solicitud"  placeholder="" appendTo="body" ></p-dropdown>
+                     </td>
                      
                         <td>
             
@@ -636,6 +643,7 @@ class="text-xs"
         </p-tabPanel>
 
         <p-tabPanel header="Terceros" [disabled]="!tercerosHabilitado">
+         
             <div class="pb-5">
                 
         <p-table 
@@ -662,14 +670,14 @@ class="text-xs"
                 <tr>
                     <td>
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-10rem w-full" [(ngModel)]="terceros.Proveedor" />
+                            <input type="text" pInputText class="w-10rem w-full" [(ngModel)]="terceros.Proveedor"  />
                             <i class="pi pi-search" style="color: blue;"(click)="openTerceros()"></i>
                         </div>
                     </td>
                     <td> {{terceros.Nombre}} </td>
                     <td>
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-full" [(ngModel)]="terceros.OrdenCompra" />
+                            <input type="text" pInputText class="w-full" [(ngModel)]="terceros.OrdenCompra"  />
                             <i class="pi pi-search" style="color: blue;"(click)="openOrdenCompra()"></i>
                         </div>
                     </td>
@@ -685,9 +693,9 @@ class="text-xs"
             </ng-template>
         </p-table>
              </div>
+          
 
-
-             <p-dialog 
+             <!--p-dialog 
              [(visible)]="terceros" 
              [style]="{ width: '800px' }" 
              header="Lista de Socios de Negocios" 
@@ -739,9 +747,9 @@ class="text-xs"
                  </div>
      </ng-template>
         
-            </p-dialog>
+            </!--p-dialog>
             
-            <p-dialog 
+            <p-dialog-- 
              [(visible)]="ordenCompra" 
              [style]="{ width: '950px' }" 
              header="Lista de Orden de Compra" 
@@ -796,12 +804,13 @@ class="text-xs"
                  </div>
      </ng-template>
         
-            </p-dialog>
+            </p-dialog-->
             
         </p-tabPanel>
 
-
+        
         <p-tabPanel header="Recomendaciones Tecnicas" [disabled]="!recomendacionesHbilitado">
+         
             <div class="pb-5">
                 
         <p-table 
@@ -849,67 +858,63 @@ class="text-xs"
             </ng-template>
         </p-table>
 
-        <div class="flex justify-content-center col-12 mt-5">
-            <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Comentarios" ></textarea>
-        </div>
-             </div>
+          </div>
 
-             <p-dialog 
-             [(visible)]="recomendaciones" 
-             [style]="{ width: '800px' }" 
-             header="Lista de Artículos" 
-             [modal]="true" 
-             styleClass="p-fluid">
-
-             <ng-template pTemplate="content">
-                <div class="flex mb-2">
-                   
-                    <span class="p-input-icon-left ml-auto">
-                      <i class="pi pi-search"></i>
-                      <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
-                           placeholder="Buscar..." />
-                    </span>
-                  </div>
+<!--form-- [formGroup]="miFormulario">
+  <div class="pb-5">
                 
-                  <p-table 
-                  #dt3 
-                  [value]="dRecomendaciones" 
-                  [paginator]="true" 
-                  [rows]="5" 
-                  [rowsPerPageOptions]="[5, 10, 15]"
-                  dataKey="id"
-                  [globalFilterFields]="['ItemCode', 'ItemName', 'stocktotal']"
-                  >
-                    <ng-template pTemplate="header">
-                      <tr >
-                        <th scope="col" style="width:10%">Código Artículo</th>
-                        <th scope="col" style="width:20%">Descripción de Artículo</th>
-                        <th scope="col" style="width:20%">Stock</th> 
-                        
-                      </tr>
+    <p-table
+    styleClass="p-datatable-gridlines"
+    [value]="elementosTablaRecomendaciones"
+    dataKey="id"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [responsive]="true"
+    styleClass="p-datatable-gridlines align-items-center mt-3 me-5"
+    class="text-xs"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th scope="col" style="width:25%">No.Parte</th>
+        <th scope="col" style="width:40%">Descripción</th>
+        <th scope="col" style="width:25%">Cantidad</th>
+        <th scope="col" style="width:25%">Eliminar</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-recomendacion>
+      <tr>
+        <td>
+          <div class="flex gap-1 align-items-center">
+            <input type="text" pInputText class="w-full" [(ngModel)]="recomendacion.NoParte"   formControlName="NoParte" />
+            <i class="pi pi-search" style="color: blue;" (click)="recomendacionesModal()"></i>
+          </div>
+        </td>
+        <td>
+          {{recomendacion.Descripcion}}
+        </td>
+        <td>
+          <p-inputNumber inputId="minmax" mode="decimal" [min]="0" [max]="" [(ngModel)]="recoemdacion.Cantidad"  formControlName="Cantidad"></p-inputNumber>
+        </td>
+        <td>
+          <p-button icon="pi pi-times" severity="danger" styleClass="p-button-danger" (click)="onEliminarFilaRecomendacion(recomendacion)"></p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+    <div class="flex justify-content-center col-12 mt-5">
+        <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Comentarios" ></textarea>
+    </div>
+         
         
-                    </ng-template>
-                    <ng-template pTemplate="body" let-recomendacion>
-                      <tr  [pSelectableRow]="recomendacion" (dblclick)="onrowDobloClickREcomendaciones(recomendacion)"  >
-                        <td>{{ recomendacion.ItemCode }}</td>
-                        <td>{{ recomendacion.ItemName}}</td>
-                        <td>{{ recomendacion.stocktotal}}</td>
-                        
-                        
-                      </tr>
-                    </ng-template>
-                  </p-table>
-                
-                  <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
-                    <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
-                  </div>
-      </ng-template>
-            
-               
-            </p-dialog>
-            
-            
+       
+      </div>
+</!--form-->
+          
+
         </p-tabPanel>
+      
         <p-tabPanel header="Anexos" [disabled]="!anexosHabilitado">
             <div class="grid grid-cols-12">
                 <div class="col-10 me-4">
@@ -926,7 +931,7 @@ class="text-xs"
                         </ng-template>
                         <ng-template pTemplate="body" let-anexos>
                             <tr>
-                                <td>dsvdsv</td>
+                                <td>jh</td>
                                 <td>dvsdv</td>
                                 <td>dsdvsv</td>
                                 <td>dsd</td>
@@ -937,8 +942,9 @@ class="text-xs"
                 </div>
                 <div class="col-2">
                    
-                    <button pButton pRipple label="Subir Adjunto" icon="pi pi-upload" class="p-button-help"></button>
-                  
+                    <!--button pButton pRipple label="Subir Adjunto" icon="pi pi-upload" class="p-button-help"></!--button-->
+                    <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Subir Adjunto" 
+                    chooseLabel="Subir Adjunto" chooseIcon="pi pi-upload"  class="mr-2 inline-block"></p-fileUpload>
                 </div>
             </div>
             
@@ -1194,3 +1200,226 @@ styleClass="p-fluid">
 
 
 </p-dialog>   
+
+
+<p-dialog 
+             [(visible)]="recomendaciones" 
+             [style]="{ width: '800px' }" 
+             header="Lista de Artículos" 
+             [modal]="true" 
+             styleClass="p-fluid">
+
+             <ng-template pTemplate="content">
+                <div class="flex mb-2">
+                   
+                    <span class="p-input-icon-left ml-auto">
+                      <i class="pi pi-search"></i>
+                      <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+                           placeholder="Buscar..." />
+                    </span>
+                  </div>
+                
+                  <p-table 
+                  #dt3 
+                  [value]="dRecomendaciones" 
+                  [paginator]="true" 
+                  [rows]="5" 
+                  [rowsPerPageOptions]="[5, 10, 15]"
+                  dataKey="id"
+                  [globalFilterFields]="['ItemCode', 'ItemName', 'stocktotal']"
+                  >
+                    <ng-template pTemplate="header">
+                      <tr >
+                        <th scope="col" style="width:10%">Código Artículo</th>
+                        <th scope="col" style="width:20%">Descripción de Artículo</th>
+                        <th scope="col" style="width:20%">Stock</th> 
+                        
+                      </tr>
+        
+                    </ng-template>
+                    <ng-template pTemplate="body" let-recomendacion>
+                      <tr  [pSelectableRow]="recomendacion" (dblclick)="onrowDobloClickREcomendaciones(recomendacion)"  >
+                        <td>{{ recomendacion.ItemCode }}</td>
+                        <td>{{ recomendacion.ItemName}}</td>
+                        <td>{{ recomendacion.stocktotal}}</td>
+                        
+                        
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                
+                  <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
+                    <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
+                  </div>
+      </ng-template>
+            
+               
+            </p-dialog>
+
+            <p-dialog 
+            [(visible)]="terceros" 
+            [style]="{ width: '800px' }" 
+            header="Lista de Socios de Negocios" 
+            [modal]="true" 
+            styleClass="p-fluid">
+
+               <ng-template pTemplate="content">
+              <div class="flex mb-2">
+                 
+                  <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+                         placeholder="Buscar..." />
+                  </span>
+                </div>
+              
+                <p-table 
+                #dt3 
+                [value]="dProveedores" 
+                [paginator]="true" 
+                [rows]="5" 
+                [rowsPerPageOptions]="[5, 10, 15]"
+                dataKey="id"
+                [globalFilterFields]="['CardCode', 'CardName', 'Balance']"
+                >
+                  <ng-template pTemplate="header">
+                    <tr >
+                      <th scope="col" style="width:20%">Código</th>
+                      <th scope="col" style="width:50%">Nombre del Cliente</th>
+                      <th scope="col" style="width:20%">Saldo SN</th> 
+                     
+                    </tr>
+      
+                  </ng-template>
+                  <ng-template pTemplate="body" let-proveedor>
+                    <tr  [pSelectableRow]="proveedor" (dblclick)="onrowDobloClickProveedoresTerceros(proveedor)"  >
+                      <td>{{ proveedor.CardCode }}</td>
+                      <td>{{ proveedor.CardName}}</td>
+                      <td>{{ proveedor.Balance}}</td>
+                      
+                      
+                      
+                    </tr>
+                  </ng-template>
+                </p-table>
+              
+                <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
+                  <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
+                </div>
+    </ng-template>
+       
+           </p-dialog>
+           
+           <p-dialog 
+            [(visible)]="ordenCompra" 
+            [style]="{ width: '950px' }" 
+            header="Lista de Orden de Compra" 
+            [modal]="true" 
+            styleClass="p-fluid text-xs text-center">
+
+               <ng-template pTemplate="content">
+              <div class="flex mb-2">
+                 
+                  <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+                         placeholder="Buscar..." />
+                  </span>
+                </div>
+              
+                <p-table 
+                #dt3 
+                [value]="ordenesCompraAsociadas" 
+                [paginator]="true" 
+                [rows]="5" 
+                [rowsPerPageOptions]="[5, 10, 15]"
+                dataKey="id"
+                [globalFilterFields]="['DocNum', 'docdate','CardName' , 'Comments', 'DocDueDate', 'DocTotal']"
+                >
+                  <ng-template pTemplate="header">
+                    <tr >
+                      <th scope="col" style="width:10%">DocNum</th>
+                      <th scope="col" style="width:15%">Fecha</th>
+                      <th scope="col" style="width:50%">Proveedor</th> 
+                      <th scope="col" style="width:15%">Comentario</th>
+                      <th scope="col" style="width:15%">Fecha Vencimiento</th>
+                      <th scope="col" style="width:5%">Total</th>
+                    </tr>
+      
+                  </ng-template>
+                  <ng-template pTemplate="body" let-ordenCompra>
+                    <tr  [pSelectableRow]="ordenCompra" (dblclick)="onrowDobloClickOrdenCompraProveedor(ordenCompra)"  >
+                      <td>{{ ordenCompra.DocNum }}</td>
+                      <td>{{ ordenCompra.docdate}}</td>
+                      <td>{{ordenCompra.CardName}}</td>
+                      <td>{{ ordenCompra.Comments}}</td>
+                      <td>{{ ordenCompra.DocDueDate}}</td>
+                      <td>{{ ordenCompra.DocTotal}}</td>
+                      
+                    </tr>
+                  </ng-template>
+                </p-table>
+              
+                <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
+                  <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
+                </div>
+    </ng-template>
+       
+           </p-dialog>
+
+
+
+
+           <p-dialog 
+            [(visible)]="agente" 
+            [style]="{ width: '600px' }" 
+            header="Lista de empleados del Departamento de Ventas" 
+            [modal]="true" 
+            styleClass="p-fluid text-xs text-center">
+
+               <ng-template pTemplate="content">
+              <div class="flex mb-2">
+                 
+                  <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text"   (input)="dt6?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
+                         placeholder="Buscar..." />
+                  </span>
+                </div>
+              
+                <p-table 
+                #dt6
+                [value]="agenteVentas" 
+                [paginator]="true" 
+                [rows]="5" 
+                [rowsPerPageOptions]="[5, 10, 15]"
+                dataKey="id"
+                [globalFilterFields]="['SlpCode' ,'SlpName', 'Memo']"
+                >
+                  <ng-template pTemplate="header">
+                    <tr >
+                      <th scope="col" style="width:10%">#</th>
+                      <th scope="col" style="width:25%">Nombre empledado</th>
+                      
+                      <th scope="col" style="width:10%">Comentarios</th>
+                      
+                    </tr>
+      
+                  </ng-template>
+                  <ng-template pTemplate="body" let-agente>
+                    <tr  [pSelectableRow]="agente" (dblclick)="seleccionarAgente1(agente)"  >
+                      <td>{{ agente.SlpCode }}</td>
+                      <td>{{ agente.SlpName }}</td>
+                      <td>{{ agente.Memo}}</td>
+                      
+                      
+                    </tr>
+                  </ng-template>
+                </p-table>
+              
+                <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
+                  <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
+                </div>
+    </ng-template>
+       
+           </p-dialog>

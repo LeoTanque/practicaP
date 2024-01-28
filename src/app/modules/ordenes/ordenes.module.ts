@@ -21,6 +21,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { CheckboxModule } from 'primeng/checkbox';
 import { CustomFilterPipe } from 'src/app/services/pipe';
 
+
+import { FileUploadModule } from 'primeng/fileupload';
+
 @NgModule({
   declarations: [
     OrdenesComponent,
@@ -46,7 +49,8 @@ import { CustomFilterPipe } from 'src/app/services/pipe';
     DialogModule,
     //ConfirmDialogModule,
     InputNumberModule,
-    CheckboxModule
+    CheckboxModule,
+    FileUploadModule
   ]
 })
 export class OrdenesModule { }

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Table } from 'primeng/table';
 import { Observable, catchError, exhaustMap, finalize, map, of, throwError } from 'rxjs';
@@ -39,6 +39,8 @@ export class OrdenesComponent implements OnInit {
  cotizaciones:boolean= false
  manoDeObra:boolean = false;
  manoDeObraTecnicos: boolean = false
+
+ agente: boolean = false;
  product!: any;
  productos!: any[];
  selectedCity: any;
@@ -91,6 +93,8 @@ dCotizaciones:any[]=[];
 dDetallesCotizaciones:any[]=[];
 selectedRowData: any;
 
+agenteVentas:any[]=[];
+
 selectedProduct: any;
 
 clienteProp: string = '';
@@ -112,6 +116,14 @@ elementosTablaRefacciones:any[]=[
 
 selectedU_NReparto: any = '';
 
+
+
+Solicitud:any=[
+  {label:'-', value:''},
+  {label: 'Solicitado', value:'S'},
+  {label: 'No Solicitado', value:'N'},
+]
+
 select:any='';
 
 prioridades: any[] = [
@@ -119,6 +131,11 @@ prioridades: any[] = [
   { label: 'Normal', value: 'N' },
   { label: '-', value: '-' },
 ];
+
+prioridadValidator(control: AbstractControl): { [key: string]: boolean } | null {
+  // Asegura que el valor no sea '-'
+  return control.value === '-' ? { 'invalidPrioridad': true } : null;
+}
 
 estados:any[]=[
   
@@ -191,8 +208,9 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       if (this.docEntry) {
         this.modoEdicion = true;
         // Estás editando, llama al servicio para obtener detalles y actualiza tu formulario
-/*
-        this.creacionOrdenesService.obtenerDetalleOrden(docEntry).subscribe(
+
+        /*
+        this.creacionOrdenesService.obtenerDetalleOrden(this.docEntry).subscribe(
           (response: any) => {
             if (response && response.data) {
               // Actualiza tu formulario con los detalles de la orden
@@ -231,13 +249,13 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
               if (response.data.DVP_WOR7Collection && Array.isArray(response.data.DVP_WOR7Collection) && response.data.DVP_WOR7Collection.length > 0) {
                 this.elementosTabla = [{
                   //tipo: response.data.tipoEquipoNombre,
-                  U_TipEqu: response.U_TipEqu,
-                  U_NumEcon: response.data.DVP_WOR7Collection[0].U_NumEcon,
-                  U_NReparto: response.data.DVP_WOR7Collection[0].U_NorRep,
-                  U_GoodsBrand: response.data.DVP_WOR7Collection[0].U_Marca,
-                  U_GoodsModel: response.data.DVP_WOR7Collection[0].U_Modelo,
-                  U_GoodsSerial: response.data.DVP_WOR7Collection[0].U_Serie,
-                  U_OdoAct: response.data.DVP_WOR7Collection[0].U_OdomAct,
+              U_TipEqu: response.data.DVP_WOR7Collection[0].U_TipEqu,
+              U_NumEcon: response.data.DVP_WOR7Collection[0].U_NumEcon,
+              U_NReparto: response.data.DVP_WOR7Collection[0].U_NorRep,
+              U_GoodsBrand: response.data.DVP_WOR7Collection[0].U_Marca,
+              U_GoodsModel: response.data.DVP_WOR7Collection[0].U_Modelo,
+              U_GoodsSerial: response.data.DVP_WOR7Collection[0].U_Serie,
+              U_OdoAct: response.data.DVP_WOR7Collection[0].U_OdomAct,
                   U_OdomNue: response.data.DVP_WOR7Collection[0].U_OdomNue !== undefined ? response.data.DVP_WOR7Collection[0].U_OdomNue : null,
                 }];
                 if (this.elementosTabla.length > 0) {
@@ -246,8 +264,6 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
               }
 
               
-              
-
               console.log('Carga de datos', response.data);
             } else {
               console.error('La respuesta no tiene la estructura esperada', response);
@@ -276,25 +292,28 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
    // this.cargarDatosOrdenTerceros()
     this.cargarDatosRecomendaciones()
 
+    this.cargarDatosAgenteVentas();
 
     this.miFormulario = this.fb.group({
-      tipoTrabajo: [''], 
-      selectedSeries: [''],
+      tipoTrabajo: ['', Validators.required], 
+      selectedSeries: ['', Validators.required],
       otroInput: [''],
       selectedSeriesInput: [''],
-      selectedFallos:[''],
+      selectedFallos:['', Validators.required],
       reportadoPor:[''],
-      autorizadoPor:[''],
+      autorizadoPor:['', Validators.required],
       fueraDeServicio: [''],
-      prioridadSeleccionada:['A'],
+      //prioridadSeleccionada:['A', [Validators.required, this.prioridadValidator]],
+      prioridadSeleccionada:['A', Validators.required],
       fechaSeleccionada: [new Date()],
-      estadoSeleccionado:['D'],
+      estadoSeleccionado:['D', Validators.required],
       seleccionAgente:[''],
-      seleccionTecnico: [''],
-      seleccionCoordinador: [''],
+      codigoAgente:[''],
+      seleccionTecnico: ['', Validators.required],
+      seleccionCoordinador: ['', Validators.required],
       seleccionarFormato: [''],
-      textoDiagnostico:[''],
-      listaTrabajos:[''],
+      textoDiagnostico:['', Validators.required],
+     // listaTrabajos:[''],
       dropdownCotizaciones: [''],
       U_ProRep:[''],
       cliente: [''],
@@ -304,11 +323,14 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       telefono: [''],
       contrato: [''],
      // ocOt: [''],
-     U_OdomNue:[null],
-     U_TipEqu:[''],
+     U_OdomNue:[null, [Validators.required]],
+     U_TipEqu:['', Validators.required],
      elementosTabla: this.fb.array([]),
-
-   
+     NoParte: [''],
+     Descripcion: [''],
+     Cantidad: [''],
+     Proveedor:[''],
+     OrdenCompra:['']
     });
 
     this.valorActual = this.miFormulario.value.tipoTrabajo;
@@ -317,7 +339,11 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     
   }
 
-  
+  get f() {
+    return this.miFormulario.controls;
+  }
+
+  /*
   private cargarDatosOrden(docEntry: number): void {
     // Llama al servicio para obtener detalles y actualiza tu formulario
     this.creacionOrdenesService.obtenerDetalleOrden(docEntry).subscribe(
@@ -349,28 +375,40 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
             telefono: response.data.U_Phone,
             contrato: response.data.U_OrdCom,
             textoDiagnostico: response.data.U_ComTra,
-            // ... continua mapeando las demás propiedades ...
+            DVP_WOR7Collection: response.data.DVP_WOR7Collection || [],
 
+        
+            
           };
-          this.miFormulario.patchValue(datosMapeados);
+
+         
 
           if (response.data.DVP_WOR7Collection && Array.isArray(response.data.DVP_WOR7Collection) && response.data.DVP_WOR7Collection.length > 0) {
-            this.elementosTabla = [{
-              U_TipEqu: response.data.DVP_WOR7Collection[0].U_TipEqu,
-              U_NumEcon: response.data.DVP_WOR7Collection[0].U_NumEcon,
-              U_NReparto: response.data.DVP_WOR7Collection[0].U_NorRep,
-              U_GoodsBrand: response.data.DVP_WOR7Collection[0].U_Marca,
-              U_GoodsModel: response.data.DVP_WOR7Collection[0].U_Modelo,
-              U_GoodsSerial: response.data.DVP_WOR7Collection[0].U_Serie,
-              U_OdoAct: response.data.DVP_WOR7Collection[0].U_OdomAct,
-              U_OdomNue: response.data.DVP_WOR7Collection[0].U_OdomNue !== undefined ? response.data.DVP_WOR7Collection[0].U_OdomNue : null,
-            }];
+            this.elementosTabla = response.data.DVP_WOR7Collection.map((elemento: any) => ({
+              U_TipEqu: elemento.U_TipEqu,
+              U_NumEcon: elemento.U_NumEcon,
+              U_NReparto: elemento.U_NorRep,
+              U_GoodsBrand: elemento.U_Marca,
+              U_GoodsModel: elemento.U_Modelo,
+              U_GoodsSerial: elemento.U_Serie,
+              U_OdoAct: elemento.U_OdomAct,
+              U_OdomNue: elemento.U_OdomNue !== undefined ? elemento.U_OdomNue : null,
+            }));
+
             if (this.elementosTabla.length > 0) {
               this.miFormulario.controls['U_OdomNue'].setValue(this.elementosTabla[0].U_OdomNue);
             }
+          
+          this.miFormulario.patchValue(datosMapeados);
+          
           }
+          
+         
 
           console.log('Carga de datos', response.data);
+
+          const jsonBody = JSON.stringify(response.data);
+          console.log(jsonBody)
         } else {
           console.error('La respuesta no tiene la estructura esperada', response);
           // Puedes manejar el caso en el que la respuesta no tenga la estructura esperada
@@ -381,14 +419,118 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
         // Puedes manejar el error según tus necesidades
       }
     );
-  }
-  
-  grabarOrden() {
+  }*/
+
+  private cargarDatosOrden(docEntry: number): void {
+    // Llama al servicio para obtener detalles y actualiza tu formulario
+    this.creacionOrdenesService.obtenerDetalleOrden(docEntry).subscribe(
+        (response: any) => {
+            if (response && response.data) {
+                // Actualiza tu formulario con los detalles de la orden
+                const datosMapeados = {
+                    tipoTrabajo: response.data.U_TipTra,
+                    selectedSeries: response.data.U_Series,
+                    otroInput: response.data.U_OtroInput,
+                    selectedSeriesInput: response.data.U_DocNum,
+                    selectedFallos: response.data.U_CodFall,
+                    reportadoPor: response.data.U_PerRep,
+                    autorizadoPor: response.data.U_PerAut,
+                    fueraDeServicio: response.data.U_FueSer,
+                    prioridadSeleccionada: response.data.U_Prior,
+                    fechaSeleccionada: new Date(response.data.U_DocDate),
+                    estadoSeleccionado: response.data.U_Status,
+                    seleccionAgente: response.data.U_NomAgVent,
+                    seleccionTecnico: response.data.U_TecResp,
+                    seleccionCoordinador: response.data.U_Coord,
+                    seleccionarFormato: response.data.U_ComTra,
+                    dropdownCotizaciones: response.data.U_DocCot,
+                    U_ProRep: response.data.U_ProRep,
+                    cliente: response.data.U_CardCode,
+                    nombre: response.data.U_CardName,
+                    direccion: response.data.U_Address,
+                    ciudad: response.data.U_City,
+                    telefono: response.data.U_Phone,
+                    contrato: response.data.U_OrdCom,
+                    textoDiagnostico: response.data.U_ComTra,
+                    DVP_WOR7Collection: response.data.DVP_WOR7Collection || [],
+                };
+
+                if (response.data.DVP_WOR7Collection && Array.isArray(response.data.DVP_WOR7Collection)) {
+                    this.elementosTabla = response.data.DVP_WOR7Collection.map((elemento: any) => ({
+                        U_TipEqu: elemento.U_TipEqu,
+                        U_NumEcon: elemento.U_NumEcon,
+                        U_NReparto: elemento.U_NorRep,
+                        U_GoodsBrand: elemento.U_Marca,
+                        U_GoodsModel: elemento.U_Modelo,
+                        U_GoodsSerial: elemento.U_Serie,
+                        U_OdoAct: elemento.U_OdomAct,
+                        U_OdomNue: elemento.U_OdomNue !== undefined ? elemento.U_OdomNue : null,
+                       // U_OdomNue: elemento.U_OdomNue 
+                    }));
+
+                    if (this.elementosTabla.length > 0) {
+                      this.miFormulario.controls['U_OdomNue'].setValue(this.elementosTabla[0].U_OdomNue);
+                    
+                    }
+
+                    /*
+                    const U_OdomNueArray = this.elementosTabla.map(elem => elem.U_OdomNue);
+                    console.log('Valores de U_OdomNueArray:', U_OdomNueArray);
+                // Asignar el arreglo U_OdomNueArray al control U_OdomNue en el formulario
+                this.miFormulario.controls['U_OdomNue'].setValue(U_OdomNueArray);
+                    */
+
+
+                    const ultimaPosicionVacia = this.elementosTabla[this.elementosTabla.length - 1].U_TipEqu === null;
+
+                    if (!ultimaPosicionVacia) {
+                        this.elementosTabla.push({
+                            U_TipEqu: null,
+                            U_NumEcon:'',
+                            U_NReparto: '',
+                            U_GoodsBrand: '',
+                            U_GoodsModel: '',
+                            U_GoodsSerial: '',
+                            U_OdoAct: '',
+                            U_OdomNue: null,
+                        });
+                    }
+
+                    
+                }
+
+                this.miFormulario.patchValue(datosMapeados);
+                console.log('Carga de datos', response.data);
+
+                const jsonBody = JSON.stringify(response.data);
+                console.log(jsonBody)
+
+            } else {
+                console.error('La respuesta no tiene la estructura esperada', response);
+            }
+        },
+        error => {
+            console.error('Error al obtener detalles de la orden para editar', error);
+        }
+    );
+}
+
+
+
+
+  grabarOrden1() {
     
-    if (this.isSubmitting) {
+
+    if (this.isSubmitting || !this.miFormulario.valid) {
+      // Mostrar modal de SweetAlert indicando que debe llenar los campos obligatorios
+      Swal.fire({
+        title: "Error",
+        text: "Debe llenar los campos obligatorios.",
+        icon: "error"
+      });
       return;
     }
-  
+
     // Deshabilita el botón para evitar múltiples envíos
     this.isSubmitting = true;
     // Muestra los valores del formulario en la consola
@@ -399,6 +541,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
    console.log('nombre del equipo', tipoEquipoNombre)
 
+   /*
    const dvpWor7Collection = this.elementosTabla.map((orden, index) => ({
     LineId: index,
     U_TipEqu: tipoEquipoNombre,
@@ -410,7 +553,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     U_OdomAct: orden.U_OdoAct,
     U_OdomNue: orden.U_OdomNue !== undefined ? orden.U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
     
-  }));
+  }));*/
 
     // Crea el objeto con la estructura requerida para el API
     const bodyParaAPI = {
@@ -542,6 +685,458 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
   
 
 
+  grabarOrden() {
+    
+      // El formulario es válido, procede a enviar los datos al servicio
+      const valoresFormulario = this.miFormulario.value;
+      
+      const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
+      const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
+     console.log('nombre del equipo', tipoEquipoNombre)
+
+
+
+     const dvpWor7Collection = this.elementosTabla.slice(0, -1).map((elemento, index) => ({
+      LineId: index + 1,
+      U_TipEqu: tipoEquipoNombre,
+      U_NumEcon: elemento.U_NumEcon,
+      U_NorRep: elemento.U_NReparto,
+      U_Marca: elemento.U_GoodsBrand,
+      U_Modelo: elemento.U_GoodsModel,
+      U_Serie: elemento.U_GoodsSerial,
+      U_OdomAct: elemento.U_OdoAct,
+    
+      //U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[index].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+      U_OdomNue: elemento.U_OdomNue !== undefined ? elemento.U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+   
+    }));
+
+      const bodyParaAPI = {
+        DocEntry: 64,
+        DocNum: 64,
+        Series: -1,
+        U_LastPref: null,
+        U_ConFlo: null,
+        U_DocNum: valoresFormulario.selectedSeriesInput,
+        U_Series: valoresFormulario.selectedSeries,
+        U_Prefix: null,
+        U_TipTra: valoresFormulario.tipoTrabajo,
+        U_RefOrdTra: null,
+        U_CardCode: valoresFormulario.cliente,
+        U_CardName: valoresFormulario.nombre,
+        U_Address: valoresFormulario.direccion,
+        U_City: valoresFormulario.ciudad,
+        U_Phone: valoresFormulario.telefono,
+        U_OrdCom: null,
+        U_PDFOC: null,
+        U_NomSysOC: null,
+        U_Status: valoresFormulario.estadoSeleccionado,
+        U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
+        U_FecEspPar: null,
+        U_Prior: valoresFormulario.prioridadSeleccionada,
+        U_AgVent: valoresFormulario.codigoAgente,
+        U_NomAgVent: valoresFormulario.seleccionAgente, // Ajusta según tu lógica
+        U_PerAut: valoresFormulario.autorizadoPor,
+        U_PerRep: valoresFormulario.reportadoPor,
+        U_CodFall: valoresFormulario.selectedFallos,
+        U_ProRep: valoresFormulario.U_ProRep,
+        U_ComTra: valoresFormulario.textoDiagnostico,
+        U_ComRec: null,
+        U_ComRef: null,
+        U_ComMan: null,
+        U_ComRep: null,
+        U_Com: null,
+        U_ComClosed: null,
+        U_TipEqu: null,
+        U_NumEcon: null,
+        U_Marca: null,
+        U_Modelo: null,
+        U_Serie: null,
+        U_Closed: null,
+        U_Ended: null,
+        U_Odom: null,
+        U_EndRec: null,
+        U_StartD: null,
+        U_EndD: null,
+        U_HasD: null,
+        U_HorasMan: null,
+        U_StartC: null,
+        U_EndC: null,
+        U_HasC: null,
+        U_StartA: null,
+        U_EndA: null,
+        U_HasA: null,
+        U_StartP: null,
+        U_EndP: null,
+        U_HasP: null,
+        U_StartE: null,
+        U_EndE: null,
+        U_HasE: null,
+        U_DocT: null,
+        U_DocR: null,
+        U_DocCot: null,
+        U_DocFac: null,
+        U_EnTras: null,
+        U_FueSer: null,
+        U_NorRep: null,
+        U_TecResp: valoresFormulario.seleccionTecnico,
+        U_Coord: valoresFormulario.seleccionCoordinador,
+        U_ManObrCap: null,
+        DVP_WOR1Collection: null,
+        DVP_WOR2Collection: null,
+        DVP_WOR3Collection: null,
+        DVP_WOR4Collection: null,
+        DVP_WOR5Collection: null,
+        DVP_WOR6Collection: null,
+        DVP_WOR7Collection: dvpWor7Collection,
+       
+       /*
+        DVP_WOR7Collection: []= [{
+          LineId: 1, // Asegura que LineId sea único
+          U_TipEqu:tipoEquipoNombre,
+          U_NumEcon: this.elementosTabla[0].U_NumEcon,
+          U_NorRep: this.elementosTabla[0].U_NReparto,
+          U_Marca: this.elementosTabla[0].U_GoodsBrand,
+          U_Modelo: this.elementosTabla[0].U_GoodsModel,
+          U_Serie: this.elementosTabla[0].U_GoodsSerial,
+          U_OdomAct: this.elementosTabla[0].U_OdoAct,
+          U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[0].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+        }],
+        */
+      };
+
+      console.log('Valores mandados al api', bodyParaAPI);
+      // Llama al servicio para guardar los datos en el API
+      const jsonBody = JSON.stringify(bodyParaAPI);
+    console.log(jsonBody)
+
+    if (this.miFormulario.valid) {
+      // Llama al servicio para enviar los datos
+      this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI).subscribe(
+        (respuesta) => {
+          
+          // Manejar la respuesta del servicio según sea necesario
+          console.log('Respuesta del servicio:', respuesta);
+          Swal.fire({
+            title: "Exito",
+            text: "OT Grabado con Exito",
+            icon: "success"
+          });
+          
+        },
+        (error) => {
+          // Manejar errores si es necesario
+          console.error('Error en la petición:', error);
+          Swal.fire({
+            title: "Error",
+            text: "Error al llamar al API",
+            icon: "error"
+          });
+          return;
+        }
+      );
+    } else {
+      // El formulario no es válido, muestra un mensaje con SweetAlert
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Debe llenar los campos del formulario',
+      });
+
+    }
+    
+  }
+
+  async grabarOrden0() {
+    if (this.miFormulario.valid) {
+      try {
+        // Preparación de los datos para la solicitud al API...
+  
+        const valoresFormulario = this.miFormulario.value;
+      
+        const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
+        const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
+       console.log('nombre del equipo', tipoEquipoNombre)
+  
+  
+  
+       const dvpWor7Collection = this.elementosTabla.map((elemento, index) => ({
+        LineId: index + 1,
+        U_TipEqu: tipoEquipoNombre,
+        
+        U_NumEcon: elemento.U_NumEcon,
+        U_NorRep: elemento.U_NReparto,
+        U_Marca: elemento.U_GoodsBrand,
+        U_Modelo: elemento.U_GoodsModel,
+        U_Serie: elemento.U_GoodsSerial,
+        U_OdomAct: elemento.U_OdoAct,
+        U_OdomNue: elemento.U_OdomNue !== undefined ? elemento.U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+       // U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[index].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+      }));
+  
+        const bodyParaAPI = {
+          DocEntry: 64,
+          DocNum: 64,
+          Series: -1,
+          U_LastPref: null,
+          U_ConFlo: null,
+          U_DocNum: valoresFormulario.selectedSeriesInput,
+          U_Series: valoresFormulario.selectedSeries,
+          U_Prefix: null,
+          U_TipTra: valoresFormulario.tipoTrabajo,
+          U_RefOrdTra: null,
+          U_CardCode: valoresFormulario.cliente,
+          U_CardName: valoresFormulario.nombre,
+          U_Address: valoresFormulario.direccion,
+          U_City: valoresFormulario.ciudad,
+          U_Phone: valoresFormulario.telefono,
+          U_OrdCom: null,
+          U_PDFOC: null,
+          U_NomSysOC: null,
+          U_Status: valoresFormulario.estadoSeleccionado,
+          U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
+          U_FecEspPar: null,
+          U_Prior: valoresFormulario.prioridadSeleccionada,
+          U_AgVent: valoresFormulario.seleccionAgente,
+          U_NomAgVent: null, // Ajusta según tu lógica
+          U_PerAut: valoresFormulario.autorizadoPor,
+          U_PerRep: valoresFormulario.reportadoPor,
+          U_CodFall: valoresFormulario.selectedFallos,
+          U_ProRep: valoresFormulario.U_ProRep,
+          U_ComTra: valoresFormulario.textoDiagnostico,
+          U_ComRec: null,
+          U_ComRef: null,
+          U_ComMan: null,
+          U_ComRep: null,
+          U_Com: null,
+          U_ComClosed: null,
+          U_TipEqu: null,
+          U_NumEcon: null,
+          U_Marca: null,
+          U_Modelo: null,
+          U_Serie: null,
+          U_Closed: null,
+          U_Ended: null,
+          U_Odom: null,
+          U_EndRec: null,
+          U_StartD: null,
+          U_EndD: null,
+          U_HasD: null,
+          U_HorasMan: null,
+          U_StartC: null,
+          U_EndC: null,
+          U_HasC: null,
+          U_StartA: null,
+          U_EndA: null,
+          U_HasA: null,
+          U_StartP: null,
+          U_EndP: null,
+          U_HasP: null,
+          U_StartE: null,
+          U_EndE: null,
+          U_HasE: null,
+          U_DocT: null,
+          U_DocR: null,
+          U_DocCot: null,
+          U_DocFac: null,
+          U_EnTras: null,
+          U_FueSer: null,
+          U_NorRep: null,
+          U_TecResp: valoresFormulario.seleccionTecnico,
+          U_Coord: valoresFormulario.seleccionCoordinador,
+          U_ManObrCap: null,
+          DVP_WOR1Collection: null,
+          DVP_WOR2Collection: null,
+          DVP_WOR3Collection: null,
+          DVP_WOR4Collection: null,
+          DVP_WOR5Collection: null,
+          DVP_WOR6Collection: null,
+          DVP_WOR7Collection: dvpWor7Collection,
+         
+         
+        };
+  
+        console.log('Valores mandados al api', bodyParaAPI);
+        // Llama al servicio para guardar los datos en el API
+        const jsonBody = JSON.stringify(bodyParaAPI);
+      console.log(jsonBody)
+
+        const respuesta = await this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI).toPromise();
+  
+        if (respuesta) {
+          console.log('Respuesta del servicio:', respuesta);
+          Swal.fire({
+            title: "Exito",
+            text: "OT Grabado con Exito",
+            icon: "success"
+          });
+          // Aquí podrías realizar otras acciones, como actualizar la tabla, etc.
+        } else {
+          throw new Error('Error al llamar al API');
+        }
+  
+      } catch (error) {
+        console.error('Error en la petición:', error);
+        Swal.fire({
+          title: "Error",
+          text: "Error al llamar al API",
+          icon: "error"
+        });
+      }
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Debe llenar los campos del formulario',
+      });
+    }
+  }
+  
+  
+  
+
+  grabarOrden2() {
+    if (this.miFormulario.valid) {
+      // El formulario es válido, procede a enviar los datos al servicio
+      const valoresFormulario = this.miFormulario.value;
+  
+      const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
+      const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
+     console.log('nombre del equipo', tipoEquipoNombre)
+
+      const bodyParaAPI = {
+        DocEntry: 64,
+        DocNum: 64,
+        Series: -1,
+        U_LastPref: null,
+        U_ConFlo: null,
+        U_DocNum: valoresFormulario.selectedSeriesInput,
+        U_Series: valoresFormulario.selectedSeries,
+        U_Prefix: null,
+        U_TipTra: valoresFormulario.tipoTrabajo,
+        U_RefOrdTra: null,
+        U_CardCode: valoresFormulario.cliente,
+        U_CardName: valoresFormulario.nombre,
+        U_Address: valoresFormulario.direccion,
+        U_City: valoresFormulario.ciudad,
+        U_Phone: valoresFormulario.telefono,
+        U_OrdCom: null,
+        U_PDFOC: null,
+        U_NomSysOC: null,
+        U_Status: valoresFormulario.estadoSeleccionado,
+        U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
+        U_FecEspPar: null,
+        U_Prior: valoresFormulario.prioridadSeleccionada,
+        U_AgVent: valoresFormulario.seleccionAgente,
+        U_NomAgVent: null, // Ajusta según tu lógica
+        U_PerAut: valoresFormulario.autorizadoPor,
+        U_PerRep: valoresFormulario.reportadoPor,
+        U_CodFall: valoresFormulario.selectedFallos,
+        U_ProRep: valoresFormulario.U_ProRep,
+        U_ComTra: valoresFormulario.textoDiagnostico,
+        U_ComRec: null,
+        U_ComRef: null,
+        U_ComMan: null,
+        U_ComRep: null,
+        U_Com: null,
+        U_ComClosed: null,
+        U_TipEqu: null,
+        U_NumEcon: null,
+        U_Marca: null,
+        U_Modelo: null,
+        U_Serie: null,
+        U_Closed: null,
+        U_Ended: null,
+        U_Odom: null,
+        U_EndRec: null,
+        U_StartD: null,
+        U_EndD: null,
+        U_HasD: null,
+        U_HorasMan: null,
+        U_StartC: null,
+        U_EndC: null,
+        U_HasC: null,
+        U_StartA: null,
+        U_EndA: null,
+        U_HasA: null,
+        U_StartP: null,
+        U_EndP: null,
+        U_HasP: null,
+        U_StartE: null,
+        U_EndE: null,
+        U_HasE: null,
+        U_DocT: null,
+        U_DocR: null,
+        U_DocCot: null,
+        U_DocFac: null,
+        U_EnTras: null,
+        U_FueSer: null,
+        U_NorRep: null,
+        U_TecResp: valoresFormulario.seleccionTecnico,
+        U_Coord: valoresFormulario.seleccionCoordinador,
+        U_ManObrCap: null,
+        DVP_WOR1Collection: null,
+        DVP_WOR2Collection: null,
+        DVP_WOR3Collection: null,
+        DVP_WOR4Collection: null,
+        DVP_WOR5Collection: null,
+        DVP_WOR6Collection: null,
+        //DVP_WOR7Collection: dvpWor7Collection,
+        DVP_WOR7Collection: []= [{
+          LineId: 1, // Asegura que LineId sea único
+          U_TipEqu:tipoEquipoNombre,
+          U_NumEcon: this.elementosTabla[0].U_NumEcon,
+          U_NorRep: this.elementosTabla[0].U_NReparto,
+          U_Marca: this.elementosTabla[0].U_GoodsBrand,
+          U_Modelo: this.elementosTabla[0].U_GoodsModel,
+          U_Serie: this.elementosTabla[0].U_GoodsSerial,
+          U_OdomAct: this.elementosTabla[0].U_OdoAct,
+          U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[0].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+        }],
+      };
+  
+      // Llama al servicio para enviar los datos
+      this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI)
+        .pipe(
+          catchError((error) => {
+            // Manejar errores de conexión o cualquier otro error
+            console.error('Error en la petición:', error);
+            Swal.fire({
+              title: 'Error',
+              text: 'Error al llamar al API',
+              icon: 'error'
+            });
+  
+            // Puedes elegir retornar un observable vacío o re-lanzar el error
+            return throwError('Error en la petición');
+          })
+        )
+        .subscribe(
+          (respuesta) => {
+            // Manejar la respuesta del servicio según sea necesario
+            console.log('Respuesta del servicio:', respuesta);
+            Swal.fire({
+              title: 'Éxito',
+              text: 'OT Grabado con Éxito',
+              icon: 'success'
+            });
+            
+          },
+          (error) => {
+            // Este bloque se ejecutará solo si hay un error y no se enviarán datos al API
+            console.error('Error en la petición (suscripción):', error);
+          }
+        );
+    } else {
+      // El formulario no es válido, muestra un mensaje con SweetAlert
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Debe llenar los campos del formulario',
+      });
+    }
+  }
+
   onSubmit(): void {
     if (this.modoEdicion) {
       this.actualizarOrden();
@@ -551,14 +1146,35 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
   }
 
 
-
   actualizarOrden() {
     if (this.docEntry !== null) {
 
     const valoresFormulario = this.miFormulario.value;
+    console.log('Datos del formulario por propoedades' ,valoresFormulario)
+    /*
     //console.log('Valores enviados para edicion', valoresFormulario)
     const tipoEquipoNombre = this.elementosTabla[0]?.U_TipEqu || '';
     console.log(tipoEquipoNombre)
+
+*/
+    const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
+    const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
+   console.log('nombre del equipo', tipoEquipoNombre)
+
+    const filasNoVacias = this.elementosTabla.filter(fila => fila.U_TipEqu !== null);
+        
+    // Mapear las filas no vacías al formato esperado para DVP_WOR7Collection
+    const dvpWor7Collection = filasNoVacias.map((fila, index) => ({
+        LineId: index + 1, // Asegura que LineId sea único
+        U_TipEqu: fila.U_TipEqu,
+        U_NumEcon: fila.U_NumEcon,
+        U_NorRep: fila.U_NReparto,
+        U_Marca: fila.U_GoodsBrand,
+        U_Modelo: fila.U_GoodsModel,
+        U_Serie: fila.U_GoodsSerial,
+        U_OdomAct: fila.U_OdoAct,
+        U_OdomNue: fila.U_OdomNue !== undefined ? fila.U_OdomNue : null,
+    }));
     
     const bodyParaActualizacion = {
       DocEntry: this.docEntry,
@@ -583,8 +1199,9 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
       U_FecEspPar: null,
       U_Prior: valoresFormulario.prioridadSeleccionada,
-      U_AgVent: valoresFormulario.seleccionAgente,
-      U_NomAgVent: null, // Ajusta según tu lógica
+      U_NomAgVent: valoresFormulario.seleccionAgente, 
+      U_AgVent: valoresFormulario.codigoAgente,
+     // Ajusta según tu lógica
       U_PerAut: valoresFormulario.autorizadoPor,
       U_PerRep: valoresFormulario.reportadoPor,
       U_CodFall: valoresFormulario.selectedFallos,
@@ -637,10 +1254,11 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       DVP_WOR4Collection: null,
       DVP_WOR5Collection: null,
       DVP_WOR6Collection: null,
-      //DVP_WOR7Collection: dvpWor7Collection,
-      DVP_WOR7Collection: []= [{
+      DVP_WOR7Collection: dvpWor7Collection,
+     
+     /* DVP_WOR7Collection: []= [{
         LineId: 1, // Asegura que LineId sea único
-        //U_TipEqu:this.elementosTabla[0].U_TipEqu,
+       
         U_TipEqu:tipoEquipoNombre,
         U_NumEcon: this.elementosTabla[0].U_NumEcon,
         U_NorRep: this.elementosTabla[0].U_NReparto,
@@ -649,7 +1267,9 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
         U_Serie: this.elementosTabla[0].U_GoodsSerial,
         U_OdomAct: this.elementosTabla[0].U_OdoAct,
         U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[0].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
-      }],
+
+        
+      }],*/
     };
     
 
@@ -682,18 +1302,6 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
 }
   
 
-
-  actualizarDatosTablaOrdenes(nuevosDatos: any) {
-    // Asegúrate de tener acceso a la lista de órdenes que llena la tabla
-    // Actualiza los datos en la lista (this.ordenes) con los nuevosDatos recibidos del API
-    // Esto dependerá de cómo esté implementada tu lógica para mostrar las órdenes en la tabla
-    // Por ejemplo:
-    const indiceOrden = this.ordenes.findIndex(orden => orden.DocEntry === nuevosDatos.DocEntry);
-    if (indiceOrden !== -1) {
-      this.ordenes[indiceOrden] = nuevosDatos;
-      
-    }
-  }
 
   /*
   onSubmit() {
@@ -894,7 +1502,16 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     );
   }
 
-  
+  cargarDatosAgenteVentas(){
+    this.creacionOrdenesService.traerAgenteVentas().subscribe(
+      (response)=>{
+        if(response.ResultCode === 0 && response.data){
+          this.agenteVentas = response.data;
+          console.log( 'Datos de Agente de ventas',response.data)
+        }
+      }
+    )
+  }
 
   cargarDatosAdicionalesMC01(tipo:any, codigo:any){
   this.creacionOrdenesService.datosMC01(codigo,tipo).subscribe(
@@ -1184,6 +1801,7 @@ cargarDatosRecomendaciones(){
     (response)=>{
       if(response.ResultCode ===0 && response.data){
         this.dRecomendaciones = response.data
+        
         console.log('Datos Recomendaciones',this.dRecomendaciones);
       }else {
         console.error('Error al obtener datos del API')
@@ -1481,7 +2099,7 @@ onrowDobleClickref(orden: any) {
         if (coincideConAlgunAlmacen) {
           // Crea una nueva fila con los datos de la orden seleccionada
           const nuevaFila = {
-            NoParte: '',
+            NoParte: orden.ItemCode,
             Descripcion: orden.ItemName,
             Cantidad: '',
             CC: '',
@@ -1969,7 +2587,7 @@ onrowDobloClickProveedoresTerceros(proveedor: any) {
 onrowDobloClickOrdenCompraProveedor(ordenCompra: any) {
   // Verifica si hay una posición creada
   if (this.ultimaPosicionCreada !== -1) {
-    this.elementosTablaTerceros[this.ultimaPosicionCreada].OrdenCompra = ordenCompra.CardName;
+    this.elementosTablaTerceros[this.ultimaPosicionCreada].OrdenCompra = ordenCompra.DocNum;
     this.elementosTablaTerceros[this.ultimaPosicionCreada].Total = ordenCompra.DocTotal;
   } else { 
     // Si nuevaManoDeObra no está creada, muestra un mensaje o realiza alguna acción necesaria
@@ -1985,31 +2603,87 @@ onrowDobloClickOrdenCompraProveedor(ordenCompra: any) {
 }
 
 
-
+/*
 onrowDobloClickREcomendaciones(recomendacion: any) {
-  // Crea un nuevo objeto para la nueva posición en la tabla
-  if (this.miFormulario.get('estadoSeleccionado')?.value === 'C'){
+  
+ 
     const nuevaRecomendacion = {
       NoParte: recomendacion.ItemCode,
       Descripcion: recomendacion.ItemName,
-      Cantidad: '',
+      Cantidad: recomendacion.stocktotal,
+      
       
     };
+
   
     this.elementosTablaRecomendaciones.push(nuevaRecomendacion);
+   console.log(nuevaRecomendacion)
    
     this.elementosTablaRecomendaciones = [...this.elementosTablaRecomendaciones];
+    console.log(this.elementosTablaRecomendaciones)
     // Limpia el formulario si es necesario
+    
     this.miFormulario.reset();
-  }else{
-    Swal.fire({
-      title: 'Error',
-      text: 'La opción "Cotización" no está seleccionada.',
-      icon: 'error'
-    });
-    console.error('Error: La opción "Cotización" no está seleccionada en el select de estados.');
-  }
+  
+    
+  
   this.recomendaciones = false
+}*/
+
+
+
+onrowDobloClickREcomendaciones(recomendacion: any) {
+  const nuevaRecomendacion = {
+    NoParte: recomendacion.ItemCode,
+    Descripcion: recomendacion.ItemName,
+    Cantidad: recomendacion.stocktotal,
+  };
+
+  this.elementosTablaRecomendaciones.push(nuevaRecomendacion);
+  console.log(nuevaRecomendacion);
+
+  this.elementosTablaRecomendaciones = [...this.elementosTablaRecomendaciones];
+  console.log(this.elementosTablaRecomendaciones);
+
+  // Limpia el formulario si es necesario
+  this.miFormulario.reset();
+
+  this.recomendaciones = false;
+}
+
+
+
+seleccionarAgente(nombreAgente: string) {
+  this.miFormulario.get('seleccionAgente')?.setValue(nombreAgente); // Ajusta esto según tu estructura
+  console.log(nombreAgente)
+  this.agente = false; // Oculta el modal
+}
+
+
+seleccionarAgente1(agenteSeleccionado: any) {
+  this.miFormulario.get('seleccionAgente')?.setValue(agenteSeleccionado.SlpName);
+  console.log(agenteSeleccionado.SlpName)
+  this.miFormulario.get('codigoAgente')?.setValue(agenteSeleccionado.SlpCode);
+  console.log(agenteSeleccionado.SlpCode)
+  this.agente = false; // Oculta el modal
+}
+
+onrowDobloClickREcomendaciones1(recomendacion: any) {
+const nuevaRecomendacion = [ 
+  this.miFormulario.get('NoParte')?.setValue(recomendacion.ItemCode),
+   recomendacion.ItemName,
+  this.miFormulario.get('Cantidad')?.setValue(recomendacion.stocktotal),
+];
+
+ this.miFormulario.get('NoParte')?.setValue(recomendacion.ItemCode),
+  recomendacion.ItemName,
+this.miFormulario.get('Cantidad')?.setValue(recomendacion.stocktotal),
+  this.elementosTablaRecomendaciones.push(nuevaRecomendacion);
+  console.log(nuevaRecomendacion)
+  this.elementosTablaRecomendaciones = [...this.elementosTablaRecomendaciones];
+
+  this.miFormulario.reset();
+  this.recomendaciones = false;
 }
 
 
@@ -2183,6 +2857,10 @@ openNew3() {
   this.refacciones = true
  }
 
+ agenteV(){
+  this.agente = true
+ }
+
  cotizacion(){
   this.cotizaciones = true;
  }
@@ -2333,6 +3011,7 @@ hideDialog() {
   this.cotizaciones = false;
   this.manoDeObraTecnicos = false
   this.ordenCompra = false
+  this.agente = false
 }
 
 mTerceros() {
