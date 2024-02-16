@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
-
+import { CardModule } from 'primeng/card';
 @NgModule({
   declarations: [
     EntregaComponent
@@ -25,7 +25,8 @@ import { CheckboxModule } from 'primeng/checkbox';
     ButtonModule,
     TableModule,
     CalendarModule,
-    CheckboxModule
+    CheckboxModule,
+    CardModule
   ]
 })
 export class EntregaModule { }

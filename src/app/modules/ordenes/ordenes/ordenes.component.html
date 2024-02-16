@@ -61,11 +61,11 @@ class="text-xs"
     <th  style="width:25%">Acciones</th>
   </tr>
 </ng-template>
-<ng-template pTemplate="body" let-rowData>
+<ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
   <tr>
     <td>
         <p-dropdown [style]="{'width': dropdownWidth2}" containerStyleClass="w-full" class="md:w-15rem w-full "  placeholder="Tipo"
-        [options]="listaTrabajos" optionLabel="Name" optionValue="Code" (onChange)="onTipoChange($event)"  formControlName="U_TipEqu"
+        [options]="listaTrabajos" optionLabel="Name" optionValue="Code" (onChange)="onTipoChange($event, rowIndex)"   formControlName="U_TipEqu"
          appendTo="body" 
         ></p-dropdown>
     </td>
@@ -342,7 +342,7 @@ class="text-xs"
                         <th  style="width:5%">Eliminar</th>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-orden>
+                <ng-template pTemplate="body" let-orden >
                     <tr>
                         <td>
                             <div class="flex gap-1 align-items-center">
@@ -400,7 +400,8 @@ class="text-xs"
                              
                         </td>
                         <td>
-                            <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
+                            <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0" [(ngModel)]="orden.Existencia"
+                           
                             > </p-inputNumber>
                         </td>
                         <td>
@@ -482,7 +483,8 @@ class="text-xs"
                     <td>{{mDeObra.Horas}}</td>
                     <td>
                         <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
-                          > </p-inputNumber> 
+                        [(ngModel)]="mDeObra.Cantidad"
+                        > </p-inputNumber> 
                     </td>
                     <td> 
                         <div class="flex gap-1 align-items-center">
@@ -504,11 +506,14 @@ class="text-xs"
 
                     <td>
                         <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
+                        [(ngModel)]="mDeObra.HReales"
                         > </p-inputNumber>
                     </td>
                     
                     <td>
-                        <p-checkbox  name="ejecutada" value="ejecutada" label="" [binary]="true" inputId="binary" ></p-checkbox>
+                        <p-checkbox  name="ejecutada" value="ejecutada" label=""  [binary]="true" inputId="binary" 
+                        [(ngModel)]="mDeObra.Ejecutada"
+                        ></p-checkbox>
                     </td>
                     
                     
@@ -916,10 +921,21 @@ class="text-xs"
         </p-tabPanel>
       
         <p-tabPanel header="Anexos" [disabled]="!anexosHabilitado">
+          
             <div class="grid grid-cols-12">
                 <div class="col-10 me-4">
-                    <p-table styleClass="p-datatable-gridlines">
-                        [value]="anexos"
+                    <p-table styleClass="p-datatable-gridlines"
+                    
+                    [value]="archivos"
+                    dataKey="id"
+                    [paginator]="true"
+                    [rows]="10"
+                    [rowsPerPageOptions]="[5, 10, 20]"
+                    [responsive]="true"
+                    styleClass="p-datatable-gridlines align-items-center mt-3 me-5"
+                    class="text-xs"
+                    >
+                        
                         <ng-template pTemplate="header">
                             <tr>
                                 <th style="width:25%">Archivo</th>
@@ -929,39 +945,49 @@ class="text-xs"
                                 
                             </tr>
                         </ng-template>
-                        <ng-template pTemplate="body" let-anexos>
+                        <ng-template pTemplate="body" let-archivo>
                             <tr>
-                                <td>jh</td>
-                                <td>dvsdv</td>
-                                <td>dsdvsv</td>
-                                <td>dsd</td>
-                                
-                            </tr>
+                              <td>{{ archivo.name }}</td>
+                              <td>{{ archivo.tipo }}</td>
+                              <td>
+                                <input type="text" pInputText class="w-full" [(ngModel)]="archivo.descripcion" />
+                              </td>
+                              <td>
+                                <div class="flex gap-2">
+                                  <p-button icon="pi pi-times" severity="danger" styleClass="p-button-danger" ></p-button>
+                                  <p-button icon="pi pi-check" severity="success" styleClass="p-button-primary" ></p-button>
+                                </div>                              
+                              </td>
+                              
                         </ng-template>
                     </p-table>
                 </div>
-                <div class="col-2">
+                <div class="col-2 align-items-center mt-3 ">
                    
-                    <!--button pButton pRipple label="Subir Adjunto" icon="pi pi-upload" class="p-button-help"></!--button-->
-                    <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Subir Adjunto" 
-                    chooseLabel="Subir Adjunto" chooseIcon="pi pi-upload"  class="mr-2 inline-block"></p-fileUpload>
+                    <!--button pButton pRipple  label="Subir Adjunto" icon="pi pi-upload" class="p-button-help"></!--button-->
+                    
+                    <input type="file" (change)="onFileSelected($event)" class="hidden" id="fileInput">
+                    <label for="fileInput" class="p-button p-button-help" style="cursor: pointer">
+                      <i class="pi pi-upload mr-2"></i>
+                      Adjuntar
+                      
+                    </label>
+                    
+
                 </div>
             </div>
-            
+        
         </p-tabPanel>
     </p-tabView>
 </div>
 
 
 <div class="flex gap-2">
-  <form [formGroup]="miFormulario" (ngSubmit)="onSubmit()">
     <div class="flex gap-2">
-      <p-button type="submit" label="{{ modoEdicion ? 'Actualizar' : 'Grabar' }}"  [disabled]="isSubmitting" ></p-button>
-      <p-button label="Regresar" styleClass="p-button-secondary"></p-button>
+      <p-button type="submit" label="{{ modoEdicion ? 'Actualizar' : 'Grabar' }}"  [disabled]="isSubmitting"  (onClick)="modoEdicion? actualizarOrden() : grabarOrden()"></p-button>
+      <p-button label="Regresar" styleClass="p-button-secondary" ></p-button>
       <!--p-button label="Editar" type="button" [disabled]="isSubmitting" (click)="actualizarOrden()"></!--p-button-->
     </div>
-    
-  </form>
     
 </div>
 

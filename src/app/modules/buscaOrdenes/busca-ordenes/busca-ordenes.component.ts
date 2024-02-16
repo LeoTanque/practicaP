@@ -24,7 +24,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private route
    
   }
 
-  
+   
 
   onFechaSeleccionada(){
     const parametros = {

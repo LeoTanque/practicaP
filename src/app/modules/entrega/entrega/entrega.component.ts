@@ -8,7 +8,7 @@ import { CreacionOrdenesService } from 'src/app/services/creacion-ordenes.servic
   styleUrls: ['./entrega.component.scss']
 })
 export class EntregaComponent {
-
+ 
 
   U_DocDatehasta: Date = new Date();
   dropdownWidth: string = '20rem';
@@ -40,4 +40,6 @@ export class EntregaComponent {
   submitForm() {
   console.log(this.entregaForm.value);
 }
+
+
 }

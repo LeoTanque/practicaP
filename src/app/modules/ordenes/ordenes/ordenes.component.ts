@@ -106,13 +106,26 @@ otroInput: string = '';
 
 valorActual: any;
 
+tipoTrabajoSeleccionado: string = ''; // Puedes inicializarla con un valor predeterminado si es necesario
+
+/*
 elementosTabla: any[]=[
   {tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:'', U_OdomNue:''},
-]
+] */
+
+
+elementosTabla: any[] = [
+  { U_TipEqu: null, U_NReparto: '', U_NumEcon: '', U_GoodsBrand: '', U_GoodsModel: '', U_GoodsSerial: '', U_OdoAct: '', U_OdomNue: null }
+];
+
+
 
 elementosTablaRefacciones:any[]=[
   {NoParte:'', Descripcion:'', Cantidad:'', CC:'', SC:'',U_GoodsSerial:'', Almacen:'', Existencia:'',original: true }
 ]
+
+
+
 
 selectedU_NReparto: any = '';
 
@@ -168,10 +181,18 @@ cotizacionSeleccionadaDocEntry: number | undefined;
 //Mano de obra 
 dManoDeObra:any[]=[];
 elementosTablaManoDeObra:any[]=[
-  {Articulos:'', Nombres:'', Horas: '', Cantidad:'', Tecnico:'', Nombre:'',Fecha:'', HReales:'', Ejecutada:'' }
+  {Articulos:'', Nombres:'', Horas: '', Cantidad: '', Tecnico:'', Nombre:'',Fecha:'', HReales:'', Ejecutada:'' }
 ]
 
+
+
 ultimaPosicionCreada: number = -1;
+
+codigoTecnicoSeleccionado: any = '';
+nombreTecnicoSeleccionado: any = '';
+
+tecnicosSeleccionados: { [key: number]: { codigo: any, nombre: any } } = {};
+
 
 dTerceros:any[]=[];
 dProveedores:any[]=[];
@@ -196,6 +217,9 @@ ordenes: any[]=[];
 
 modoEdicion = false;
 docEntry: number | null = null;
+
+archivos: any[] = [];
+
 constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: FormBuilder, private router: Router, private route: ActivatedRoute){}
 
 
@@ -330,12 +354,16 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
      Descripcion: [''],
      Cantidad: [''],
      Proveedor:[''],
-     OrdenCompra:['']
+     OrdenCompra:[''],
+    
+
+     
     });
 
     this.valorActual = this.miFormulario.value.tipoTrabajo;
     this.actualizarIndiceActivo();
-    this.onEstadoSeleccionadoChange1({ value: 'D' });  
+   
+   // this.onEstadoSeleccionadoChange1({ value: 'D' });  
     
   }
 
@@ -453,11 +481,17 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     contrato: response.data.U_OrdCom,
                     textoDiagnostico: response.data.U_ComTra,
                     DVP_WOR7Collection: response.data.DVP_WOR7Collection || [],
+                    DVP_WOR2Collection: response.data.DVP_WOR2Collection || [],
+                   
+                
                 };
 
+                
                 if (response.data.DVP_WOR7Collection && Array.isArray(response.data.DVP_WOR7Collection)) {
                     this.elementosTabla = response.data.DVP_WOR7Collection.map((elemento: any) => ({
+                      
                         U_TipEqu: elemento.U_TipEqu,
+                        //U_TipEqu:elemento.tipoTrabajoSeleccionado,
                         U_NumEcon: elemento.U_NumEcon,
                         U_NReparto: elemento.U_NorRep,
                         U_GoodsBrand: elemento.U_Marca,
@@ -473,8 +507,17 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     
                     }
 
+                   
+                    if (this.elementosTabla.length > 0) {
+                      // Asigna el valor de U_TipEqu para cada fila en elementosTabla
+                      this.elementosTabla.forEach((elemento, index) => {
+                          this.miFormulario.get(`elementosTabla.${index}.U_TipEqu`)?.setValue(elemento.U_TipEqu);
+                      });
+                  }
+                  
+
                     /*
-                    const U_OdomNueArray = this.elementosTabla.map(elem => elem.U_OdomNue);
+                    const U_OdomNueArray = this.elementosTabla.map(elem => elem.U_TipEqu);
                     console.log('Valores de U_OdomNueArray:', U_OdomNueArray);
                 // Asignar el arreglo U_OdomNueArray al control U_OdomNue en el formulario
                 this.miFormulario.controls['U_OdomNue'].setValue(U_OdomNueArray);
@@ -499,9 +542,12 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     
                 }
 
+
+
+
                 this.miFormulario.patchValue(datosMapeados);
                 console.log('Carga de datos', response.data);
-
+                this.actualizarIndiceActivo();
                 const jsonBody = JSON.stringify(response.data);
                 console.log(jsonBody)
 
@@ -517,198 +563,110 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
 
 
 
-
-  grabarOrden1() {
-    
-
-    if (this.isSubmitting || !this.miFormulario.valid) {
-      // Mostrar modal de SweetAlert indicando que debe llenar los campos obligatorios
-      Swal.fire({
-        title: "Error",
-        text: "Debe llenar los campos obligatorios.",
-        icon: "error"
-      });
-      return;
-    }
-
-    // Deshabilita el botón para evitar múltiples envíos
-    this.isSubmitting = true;
-    // Muestra los valores del formulario en la consola
-    const valoresFormulario = this.miFormulario.value;
-    console.log('Valores del formulario', valoresFormulario);
-  
-    const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
-    const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
-   console.log('nombre del equipo', tipoEquipoNombre)
-
-   /*
-   const dvpWor7Collection = this.elementosTabla.map((orden, index) => ({
-    LineId: index,
-    U_TipEqu: tipoEquipoNombre,
-    U_NumEcon: orden.U_NumEcon,
-    U_NorRep: orden.U_NReparto,
-    U_Marca: orden.U_GoodsBrand,
-    U_Modelo: orden.U_GoodsModel,
-    U_Serie: orden.U_GoodsSerial,
-    U_OdomAct: orden.U_OdoAct,
-    U_OdomNue: orden.U_OdomNue !== undefined ? orden.U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
-    
-  }));*/
-
-    // Crea el objeto con la estructura requerida para el API
-    const bodyParaAPI = {
-      DocEntry: 64,
-      DocNum: 64,
-      Series: -1,
-      U_LastPref: null,
-      U_ConFlo: null,
-      U_DocNum: valoresFormulario.selectedSeriesInput,
-      U_Series: valoresFormulario.selectedSeries,
-      U_Prefix: null,
-      U_TipTra: valoresFormulario.tipoTrabajo,
-      U_RefOrdTra: null,
-      U_CardCode: valoresFormulario.cliente,
-      U_CardName: valoresFormulario.nombre,
-      U_Address: valoresFormulario.direccion,
-      U_City: valoresFormulario.ciudad,
-      U_Phone: valoresFormulario.telefono,
-      U_OrdCom: null,
-      U_PDFOC: null,
-      U_NomSysOC: null,
-      U_Status: valoresFormulario.estadoSeleccionado,
-      U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
-      U_FecEspPar: null,
-      U_Prior: valoresFormulario.prioridadSeleccionada,
-      U_AgVent: valoresFormulario.seleccionAgente,
-      U_NomAgVent: null, // Ajusta según tu lógica
-      U_PerAut: valoresFormulario.autorizadoPor,
-      U_PerRep: valoresFormulario.reportadoPor,
-      U_CodFall: valoresFormulario.selectedFallos,
-      U_ProRep: valoresFormulario.U_ProRep,
-      U_ComTra: valoresFormulario.textoDiagnostico,
-      U_ComRec: null,
-      U_ComRef: null,
-      U_ComMan: null,
-      U_ComRep: null,
-      U_Com: null,
-      U_ComClosed: null,
-      U_TipEqu: null,
-      U_NumEcon: null,
-      U_Marca: null,
-      U_Modelo: null,
-      U_Serie: null,
-      U_Closed: null,
-      U_Ended: null,
-      U_Odom: null,
-      U_EndRec: null,
-      U_StartD: null,
-      U_EndD: null,
-      U_HasD: null,
-      U_HorasMan: null,
-      U_StartC: null,
-      U_EndC: null,
-      U_HasC: null,
-      U_StartA: null,
-      U_EndA: null,
-      U_HasA: null,
-      U_StartP: null,
-      U_EndP: null,
-      U_HasP: null,
-      U_StartE: null,
-      U_EndE: null,
-      U_HasE: null,
-      U_DocT: null,
-      U_DocR: null,
-      U_DocCot: null,
-      U_DocFac: null,
-      U_EnTras: null,
-      U_FueSer: null,
-      U_NorRep: null,
-      U_TecResp: valoresFormulario.seleccionTecnico,
-      U_Coord: valoresFormulario.seleccionCoordinador,
-      U_ManObrCap: null,
-      DVP_WOR1Collection: null,
-      DVP_WOR2Collection: null,
-      DVP_WOR3Collection: null,
-      DVP_WOR4Collection: null,
-      DVP_WOR5Collection: null,
-      DVP_WOR6Collection: null,
-      //DVP_WOR7Collection: dvpWor7Collection,
-      DVP_WOR7Collection: []= [{
-        LineId: 1, // Asegura que LineId sea único
-        U_TipEqu:tipoEquipoNombre,
-        U_NumEcon: this.elementosTabla[0].U_NumEcon,
-        U_NorRep: this.elementosTabla[0].U_NReparto,
-        U_Marca: this.elementosTabla[0].U_GoodsBrand,
-        U_Modelo: this.elementosTabla[0].U_GoodsModel,
-        U_Serie: this.elementosTabla[0].U_GoodsSerial,
-        U_OdomAct: this.elementosTabla[0].U_OdoAct,
-        U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[0].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
-      }],
-    };
-
-   
-    console.log('Valores mandados al api', bodyParaAPI);
-    // Llama al servicio para guardar los datos en el API
-    const jsonBody = JSON.stringify(bodyParaAPI);
-  console.log(jsonBody)
-
-  
-      this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI)
-      .subscribe(
-        response => {
-          console.log('Respuesta del API', response);
-          Swal.fire({
-            title: "Exito",
-            text: "OT Grabado con Exito",
-            icon: "success"
-          });
-        },
-        
-        error => {
-          console.error('Error al llamar al API', error);
-          Swal.fire({
-            title: "Error",
-            text: "Error al llamar al API",
-            icon: "error"
-          });
-        }
-      ) .add(() => {
-        // Habilita el botón después de que la solicitud ha terminado (ya sea con éxito o con error)
-        this.isSubmitting = false;
-
-        //this.miFormulario.reset()
-      });
-    //this.miFormulario.reset()
-
-  }
-  
-
-
   grabarOrden() {
     
       // El formulario es válido, procede a enviar los datos al servicio
       const valoresFormulario = this.miFormulario.value;
-      
+      /*
       const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
       const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
+*/
+      const tipoEquipoNombre = this.tipoTrabajoSeleccionado;
+
      console.log('nombre del equipo', tipoEquipoNombre)
 
+     const uNorRepValue = this.selectedU_NReparto;
+     const almacen = this.almacenSeleccionado;
+     const valoresUOdomNue = this.elementosTabla.map(elemento => elemento.U_OdomNue !== undefined ? elemento.U_OdomNue : null);
+     //const valoresUOdomNue = this.elementosTabla.map(elemento => elemento.U_OdomNue);
+
+     const valoresUExistencia = this.elementosTablaRefacciones.map((elemento) => elemento.Existencia);
+     
+     //const valoresUExistencia = this.elementosTablaRefacciones.map(elemento => elemento.Existencia).filter(existencia => existencia !== '');
+     //const valoresUExistencia = this.elementosTablaRefacciones[index]?.Existencia || '';
 
 
-     const dvpWor7Collection = this.elementosTabla.slice(0, -1).map((elemento, index) => ({
+     /*
+     const detallesCotizacionesParaAPI = this.elementosTablaRefacciones.map((detalle, index) => ({
+      //LineId: null,
       LineId: index + 1,
-      U_TipEqu: tipoEquipoNombre,
+      U_ItemCode: detalle.ItemCode,
+      U_ItemName: detalle.Dscription,
+      U_Quantity: detalle.Quantity,
+      U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
+      U_CarEmp: "N",
+      U_InCot: null,
+      U_Ins: null,
+      U_StaAlm: null,
+      U_DocEnt: null,
+      U_DocSal: null,
+      U_LinDocSal: null,
+      U_AlmEnt: "08", // Ajusta según tus necesidades
+      U_AlmSal: null,
+     // U_CotVen: 4534,
+      U_CotVen: detalle.DocEntry,// Ajusta según tus necesidades
+      U_LinCot: null,
+      U_OrdVen: null,
+      U_LinOrdVen: null,
+      U_StaSol: null,
+      U_OrdCom: null,
+      U_LinOrdCom: null,
+      U_TipDocSal: null,
+      U_Factura: null,
+      U_LinFactura: null,
+      U_Entregado: null,
+      U_InvIt: null,
+      U_EsSer: null,
+      U_CodTec: null,
+      U_NomTec: null,
+      U_FecSer: null,
+      U_End: null,
+      U_HorSer: 0.0,
+      U_HorSerR: 0.0,
+      //U_Existencia: 0.0,
+      U_Existencia: this.elementosTablaRefacciones[index +1]?.Existencia || '',
+      //U_Existencia: detalle.Existencia !== undefined ? detalle.Existencia : 0, // Se usa un valor por defecto (0) si Existencia es undefined
+      //U_NorRep: detalle.NorRep,
+       U_NorRep: uNorRepValue, // Ajusta según tus necesidades
+    }));
+
+    const elementos = this.elementosTablaRefacciones.map((detalle, index) => ({
+      LineId: index + 1,
+      U_NorRep: uNorRepValue,
+      
+    }));
+
+
+
+const fecha = this.fechaSeleccionadatablas;
+
+  const dvpWor2Collection = this.elementosTablaManoDeObra.map((nuevaManoDeObra, index) => ({
+    LineId: index + 1, // Ajusta el LineId según tus necesidades
+    U_ItemCode: nuevaManoDeObra.Articulo,
+    U_ItemName: nuevaManoDeObra.Nombres,
+    U_CodTec: nuevaManoDeObra.Code,
+    U_NomTec: nuevaManoDeObra.Name,
+    U_FecSer: fecha,
+    U_End: nuevaManoDeObra.Ejecutada === 'ejecutada' ? 'S' : 'N', // Suponiendo que Ejecutada es un booleano
+    U_HorSer: '', // Convertir a número, si es necesario
+    U_HorSerR: '', // Convertir a número, si es necesario
+    U_Quantity: this.elementosTablaManoDeObra[index +1]?.Cantidad || '', // Convertir a número, si es necesario
+}));
+
+*/
+     const dvpWor7Collection = this.elementosTabla.slice(0, -1).map((elemento, index) => ({
+      
+      LineId: index + 1,
+     // U_TipEqu: tipoEquipoNombre,
+      U_TipEqu: elemento.U_TipEqu,
       U_NumEcon: elemento.U_NumEcon,
       U_NorRep: elemento.U_NReparto,
       U_Marca: elemento.U_GoodsBrand,
       U_Modelo: elemento.U_GoodsModel,
       U_Serie: elemento.U_GoodsSerial,
       U_OdomAct: elemento.U_OdoAct,
-    
-      //U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[index].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
       U_OdomNue: elemento.U_OdomNue !== undefined ? elemento.U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
-   
+      //U_OdomNue: valoresUOdomNue[index],
     }));
 
       const bodyParaAPI = {
@@ -731,7 +689,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
         U_PDFOC: null,
         U_NomSysOC: null,
         U_Status: valoresFormulario.estadoSeleccionado,
-        U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
+        U_DocDate: valoresFormulario.fechaSeleccionada,
         U_FecEspPar: null,
         U_Prior: valoresFormulario.prioridadSeleccionada,
         U_AgVent: valoresFormulario.codigoAgente,
@@ -783,7 +741,9 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
         U_Coord: valoresFormulario.seleccionCoordinador,
         U_ManObrCap: null,
         DVP_WOR1Collection: null,
+       // DVP_WOR1Collection:elementos,
         DVP_WOR2Collection: null,
+       // DVP_WOR2Collection: dvpWor2Collection,
         DVP_WOR3Collection: null,
         DVP_WOR4Collection: null,
         DVP_WOR5Collection: null,
@@ -847,295 +807,8 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     
   }
 
-  async grabarOrden0() {
-    if (this.miFormulario.valid) {
-      try {
-        // Preparación de los datos para la solicitud al API...
-  
-        const valoresFormulario = this.miFormulario.value;
-      
-        const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
-        const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
-       console.log('nombre del equipo', tipoEquipoNombre)
-  
-  
-  
-       const dvpWor7Collection = this.elementosTabla.map((elemento, index) => ({
-        LineId: index + 1,
-        U_TipEqu: tipoEquipoNombre,
-        
-        U_NumEcon: elemento.U_NumEcon,
-        U_NorRep: elemento.U_NReparto,
-        U_Marca: elemento.U_GoodsBrand,
-        U_Modelo: elemento.U_GoodsModel,
-        U_Serie: elemento.U_GoodsSerial,
-        U_OdomAct: elemento.U_OdoAct,
-        U_OdomNue: elemento.U_OdomNue !== undefined ? elemento.U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
-       // U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[index].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
-      }));
-  
-        const bodyParaAPI = {
-          DocEntry: 64,
-          DocNum: 64,
-          Series: -1,
-          U_LastPref: null,
-          U_ConFlo: null,
-          U_DocNum: valoresFormulario.selectedSeriesInput,
-          U_Series: valoresFormulario.selectedSeries,
-          U_Prefix: null,
-          U_TipTra: valoresFormulario.tipoTrabajo,
-          U_RefOrdTra: null,
-          U_CardCode: valoresFormulario.cliente,
-          U_CardName: valoresFormulario.nombre,
-          U_Address: valoresFormulario.direccion,
-          U_City: valoresFormulario.ciudad,
-          U_Phone: valoresFormulario.telefono,
-          U_OrdCom: null,
-          U_PDFOC: null,
-          U_NomSysOC: null,
-          U_Status: valoresFormulario.estadoSeleccionado,
-          U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
-          U_FecEspPar: null,
-          U_Prior: valoresFormulario.prioridadSeleccionada,
-          U_AgVent: valoresFormulario.seleccionAgente,
-          U_NomAgVent: null, // Ajusta según tu lógica
-          U_PerAut: valoresFormulario.autorizadoPor,
-          U_PerRep: valoresFormulario.reportadoPor,
-          U_CodFall: valoresFormulario.selectedFallos,
-          U_ProRep: valoresFormulario.U_ProRep,
-          U_ComTra: valoresFormulario.textoDiagnostico,
-          U_ComRec: null,
-          U_ComRef: null,
-          U_ComMan: null,
-          U_ComRep: null,
-          U_Com: null,
-          U_ComClosed: null,
-          U_TipEqu: null,
-          U_NumEcon: null,
-          U_Marca: null,
-          U_Modelo: null,
-          U_Serie: null,
-          U_Closed: null,
-          U_Ended: null,
-          U_Odom: null,
-          U_EndRec: null,
-          U_StartD: null,
-          U_EndD: null,
-          U_HasD: null,
-          U_HorasMan: null,
-          U_StartC: null,
-          U_EndC: null,
-          U_HasC: null,
-          U_StartA: null,
-          U_EndA: null,
-          U_HasA: null,
-          U_StartP: null,
-          U_EndP: null,
-          U_HasP: null,
-          U_StartE: null,
-          U_EndE: null,
-          U_HasE: null,
-          U_DocT: null,
-          U_DocR: null,
-          U_DocCot: null,
-          U_DocFac: null,
-          U_EnTras: null,
-          U_FueSer: null,
-          U_NorRep: null,
-          U_TecResp: valoresFormulario.seleccionTecnico,
-          U_Coord: valoresFormulario.seleccionCoordinador,
-          U_ManObrCap: null,
-          DVP_WOR1Collection: null,
-          DVP_WOR2Collection: null,
-          DVP_WOR3Collection: null,
-          DVP_WOR4Collection: null,
-          DVP_WOR5Collection: null,
-          DVP_WOR6Collection: null,
-          DVP_WOR7Collection: dvpWor7Collection,
-         
-         
-        };
-  
-        console.log('Valores mandados al api', bodyParaAPI);
-        // Llama al servicio para guardar los datos en el API
-        const jsonBody = JSON.stringify(bodyParaAPI);
-      console.log(jsonBody)
 
-        const respuesta = await this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI).toPromise();
-  
-        if (respuesta) {
-          console.log('Respuesta del servicio:', respuesta);
-          Swal.fire({
-            title: "Exito",
-            text: "OT Grabado con Exito",
-            icon: "success"
-          });
-          // Aquí podrías realizar otras acciones, como actualizar la tabla, etc.
-        } else {
-          throw new Error('Error al llamar al API');
-        }
-  
-      } catch (error) {
-        console.error('Error en la petición:', error);
-        Swal.fire({
-          title: "Error",
-          text: "Error al llamar al API",
-          icon: "error"
-        });
-      }
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Debe llenar los campos del formulario',
-      });
-    }
-  }
-  
-  
-  
 
-  grabarOrden2() {
-    if (this.miFormulario.valid) {
-      // El formulario es válido, procede a enviar los datos al servicio
-      const valoresFormulario = this.miFormulario.value;
-  
-      const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
-      const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
-     console.log('nombre del equipo', tipoEquipoNombre)
-
-      const bodyParaAPI = {
-        DocEntry: 64,
-        DocNum: 64,
-        Series: -1,
-        U_LastPref: null,
-        U_ConFlo: null,
-        U_DocNum: valoresFormulario.selectedSeriesInput,
-        U_Series: valoresFormulario.selectedSeries,
-        U_Prefix: null,
-        U_TipTra: valoresFormulario.tipoTrabajo,
-        U_RefOrdTra: null,
-        U_CardCode: valoresFormulario.cliente,
-        U_CardName: valoresFormulario.nombre,
-        U_Address: valoresFormulario.direccion,
-        U_City: valoresFormulario.ciudad,
-        U_Phone: valoresFormulario.telefono,
-        U_OrdCom: null,
-        U_PDFOC: null,
-        U_NomSysOC: null,
-        U_Status: valoresFormulario.estadoSeleccionado,
-        U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
-        U_FecEspPar: null,
-        U_Prior: valoresFormulario.prioridadSeleccionada,
-        U_AgVent: valoresFormulario.seleccionAgente,
-        U_NomAgVent: null, // Ajusta según tu lógica
-        U_PerAut: valoresFormulario.autorizadoPor,
-        U_PerRep: valoresFormulario.reportadoPor,
-        U_CodFall: valoresFormulario.selectedFallos,
-        U_ProRep: valoresFormulario.U_ProRep,
-        U_ComTra: valoresFormulario.textoDiagnostico,
-        U_ComRec: null,
-        U_ComRef: null,
-        U_ComMan: null,
-        U_ComRep: null,
-        U_Com: null,
-        U_ComClosed: null,
-        U_TipEqu: null,
-        U_NumEcon: null,
-        U_Marca: null,
-        U_Modelo: null,
-        U_Serie: null,
-        U_Closed: null,
-        U_Ended: null,
-        U_Odom: null,
-        U_EndRec: null,
-        U_StartD: null,
-        U_EndD: null,
-        U_HasD: null,
-        U_HorasMan: null,
-        U_StartC: null,
-        U_EndC: null,
-        U_HasC: null,
-        U_StartA: null,
-        U_EndA: null,
-        U_HasA: null,
-        U_StartP: null,
-        U_EndP: null,
-        U_HasP: null,
-        U_StartE: null,
-        U_EndE: null,
-        U_HasE: null,
-        U_DocT: null,
-        U_DocR: null,
-        U_DocCot: null,
-        U_DocFac: null,
-        U_EnTras: null,
-        U_FueSer: null,
-        U_NorRep: null,
-        U_TecResp: valoresFormulario.seleccionTecnico,
-        U_Coord: valoresFormulario.seleccionCoordinador,
-        U_ManObrCap: null,
-        DVP_WOR1Collection: null,
-        DVP_WOR2Collection: null,
-        DVP_WOR3Collection: null,
-        DVP_WOR4Collection: null,
-        DVP_WOR5Collection: null,
-        DVP_WOR6Collection: null,
-        //DVP_WOR7Collection: dvpWor7Collection,
-        DVP_WOR7Collection: []= [{
-          LineId: 1, // Asegura que LineId sea único
-          U_TipEqu:tipoEquipoNombre,
-          U_NumEcon: this.elementosTabla[0].U_NumEcon,
-          U_NorRep: this.elementosTabla[0].U_NReparto,
-          U_Marca: this.elementosTabla[0].U_GoodsBrand,
-          U_Modelo: this.elementosTabla[0].U_GoodsModel,
-          U_Serie: this.elementosTabla[0].U_GoodsSerial,
-          U_OdomAct: this.elementosTabla[0].U_OdoAct,
-          U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[0].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
-        }],
-      };
-  
-      // Llama al servicio para enviar los datos
-      this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI)
-        .pipe(
-          catchError((error) => {
-            // Manejar errores de conexión o cualquier otro error
-            console.error('Error en la petición:', error);
-            Swal.fire({
-              title: 'Error',
-              text: 'Error al llamar al API',
-              icon: 'error'
-            });
-  
-            // Puedes elegir retornar un observable vacío o re-lanzar el error
-            return throwError('Error en la petición');
-          })
-        )
-        .subscribe(
-          (respuesta) => {
-            // Manejar la respuesta del servicio según sea necesario
-            console.log('Respuesta del servicio:', respuesta);
-            Swal.fire({
-              title: 'Éxito',
-              text: 'OT Grabado con Éxito',
-              icon: 'success'
-            });
-            
-          },
-          (error) => {
-            // Este bloque se ejecutará solo si hay un error y no se enviarán datos al API
-            console.error('Error en la petición (suscripción):', error);
-          }
-        );
-    } else {
-      // El formulario no es válido, muestra un mensaje con SweetAlert
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Debe llenar los campos del formulario',
-      });
-    }
-  }
 
   onSubmit(): void {
     if (this.modoEdicion) {
@@ -1160,6 +833,150 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
     const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
    console.log('nombre del equipo', tipoEquipoNombre)
+
+   const uNorRepValue = this.selectedU_NReparto;
+
+   const detallesCotizacionesParaAPI = this.dDetallesCotizaciones.map((detalle, index) => ({
+    //LineId: null,
+    LineId: index + 1,
+    U_ItemCode: detalle.ItemCode,
+    U_ItemName: detalle.Dscription,
+    U_Quantity: detalle.Quantity,
+    U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
+    U_CarEmp: "N",
+    U_InCot: null,
+    U_Ins: null,
+    U_StaAlm: null,
+    U_DocEnt: null,
+    U_DocSal: null,
+    U_LinDocSal: null,
+    U_AlmEnt: "08", // Ajusta según tus necesidades
+    U_AlmSal: null,
+   // U_CotVen: 4534,
+    U_CotVen: detalle.DocEntry,// Ajusta según tus necesidades
+    U_LinCot: null,
+    U_OrdVen: null,
+    U_LinOrdVen: null,
+    U_StaSol: null,
+    U_OrdCom: null,
+    U_LinOrdCom: null,
+    U_TipDocSal: null,
+    U_Factura: null,
+    U_LinFactura: null,
+    U_Entregado: null,
+    U_InvIt: null,
+    U_EsSer: null,
+    U_CodTec: null,
+    U_NomTec: null,
+    U_FecSer: null,
+    U_End: null,
+    U_HorSer: 0.0,
+    U_HorSerR: 0.0,
+    //U_Existencia: 0.0,
+    U_Existencia: this.elementosTablaRefacciones[index +1]?.Existencia || '',
+    //U_Existencia: detalle.Existencia !== undefined ? detalle.Existencia : 0, // Se usa un valor por defecto (0) si Existencia es undefined
+    //U_NorRep: detalle.NorRep,
+     U_NorRep: uNorRepValue, // Ajusta según tus necesidades
+  }));
+
+
+  /*
+    const detallesCotizacionesParaAPI1 = this.dDetallesCotizaciones.map((detalle, index) => {
+      const valoresUExistencia = this.elementosTablaRefacciones[index+1]?.Existencia || '';
+      
+      return {
+          LineId: index + 1,
+          U_ItemCode: detalle.ItemCode,
+          U_ItemName: detalle.Dscription,
+          U_Quantity: detalle.Quantity,
+          U_CarCli: "Y",
+          U_CarEmp: "N",
+          U_AlmEnt: "08",
+          U_InCot: null,
+          U_Ins: null,
+          U_StaAlm: null,
+          U_DocEnt: null,
+          U_DocSal: null,
+          U_LinDocSal: null,
+          U_CotVen: detalle.DocEntry,
+          U_Existencia: valoresUExistencia,
+          U_NorRep: uNorRepValue,
+
+          U_AlmSal: null,
+          // U_CotVen: 4534,
+           
+           U_LinCot: null,
+           U_OrdVen: null,
+           U_LinOrdVen: null,
+           U_StaSol: null,
+           U_OrdCom: null,
+           U_LinOrdCom: null,
+           U_TipDocSal: null,
+           U_Factura: null,
+           U_LinFactura: null,
+           U_Entregado: null,
+           U_InvIt: null,
+           U_EsSer: null,
+           U_CodTec: null,
+           U_NomTec: null,
+           U_FecSer: null,
+           U_End: null,
+           U_HorSer: 0.0,
+           U_HorSerR: 0.0,
+           //U_Existencia: 0.0,
+         
+      };
+  });*/
+
+  const elementosFiltrados = this.elementosTablaManoDeObra.filter((manoDeObra, index) => index !== 0 && manoDeObra.Articulo !== '');
+  const fecha = this.fechaSeleccionadatablas;
+
+  const dvpWor2Collection = elementosFiltrados.map((nuevaManoDeObra, index) => ({
+    LineId: index + 1,
+    U_ItemCode: nuevaManoDeObra.Articulo,
+    U_ItemName: nuevaManoDeObra.Nombres,
+    U_CodTec: this.codigoTecnicoSeleccionado, 
+    U_NomTec: this.nombreTecnicoSeleccionado,
+    U_FecSer: fecha,
+    U_End: nuevaManoDeObra.Ejecutada ? 'S' : 'N',
+    U_HorSer: nuevaManoDeObra.Horas, 
+    U_HorSerR: nuevaManoDeObra.HReales, 
+    U_Quantity: nuevaManoDeObra.Cantidad,
+}));
+
+/*
+const archivosParaAPI = this.archivos.map(archivo => ({
+  LineId: null, // Ajusta según sea necesario
+  VisOrder: 0, // Ajusta según sea necesario
+  Object: null, // Ajusta según sea necesario
+  LogInst: null, // Ajusta según sea necesario
+  U_Descripcion: archivo.descripcion || '', // Ajusta según sea necesario
+  U_File: null, // Ajusta según sea necesario
+  U_NomFile: archivo.name || '', // Ajusta según sea necesario
+  U_NomSys: null, // Ajusta según sea necesario
+  U_TipAnex: archivo.tipo || '', // Ajusta según sea necesario
+  U_Filebase64: '' // Ajusta según sea necesario
+}));*/
+
+
+
+
+const DVP_WOR5Collection = this.archivos.map((archivo, index) => ({
+  LineId: null,
+  VisOrder: index,
+  Object: null,
+  LogInst: null,
+  U_Descripcion: archivo.descripcion,
+  U_File: null, // Ajusta según sea necesario, no parece estar en uso en tu ejemplo
+  U_NomFile: archivo.name,
+  U_NomSys: null, // Ajusta según sea necesario
+  U_TipAnex: archivo.tipo,
+  U_Filebase64: archivo.U_Filebase64 
+  
+}));
+
+
+
 
     const filasNoVacias = this.elementosTabla.filter(fila => fila.U_TipEqu !== null);
         
@@ -1196,7 +1013,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       U_PDFOC: null,
       U_NomSysOC: null,
       U_Status: valoresFormulario.estadoSeleccionado,
-      U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
+      U_DocDate: valoresFormulario.fechaSeleccionada,
       U_FecEspPar: null,
       U_Prior: valoresFormulario.prioridadSeleccionada,
       U_NomAgVent: valoresFormulario.seleccionAgente, 
@@ -1248,11 +1065,11 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       U_TecResp: valoresFormulario.seleccionTecnico,
       U_Coord: valoresFormulario.seleccionCoordinador,
       U_ManObrCap: null,
-      DVP_WOR1Collection: null,
-      DVP_WOR2Collection: null,
+      DVP_WOR1Collection: detallesCotizacionesParaAPI,
+      DVP_WOR2Collection: dvpWor2Collection,
       DVP_WOR3Collection: null,
       DVP_WOR4Collection: null,
-      DVP_WOR5Collection: null,
+      DVP_WOR5Collection: DVP_WOR5Collection,
       DVP_WOR6Collection: null,
       DVP_WOR7Collection: dvpWor7Collection,
      
@@ -1301,6 +1118,62 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
   }
 }
   
+/*
+onFileSelected(event: any) {
+  const selectedFile = event.target.files[0]; // Obtener el archivo seleccionado
+
+  // Verificar si se seleccionó un archivo
+  if (selectedFile) {
+    const nuevoArchivo = {
+      name: selectedFile.name,
+      tipo: selectedFile.type,
+      descripcion: '' // Puedes agregar más campos según sea necesario
+    };
+
+    this.archivos.push(nuevoArchivo); // Agregar el archivo a la lista de archivos
+    console.log(this.archivos)
+  }
+}*/
+
+
+
+onFileSelected(event: any) {
+  const selectedFiles: FileList = event.target.files; // Obtener la lista de archivos seleccionados
+
+  // Verificar si se seleccionó al menos un archivo
+  if (selectedFiles && selectedFiles.length > 0) {
+      // Iterar sobre los archivos seleccionados
+      for (let i = 0; i < selectedFiles.length; i++) {
+          const selectedFile: File = selectedFiles[i]; // Obtener cada archivo individualmente
+
+          // Crear un objeto para el archivo
+          const nuevoArchivo = {
+              name: selectedFile.name,
+              tipo: selectedFile.type,
+              descripcion: '',
+              U_Filebase64: ''
+          };
+
+          // Agregar el archivo a la lista de archivos
+          this.archivos.push(nuevoArchivo);
+
+          // Crear un objeto de FileReader para leer el contenido del archivo como URL de datos
+          const reader = new FileReader();
+          reader.readAsDataURL(selectedFile); // Leer el contenido del archivo como URL de datos
+
+          // Manejar el evento de carga del archivo
+          reader.onload = () => {
+              // Obtener el contenido en Base64
+              const base64String = reader.result as string;
+
+              // Asignar el contenido en Base64 a la propiedad U_Filebase64 del archivo
+              nuevoArchivo.U_Filebase64 = base64String.split(',')[1]; // Eliminar el prefijo "data:application/pdf;base64," antes del contenido Base64
+          };
+      }
+
+      console.log(this.archivos); // Verifica la lista de archivos en la consola
+  }
+}
 
 
   /*
@@ -1987,17 +1860,62 @@ if (this.isBT01Selected) {
     }
   }*/
   
+
+  /*
   onTipoChange(event: any) {
     console.log('Tipo changed:', event.value);
   
     if (this.miFormulario.get('tipoTrabajo')?.value) {
       const tipoSeleccionado = this.listaTrabajos.find(tipo => tipo.Code === event.value);
   
+
+
       if (tipoSeleccionado) {
-        this.miFormulario.get('U_TipEqu')?.setValue(tipoSeleccionado);
-        this.isBT01Selected = event.value === 'BT01';
-        this.isMC01Selected = event.value === 'MC01';
+      this.miFormulario.get('U_TipEqu')?.setValue(tipoSeleccionado);
+      this.tipoTrabajoSeleccionado = event.value;
+        this.isBT01Selected = this.tipoTrabajoSeleccionado === 'BT01';
+        this.isMC01Selected = this.tipoTrabajoSeleccionado === 'MC01';
+
+         console.log('tipo', this.tipoTrabajoSeleccionado)
+        if (this.isBT01Selected) {
+          this.visibleBT01Modal = true;
+        } else if (this.isMC01Selected) {
+          this.visibleMC01Modal = true;
+        } else {
+          console.error('Error: La opción seleccionada en el segundo p-dropdown no coincide.');
+        }
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo encontrar el tipo de equipo seleccionado.',
+          icon: 'error'
+        });
+      }
+    } else {
+      Swal.fire({
+        title: 'Error',
+        text: 'Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.',
+        icon: 'error'
+      });
+      console.error('Error: Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.');
+    }
+  }*/
   
+  
+  onTipoChange(event: any, index: number) {
+    console.log('Tipo changed:', event.value);
+  
+    if (this.miFormulario.get('tipoTrabajo')?.value) {
+      const tipoSeleccionado = this.listaTrabajos.find(tipo => tipo.Code === event.value);
+  
+      if (tipoSeleccionado) {
+        this.miFormulario.get('elementosTabla.' + index + '.U_TipEqu')?.setValue(tipoSeleccionado);
+        this.tipoTrabajoSeleccionado = event.value;
+        this.isBT01Selected = this.tipoTrabajoSeleccionado === 'BT01';
+        this.isMC01Selected = this.tipoTrabajoSeleccionado === 'MC01';
+        
+  
+        console.log('tipo', this.tipoTrabajoSeleccionado);
         if (this.isBT01Selected) {
           this.visibleBT01Modal = true;
         } else if (this.isMC01Selected) {
@@ -2022,7 +1940,8 @@ if (this.isBT01Selected) {
     }
   }
   
-  
+
+/*
   onRowDoubleClick(event: any, rowData: any, tipo: string, codigo:any) {
     this.cargarDatosAdicionalesMC01(tipo, codigo)
     console.log(tipo,codigo)
@@ -2078,9 +1997,71 @@ this.visibleMC01Modal=false
       
        this.selectedU_NReparto = rowData.U_NReparto;
    }
+  }*/
+
+
+  
+  onRowDoubleClick(event: any, rowData: any, tipo: string, codigo: any) {
+    // Cargar datos adicionales según el tipo y código
+    this.cargarDatosAdicionalesMC01(tipo, codigo);
+    console.log(tipo, codigo);
+  
+    const seleccion = this.miFormulario.value.tipoTrabajo;
+  
+    if (this.elementosTabla.length > 0 && this.elementosTabla[0].U_TipEqu !== null) {
+      if (this.puedeAgregarEquipo(seleccion)) {
+        this.agregarNuevoEquipo(rowData);
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: "No se puede agregar más equipos",
+          icon: "error"
+        });
+        this.visibleBT01Modal = false;
+        this.visibleMC01Modal = false;
+      }
+    } else if (this.elementosTabla.length === 1 && this.elementosTabla[0].U_TipEqu === null) {
+      this.agregarNuevoEquipo(rowData);
+    }
   }
-
-
+  
+  private puedeAgregarEquipo(seleccion: string): boolean {
+    const permitidos = ['MP1200', 'MP1000', 'MP200', 'MP2000', 'MP2400', 'MP250', 'MP500', 'MP600'];
+    return permitidos.includes(seleccion);
+  }
+  
+  private agregarNuevoEquipo(rowData: any): void {
+    this.elementosTabla[this.elementosTabla.length - 1] = {
+       //U_TipEqu: 1,
+      //U_TipEqu:rowData.U_TipEqu,
+      U_TipEqu:this.tipoTrabajoSeleccionado, 
+      U_NReparto: rowData.U_NReparto,
+      U_NumEcon: rowData.U_NumEcon,
+      U_GoodsBrand: rowData.U_GoodsBrand,
+      U_GoodsModel: rowData.U_GoodsModel,
+      U_GoodsSerial: rowData.U_GoodsSerial,
+      U_OdoAct: rowData.U_OdoAct,
+      U_OdomNue: rowData.U_OdomNue
+    };
+    this.visibleBT01Modal = false;
+    this.visibleMC01Modal = false;
+    this.elementosTabla.push({
+      U_TipEqu: null,
+      U_NReparto: '',
+      U_NumEcon: '',
+      U_GoodsBrand: '',
+      U_GoodsModel: '',
+      U_GoodsSerial: '',
+      U_OdoAct: '',
+      U_OdomNue: null
+    });
+  
+    this.selectedRowData = rowData;
+    this.clienteProp = rowData.U_CliProp;
+    this.nombreProp = rowData.U_NCliProp;
+    this.selectedU_NReparto = rowData.U_NReparto;
+  }
+  
 
 onrowDobleClickref(orden: any) {
   // Verifica si la opción "Cotización" está seleccionada en el dropdown de estados
@@ -2277,6 +2258,7 @@ onrowDobleClickcotizacion1(cotizacion: any) {
                     U_GoodsSerial: '',
                     Almacen: cotizacion.SeriesName,
                     Existencia: '',
+                    //Existencia: detalle.stocktotal,
                     original: false,
                     cotizacionAsociada: true,
                   };
@@ -2342,7 +2324,7 @@ onrowDobloClickManoDeObra1(mano: any) {
       Articulo: mano.ItemCode,
       Nombres: mano.ItemName,
       Horas: mano.stocktotal,
-      Cantidad: '',
+      Cantidad: null,
       Tecnico: '',   
       Nombre: '',    
       Fecha: '',   
@@ -2358,76 +2340,12 @@ onrowDobloClickManoDeObra1(mano: any) {
     //this.manoDeObra = false
     this.elementosTablaManoDeObra = [...this.elementosTablaManoDeObra];
     // Limpia el formulario si es necesario
-    this.miFormulario.reset();
+    //this.miFormulario.reset();
   
   this.manoDeObra = false
 }
 
-/*
-onrowDobloClickManoDeObra1(mano: any) {
-  // Verifica si los campos de los selects no están vacíos
-  if (this.miFormulario.get('tipoTrabajo')?.value &&
-      this.miFormulario.get('selectedSeries')?.value) {
 
-    // Crea un nuevo objeto para la nueva posición en la tabla
-    const nuevaManoDeObra = {
-      Articulo: mano.ItemCode,
-      Nombres: mano.ItemName,
-      Horas: mano.stocktotal,
-      Cantidad: '',
-      Tecnico: '',   
-      Nombre: '',    
-      Fecha: '',   
-      HReales: '', 
-      Ejecutada: '',
-    };
-  
-    this.elementosTablaManoDeObra.push(nuevaManoDeObra);
-  
-    this.ultimaPosicionCreada = this.elementosTablaManoDeObra.length - 1;
-  
-    this.elementosTablaManoDeObra = [...this.elementosTablaManoDeObra];
-  
-    // Limpia el formulario si es necesario
-    this.miFormulario.reset();
-    
-
-  } else {
-    // Muestra un mensaje de error si la validación no se cumple
-    Swal.fire({
-      title: 'Error',
-      text: 'Debe llenar los campos de Tipo de trabajo y Num OT',
-      icon: 'error'
-    });
-
-    console.error('Error: Alguno de los campos de los selects está vacío.');
-  }
-  this.manoDeObra = false;
-}*/
-
-
-/*
-onrowDobloClickTecnico(manoTecnicos: any) {
-  // Busca la posición de nuevaManoDeObra
-  const nuevaManoDeObraIndex = this.elementosTablaManoDeObra.findIndex((item) => item.Articulo);
-
-  if (nuevaManoDeObraIndex !== -1) {
-    // Actualiza las propiedades "Técnico" y "Nombre" en la misma posición de nuevaManoDeObra
-   this.elementosTablaManoDeObra[nuevaManoDeObraIndex].Tecnico = manoTecnicos.Code;
-   this.elementosTablaManoDeObra[nuevaManoDeObraIndex].Nombre = manoTecnicos.Name;
-    
-  } else {
-    // Si nuevaManoDeObra no está creada, muestra un mensaje o realiza alguna acción necesaria
-    Swal.fire({
-      title: 'Error',
-      text: 'La posicion nuevaManoDeObra no está creada.',
-      icon: 'error'
-    });
-    console.error("Error: nuevaManoDeObra no está creada");
-
-  }
-  this.manoDeObraTecnicos = false;
-}*/
 
 onrowDobloClickTecnico(manoTecnicos: any) {
   // Verifica si hay una posición creada
@@ -2435,6 +2353,10 @@ onrowDobloClickTecnico(manoTecnicos: any) {
     // Actualiza las propiedades "Técnico" y "Nombre" en la última posición de nuevaManoDeObra
     this.elementosTablaManoDeObra[this.ultimaPosicionCreada].Tecnico = manoTecnicos.Code;
     this.elementosTablaManoDeObra[this.ultimaPosicionCreada].Nombre = manoTecnicos.Name;
+
+
+    this.codigoTecnicoSeleccionado = manoTecnicos.Code;
+        this.nombreTecnicoSeleccionado = manoTecnicos.Name;
   } else {  
     // Si nuevaManoDeObra no está creada, muestra un mensaje o realiza alguna acción necesaria
     Swal.fire({
@@ -2449,95 +2371,29 @@ onrowDobloClickTecnico(manoTecnicos: any) {
 }
 
 /*
-onrowDobloClickProveedoresTerceros(proveedor: any) {
-  // Crea un nuevo objeto para la nueva posición en la tabla
-  console.log('Datos de la fila seleccionada:', proveedor);
+onrowDobloClickTecnico(manoTecnicos: any, index: number) {
+  if (index >= 0 && index < this.elementosTablaManoDeObra.length) {
+      this.elementosTablaManoDeObra[index].Tecnico = manoTecnicos.Code;
+      this.elementosTablaManoDeObra[index].Nombre = manoTecnicos.Name;
 
-  const nuevaProveedores = {
-    Proveedor: proveedor.CardCode,
-    Nombre: proveedor.CardName,
-    OrdenCompra: '',
-    Total:''
-    
-  };
-
-  this.elementosTablaTerceros.push(nuevaProveedores);
-  this.terceros = false
-  this.elementosTablaTerceros = [...this.elementosTablaTerceros];
-  // Limpia el formulario si es necesario
-  this.miFormulario.reset();
-}*/
-
-
-/*
-onrowDobloClickProveedoresTerceros(proveedor: any) {
-  // Llamada al servicio para obtener las órdenes de compra asociadas
-  this.creacionOrdenesService.traerOedenCompraTerceros(proveedor.CardCode).subscribe(
-    (ordenesCompra) => {
-      // Asigna las órdenes de compra a la variable correspondiente
-      this.ordenesCompraAsociadas = ordenesCompra;
-
-      // Puedes imprimir las órdenes de compra para verificar en consola
-      console.log('Órdenes de compra asociadas:', this.ordenesCompraAsociadas);
-      console.log(proveedor.CardCode)
-    },
-    (error) => {
-      console.error('Error al cargar órdenes de compra:', error);
-    }
-  );
-
-  // Resto del código para agregar la fila a la tabla
-  const nuevaProveedores = {
-    Proveedor: proveedor.CardCode,
-    Nombre: proveedor.CardName,
-    OrdenCompra: '',
-    Total: ''
-  };
-
-  this.elementosTablaTerceros.push(nuevaProveedores);
-  this.terceros = false;
-  this.elementosTablaTerceros = [...this.elementosTablaTerceros];
-  // Limpia el formulario si es necesario
-  this.miFormulario.reset();
-}*/
-
-// tu-componente.component.ts
-/*
-onrowDobloClickProveedoresTerceros(proveedor: any) {
-  // Imprime el CardCode en la consola para verificar que es correcto
-  console.log('CardCode del proveedor:', proveedor.CardCode);
-
-  // Llamada al servicio para obtener las órdenes de compra asociadas
-  this.creacionOrdenesService.traerOedenCompraTerceros2(proveedor.CardCode).subscribe(
-    (ordenesCompra) => {
-      // Asigna las órdenes de compra a la variable correspondiente
-      this.ordenesCompraAsociadas = ordenesCompra;
+      this.tecnicosSeleccionados[index] = {
+          codigo: manoTecnicos.Code,
+          nombre: manoTecnicos.Name
+      };
 
       
-      // Puedes imprimir las órdenes de compra para verificar en consola
-      console.log('Órdenes de compra asociadas:', this.ordenesCompraAsociadas);
-     
-
-    },
-    (error) => {
-      console.error('Error al cargar órdenes de compra:', error);
-    }
-  );
-
-  // Resto del código para agregar la fila a la tabla
-  const nuevaProveedores = {
-    Proveedor: proveedor.CardCode,
-    Nombre: proveedor.CardName,
-    OrdenCompra: '',
-    Total: ''
-  };
-
-  this.elementosTablaTerceros.push(nuevaProveedores);
-  this.terceros = false;
-  this.elementosTablaTerceros = [...this.elementosTablaTerceros];
-  // Limpia el formulario si es necesario
-  this.miFormulario.reset();
+  } else {
+      Swal.fire({
+          title: 'Error',
+          text: 'No se pudo actualizar la fila seleccionada. Índice de fila inválido.',
+          icon: 'error'
+      });
+      console.error('Error: Índice de fila inválido en onrowDobloClickTecnico');
+  }
+  this.manoDeObraTecnicos = false;
 }*/
+
+
 
 
 onrowDobloClickProveedoresTerceros(proveedor: any) {
@@ -2578,7 +2434,7 @@ onrowDobloClickProveedoresTerceros(proveedor: any) {
     
     this.elementosTablaTerceros = [...this.elementosTablaTerceros];
     // Limpia el formulario si es necesario
-    this.miFormulario.reset();
+    //this.miFormulario.reset();
   
   this.terceros = false;
 }
@@ -2646,7 +2502,7 @@ onrowDobloClickREcomendaciones(recomendacion: any) {
   console.log(this.elementosTablaRecomendaciones);
 
   // Limpia el formulario si es necesario
-  this.miFormulario.reset();
+ // this.miFormulario.reset();
 
   this.recomendaciones = false;
 }
@@ -2682,7 +2538,7 @@ this.miFormulario.get('Cantidad')?.setValue(recomendacion.stocktotal),
   console.log(nuevaRecomendacion)
   this.elementosTablaRecomendaciones = [...this.elementosTablaRecomendaciones];
 
-  this.miFormulario.reset();
+  //this.miFormulario.reset();
   this.recomendaciones = false;
 }
 
@@ -2904,7 +2760,7 @@ openManoTecnico(){
 
     this.actualizarIndiceActivo();
   }
-
+/*
   private actualizarIndiceActivo() {
     let estadoSeleccionado = this.miFormulario.value.estadoSeleccionado;
 
@@ -2925,7 +2781,31 @@ openManoTecnico(){
       this.mostrarContenidoPanelActual();
     }
     
-  }
+  }*/
+
+
+  private actualizarIndiceActivo() {
+    let estadoSeleccionado = this.miFormulario.value.estadoSeleccionado;
+
+    if (estadoSeleccionado === 'D') {
+        this.diagnosticoHabilitado = true;
+        this.refaccionesHabilitado = false;
+        this.manoDeObraHabilitado = false;
+        this.tercerosHabilitado = false;
+        this.recomendacionesHbilitado = false;
+        this.anexosHabilitado = false;
+       // this.panelActivo = 'diagnosticoPanel';
+    } else {
+        this.diagnosticoHabilitado = true;
+        this.refaccionesHabilitado = true;
+        this.manoDeObraHabilitado = true;
+        this.tercerosHabilitado = true;
+        this.recomendacionesHbilitado = true;
+        this.anexosHabilitado = true;
+        this.mostrarContenidoPanelActual();
+    }
+}
+
 
   onTabChange(event: any) {
     this.panelActivo = event.index.header;
@@ -3045,6 +2925,10 @@ onchange(event:any){
   }
 
   
+}
+
+cojone(){
+  console.log('cojone')
 }
 
 }
