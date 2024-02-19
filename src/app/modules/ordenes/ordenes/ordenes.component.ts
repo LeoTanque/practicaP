@@ -181,7 +181,7 @@ cotizacionSeleccionadaDocEntry: number | undefined;
 //Mano de obra 
 dManoDeObra:any[]=[];
 elementosTablaManoDeObra:any[]=[
-  {Articulos:'', Nombres:'', Horas: '', Cantidad: '', Tecnico:'', Nombre:'',Fecha:'', HReales:'', Ejecutada:'' }
+  {U_ItemCode:'', U_ItemName:'', U_HorSer: '', U_Quantity: '', U_CodTec:'', U_NomTec:'',U_FecSer:'', U_HorSerR:'', U_End:'' }
 ]
 
 
@@ -449,6 +449,8 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     );
   }*/
 
+
+  
   private cargarDatosOrden(docEntry: number): void {
     // Llama al servicio para obtener detalles y actualiza tu formulario
     this.creacionOrdenesService.obtenerDetalleOrden(docEntry).subscribe(
@@ -481,11 +483,93 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     contrato: response.data.U_OrdCom,
                     textoDiagnostico: response.data.U_ComTra,
                     DVP_WOR7Collection: response.data.DVP_WOR7Collection || [],
+                  
+                    DVP_WOR1Collection: response.data.DVP_WOR1Collection || [],
                     DVP_WOR2Collection: response.data.DVP_WOR2Collection || [],
-                   
+                    DVP_WOR5Collection: response.data.DVP_WOR5Collection || [],
                 
                 };
 
+/*
+                if (response.data.DVP_WOR1Collection && Array.isArray(response.data.DVP_WOR1Collection)) {
+                  this.elementosTablaRefacciones = response.data.DVP_WOR1Collection.map((cotizacion: any) => ({
+                  
+                    LineId: cotizacion.LineId,
+                    U_ItemCode: cotizacion.ItemCode,
+                    U_ItemName: cotizacion.Dscription,
+                    U_Quantity: cotizacion.Quantity,
+                    U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
+                    U_CarEmp: "N",
+                    U_InCot: null,
+                    U_Ins: null,
+                    U_StaAlm: null,
+                    U_DocEnt: null,
+                    U_DocSal: null,
+                    U_LinDocSal: null,
+                    U_AlmEnt: "08", // Ajusta según tus necesidades
+                    U_AlmSal: null,
+                   // U_CotVen: 4534,
+                    U_CotVen: cotizacion.DocEntry,// Ajusta según tus necesidades
+                    U_LinCot: null,
+                    U_OrdVen: null,
+                    U_LinOrdVen: null,
+                    U_StaSol: null,
+                    U_OrdCom: null,
+                    U_LinOrdCom: null,
+                    U_TipDocSal: null,
+                    U_Factura: null,
+                    U_LinFactura: null,
+                    U_Entregado: null,
+                    U_InvIt: null,
+                    U_EsSer: null,
+                    U_CodTec: null,
+                    U_NomTec: null,
+                    U_FecSer: null,
+                    U_End: null,
+                    U_HorSer: 0.0,
+                    U_HorSerR: 0.0,
+                    U_Existencia: 0.0,
+                     U_NorRep: cotizacion.U_NorRep,
+             
+           
+                  }));
+                }*/
+
+                if (!this.fechaSeleccionadatablas) {
+                  this.fechaSeleccionadatablas = new Date(response.data.U_DocDate);
+              }
+
+                if (response.data.DVP_WOR2Collection && Array.isArray(response.data.DVP_WOR2Collection)) {
+                  this.elementosTablaManoDeObra = response.data.DVP_WOR2Collection.map((nuevaManoDeObra: any) => ({
+                    LineId: nuevaManoDeObra.LineId,
+                    U_ItemCode: nuevaManoDeObra.U_ItemCode,
+                    U_ItemName: nuevaManoDeObra.U_ItemName,
+                    U_CodTec: nuevaManoDeObra.U_CodTec, 
+                    U_NomTec: nuevaManoDeObra.U_NomTec,
+                    U_FecSer: nuevaManoDeObra.U_FecSer,
+                    U_End: nuevaManoDeObra.U_End === 'S',
+                    U_HorSer: nuevaManoDeObra.U_HorSer, 
+                    U_HorSerR: nuevaManoDeObra.U_HorSerR, 
+                    U_Quantity: nuevaManoDeObra.U_Quantity, 
+                  }));
+                }
+
+
+
+                if (response.data.DVP_WOR5Collection && Array.isArray(response.data.DVP_WOR5Collection)) {
+                  this.archivos = response.data.DVP_WOR5Collection.map((archivo: any) => ({
+                     // LineId: archivo.LineId,
+                      VisOrder: archivo.VisOrder,
+                      Object: archivo.Object,
+                      LogInst: archivo.LogInst,
+                      U_Descripcion: archivo.U_Descripcion,
+                      U_File: archivo.U_File,
+                      U_NomFile: archivo.U_NomFile,
+                      U_NomSys: archivo.U_NomSys,
+                      U_TipAnex: archivo.U_TipAnex,
+                      U_Filebase64: archivo.U_Filebase64
+                  }));
+              }
                 
                 if (response.data.DVP_WOR7Collection && Array.isArray(response.data.DVP_WOR7Collection)) {
                     this.elementosTabla = response.data.DVP_WOR7Collection.map((elemento: any) => ({
@@ -635,9 +719,9 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       U_NorRep: uNorRepValue,
       
     }));
+*/
 
-
-
+/*
 const fecha = this.fechaSeleccionadatablas;
 
   const dvpWor2Collection = this.elementosTablaManoDeObra.map((nuevaManoDeObra, index) => ({
@@ -652,8 +736,8 @@ const fecha = this.fechaSeleccionadatablas;
     U_HorSerR: '', // Convertir a número, si es necesario
     U_Quantity: this.elementosTablaManoDeObra[index +1]?.Cantidad || '', // Convertir a número, si es necesario
 }));
-
 */
+
      const dvpWor7Collection = this.elementosTabla.slice(0, -1).map((elemento, index) => ({
       
       LineId: index + 1,
@@ -929,19 +1013,19 @@ const fecha = this.fechaSeleccionadatablas;
   });*/
 
   const elementosFiltrados = this.elementosTablaManoDeObra.filter((manoDeObra, index) => index !== 0 && manoDeObra.Articulo !== '');
-  const fecha = this.fechaSeleccionadatablas;
+  const fecha = this.fechaSeleccionadatablas || new Date();;
 
   const dvpWor2Collection = elementosFiltrados.map((nuevaManoDeObra, index) => ({
     LineId: index + 1,
-    U_ItemCode: nuevaManoDeObra.Articulo,
-    U_ItemName: nuevaManoDeObra.Nombres,
+    U_ItemCode: nuevaManoDeObra.U_ItemCode,
+    U_ItemName: nuevaManoDeObra.U_ItemName,
     U_CodTec: this.codigoTecnicoSeleccionado, 
     U_NomTec: this.nombreTecnicoSeleccionado,
     U_FecSer: fecha,
-    U_End: nuevaManoDeObra.Ejecutada ? 'S' : 'N',
-    U_HorSer: nuevaManoDeObra.Horas, 
-    U_HorSerR: nuevaManoDeObra.HReales, 
-    U_Quantity: nuevaManoDeObra.Cantidad,
+    U_End: nuevaManoDeObra.U_End ? 'S' : 'N',
+    U_HorSer: nuevaManoDeObra.U_HorSer, 
+    U_HorSerR: nuevaManoDeObra.U_HorSerR, 
+    U_Quantity: nuevaManoDeObra.U_Quantity,
 }));
 
 /*
@@ -962,15 +1046,16 @@ const archivosParaAPI = this.archivos.map(archivo => ({
 
 
 const DVP_WOR5Collection = this.archivos.map((archivo, index) => ({
-  LineId: null,
+ // LineId: null,
+  LineId: index + 1,
   VisOrder: index,
   Object: null,
   LogInst: null,
-  U_Descripcion: archivo.descripcion,
+  U_Descripcion: archivo.U_Descripcion,
   U_File: null, // Ajusta según sea necesario, no parece estar en uso en tu ejemplo
-  U_NomFile: archivo.name,
+  U_NomFile: archivo.U_NomFile,
   U_NomSys: null, // Ajusta según sea necesario
-  U_TipAnex: archivo.tipo,
+  U_TipAnex: archivo.U_TipAnex,
   U_Filebase64: archivo.U_Filebase64 
   
 }));
@@ -1148,10 +1233,10 @@ onFileSelected(event: any) {
 
           // Crear un objeto para el archivo
           const nuevoArchivo = {
-              name: selectedFile.name,
-              tipo: selectedFile.type,
-              descripcion: '',
-              U_Filebase64: ''
+            U_NomFile: selectedFile.name,
+            U_TipAnex: selectedFile.type,
+            U_Descripcion: '',
+            U_Filebase64: ''
           };
 
           // Agregar el archivo a la lista de archivos
@@ -2321,15 +2406,15 @@ onrowDobloClickManoDeObra1(mano: any) {
   // Crea un nuevo objeto para la nueva posición en la tabla
   
     const nuevaManoDeObra = {
-      Articulo: mano.ItemCode,
-      Nombres: mano.ItemName,
-      Horas: mano.stocktotal,
-      Cantidad: null,
-      Tecnico: '',   
-      Nombre: '',    
-      Fecha: '',   
-      HReales: '', 
-      Ejecutada: '',
+      U_ItemCode: mano.ItemCode,
+      U_ItemName: mano.ItemName,
+      U_HorSer: mano.stocktotal,
+      U_Quantity: null,
+      U_CodTec: '',   
+      U_NomTec: '',    
+      U_FecSer: '',   
+      U_HorSerR: '', 
+      U_End: '',
     
     };
   
@@ -2351,8 +2436,8 @@ onrowDobloClickTecnico(manoTecnicos: any) {
   // Verifica si hay una posición creada
   if (this.ultimaPosicionCreada !== -1) {
     // Actualiza las propiedades "Técnico" y "Nombre" en la última posición de nuevaManoDeObra
-    this.elementosTablaManoDeObra[this.ultimaPosicionCreada].Tecnico = manoTecnicos.Code;
-    this.elementosTablaManoDeObra[this.ultimaPosicionCreada].Nombre = manoTecnicos.Name;
+    this.elementosTablaManoDeObra[this.ultimaPosicionCreada].U_CodTec = manoTecnicos.Code;
+    this.elementosTablaManoDeObra[this.ultimaPosicionCreada].U_NomTec = manoTecnicos.Name;
 
 
     this.codigoTecnicoSeleccionado = manoTecnicos.Code;
@@ -2639,7 +2724,23 @@ onEliminarFilaRef(elemento: any) {
   }
 }
 
-
+onEliminarFilaAnexo(elemento: any) {
+  
+  if (elemento) {
+    const indice = this.archivos.indexOf(elemento);
+    
+    if (indice !== -1) {
+      this.archivos.splice(indice, 1);
+    }
+  } else {
+    // Muestra un mensaje de error ya que la fila está asociada a una cotización
+    Swal.fire({
+      title: 'Error',
+      text: 'No se pudo eliminar.',
+      icon: 'error'
+    });
+  }
+}
 
 
 onDropdownChange2(event: any) {

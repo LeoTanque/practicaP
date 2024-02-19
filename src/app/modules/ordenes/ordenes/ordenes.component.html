@@ -473,26 +473,26 @@ class="text-xs"
                 <tr>
                     <td>
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-6rem" [(ngModel)]="mDeObra.Articulo" />
+                            <input type="text" pInputText class="w-6rem" [(ngModel)]="mDeObra.U_ItemCode" />
                             <i class="pi pi-search" style="color: blue;"(click)="openNewMano()"></i>
                         </div>
                     </td>
                     <td>
-                        {{mDeObra.Nombres}}
+                        {{mDeObra.U_ItemName}}
                     </td>
-                    <td>{{mDeObra.Horas}}</td>
+                    <td>{{mDeObra.U_HorSer}}</td>
                     <td>
                         <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
-                        [(ngModel)]="mDeObra.Cantidad"
+                        [(ngModel)]="mDeObra.U_Quantity"
                         > </p-inputNumber> 
                     </td>
                     <td> 
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-6rem" [(ngModel)]="mDeObra.Tecnico" />
+                            <input type="text" pInputText class="w-6rem" [(ngModel)]="mDeObra.U_CodTec" />
                             <i class="pi pi-search" style="color: blue;"(click)="openManoTecnico()" ></i>
                         </div>
                     </td>
-                    <td>{{ mDeObra.Nombre }}</td>
+                    <td>{{ mDeObra.U_NomTec }}</td>
                     <td>
                         <div class="flex justify-content-center">
                             <p-calendar  
@@ -506,13 +506,13 @@ class="text-xs"
 
                     <td>
                         <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
-                        [(ngModel)]="mDeObra.HReales"
+                        [(ngModel)]="mDeObra.U_HorSerR"
                         > </p-inputNumber>
                     </td>
                     
                     <td>
                         <p-checkbox  name="ejecutada" value="ejecutada" label=""  [binary]="true" inputId="binary" 
-                        [(ngModel)]="mDeObra.Ejecutada"
+                        [(ngModel)]="mDeObra.U_End"
                         ></p-checkbox>
                     </td>
                     
@@ -947,14 +947,14 @@ class="text-xs"
                         </ng-template>
                         <ng-template pTemplate="body" let-archivo>
                             <tr>
-                              <td>{{ archivo.name }}</td>
-                              <td>{{ archivo.tipo }}</td>
+                              <td>{{ archivo.U_NomFile }}</td>
+                              <td>{{ archivo.U_TipAnex }}</td>
                               <td>
-                                <input type="text" pInputText class="w-full" [(ngModel)]="archivo.descripcion" />
+                                <input type="text" pInputText class="w-full" [(ngModel)]="archivo.U_Descripcion" />
                               </td>
                               <td>
                                 <div class="flex gap-2">
-                                  <p-button icon="pi pi-times" severity="danger" styleClass="p-button-danger" ></p-button>
+                                  <p-button icon="pi pi-times" severity="danger" styleClass="p-button-danger" (click)="onEliminarFilaAnexo(archivo)" ></p-button>
                                   <p-button icon="pi pi-check" severity="success" styleClass="p-button-primary" ></p-button>
                                 </div>                              
                               </td>
