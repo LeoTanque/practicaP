@@ -121,7 +121,7 @@ elementosTabla: any[] = [
 
 
 elementosTablaRefacciones:any[]=[
-  {NoParte:'', Descripcion:'', Cantidad:'', CC:'', SC:'',U_GoodsSerial:'', Almacen:'', Existencia:'',original: true }
+  {U_ItemCode:'', U_ItemName:'', U_Quantity:'', CC:'', SC:'',U_NorRep:'', Almacen:'', U_Existencia:'',original: true }
 ]
 
 
@@ -490,7 +490,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                 
                 };
 
-/*
+
                 if (response.data.DVP_WOR1Collection && Array.isArray(response.data.DVP_WOR1Collection)) {
                   this.elementosTablaRefacciones = response.data.DVP_WOR1Collection.map((cotizacion: any) => ({
                   
@@ -529,11 +529,12 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     U_HorSer: 0.0,
                     U_HorSerR: 0.0,
                     U_Existencia: 0.0,
-                     U_NorRep: cotizacion.U_NorRep,
+                    U_NorRep: cotizacion.U_NorRep,
+                    
              
            
                   }));
-                }*/
+                }
 
                 if (!this.fechaSeleccionadatablas) {
                   this.fechaSeleccionadatablas = new Date(response.data.U_DocDate);
@@ -670,7 +671,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
      //const valoresUExistencia = this.elementosTablaRefacciones[index]?.Existencia || '';
 
 
-     /*
+     
      const detallesCotizacionesParaAPI = this.elementosTablaRefacciones.map((detalle, index) => ({
       //LineId: null,
       LineId: index + 1,
@@ -719,7 +720,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       U_NorRep: uNorRepValue,
       
     }));
-*/
+
 
 /*
 const fecha = this.fechaSeleccionadatablas;
@@ -2165,14 +2166,14 @@ onrowDobleClickref(orden: any) {
         if (coincideConAlgunAlmacen) {
           // Crea una nueva fila con los datos de la orden seleccionada
           const nuevaFila = {
-            NoParte: orden.ItemCode,
-            Descripcion: orden.ItemName,
-            Cantidad: '',
+            U_ItemCode: orden.ItemCode,
+            U_ItemName: orden.ItemName,
+            U_Quantity: '',
             CC: '',
             SC: '',
-            U_GoodsSerial: '',
+            U_NorRep: '',
             Almacen: orden.WhsName,
-            Existencia: '',
+            U_Existencia: '',
             original: true,
           };
 
@@ -2335,14 +2336,14 @@ onrowDobleClickcotizacion1(cotizacion: any) {
                 detallesCotizacion.forEach(detalle => {
                   const nuevaFila = {
                     id_padre: opcion,
-                    NoParte: detalle.ItemCode,
-                    Descripcion: detalle.Dscription,
-                    Cantidad: detalle.Quantity,
+                    U_ItemCode: detalle.ItemCode,
+                    U_ItemName: detalle.Dscription,
+                    U_Quantity: detalle.Quantity,
                     CC: 'CC',
                     SC: '',
-                    U_GoodsSerial: '',
+                    U_NorRep: '',
                     Almacen: cotizacion.SeriesName,
-                    Existencia: '',
+                    U_Existencia: '',
                     //Existencia: detalle.stocktotal,
                     original: false,
                     cotizacionAsociada: true,

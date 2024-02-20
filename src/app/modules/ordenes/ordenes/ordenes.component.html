@@ -346,24 +346,21 @@ class="text-xs"
                     <tr>
                         <td>
                             <div class="flex gap-1 align-items-center">
-                                <input type="text" pInputText class="w-6rem" [(ngModel)]="orden.NoParte" />
+                                <input type="text" pInputText class="w-6rem" [(ngModel)]="orden.U_ItemCode" />
                                 <i class="pi pi-search" style="color: blue;"(click)="openNew3()" ></i>
                             </div>
                            
                         </td>
                        
-                        <td>{{ orden.Descripcion }}</td>
+                        <td>{{ orden.U_ItemName }}</td>
                         <td>
-                            <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [(ngModel)]="orden.Cantidad" [min]="0" [max]="" placeholder="0"
+                            <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [(ngModel)]="orden.U_Quantity" [min]="0" [max]="" placeholder="0"
                             > </p-inputNumber>
                         </td>
                         
 
                         <td>
-                            <!--p-radioButton name="tipoExistencia" inputId="ccRadio" [(ngModel)]="TipoExistencia"  value="CC"></!--p-radioButton>
-                           <label-- for="ingredient1" class="ml-2"></label-->
-
-                           <!--p-checkbox name="tipoExistencia" value="CC" label="" [(ngModel)]="TipoExistencia1" [binary]="true" inputId="binary"></!--p-checkbox-->
+                           
                            <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="CC" label="" [binary]="true" inputId="binary"  [disabled]="true" ></p-checkbox>
                            <div *ngIf="!orden.original">
                             <p-checkbox name="tipoExistencia" value="CC" label="" [binary]="true" inputId="binary" [(ngModel)]="TipoExistencia1"  ></p-checkbox>
@@ -371,9 +368,7 @@ class="text-xs"
                         </td>
 
                         <td>
-                            <!--p-radioButton name="tipoExistencia" inputId="scRadio" [(ngModel)]="TipoExistencia" value="SC"></!--p-radioButton>
-                          <label-- for="ingredient2" class="ml-2"></label-->
-                          <!--p-checkbox name="tipoExistencia" value="SC" label="" [(ngModel)]="checked" [binary]="true" inputId="binary"></!--p-checkbox-->
+                            
                           <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="SC" label="" [binary]="true" inputId="binary" [(ngModel)]="checked" ></p-checkbox>
                             <div *ngIf="!orden.original">
                                 <p-checkbox name="tipoExistencia" value="SC" label="" [binary]="true" inputId="binary" [disabled]="true" ></p-checkbox>
@@ -383,7 +378,7 @@ class="text-xs"
 
                         
                         <td>   
-                             <p-dropdown [options]="[selectedU_NReparto]"  placeholder="" appendTo="body" ></p-dropdown>
+                             <p-dropdown [options]="[selectedU_NReparto]"  placeholder="" appendTo="body" [(ngModel)]="orden.U_NorRep" ></p-dropdown>
                         </td>
 
                         <td>   
@@ -400,7 +395,7 @@ class="text-xs"
                              
                         </td>
                         <td>
-                            <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0" [(ngModel)]="orden.Existencia"
+                            <p-inputNumber [size]=1 inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0" [(ngModel)]="orden.U_Existencia"
                            
                             > </p-inputNumber>
                         </td>
