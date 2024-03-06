@@ -1,0 +1,15 @@
+.card {
+    position: fixed;
+    top: 50%; /* Coloca el elemento en el 50% del eje vertical */
+    left: 50%; /* Coloca el elemento en el 50% del eje horizontal */
+    transform: translate(-50%, -50%); /* Centra el elemento tanto vertical como horizontalmente */
+    z-index: 9999; /* Asegura que esté por encima de otros elementos */
+
+    display: flex;
+    flex-direction: column; /* Alinea los elementos verticalmente uno encima del otro */
+    align-items: center; 
+  }
+
+  .card p {
+    margin-bottom: 10px; /* Espacio entre los elementos */
+  }

@@ -110,7 +110,7 @@ class="text-xs"
                         
                         <div class=" flex justify-content-center">
                            
-                            <input type="text" pInputText formControlName="nombre"  class="custom-width w-full mt-2" placeholder="Nombre">
+                            <input type="text" pInputText formControlName="U_CardName"  class="custom-width w-full mt-2" placeholder="Nombre">
                         </div>
                         
                         
@@ -294,11 +294,7 @@ class="text-xs"
     
 </div>
 
-<!--div class="flex gap-2">
-  <p-button type="submit" label="Grabar" [disabled]="isSubmitting"  ></p-button>
-  <p-button label="Regresar" styleClass="p-button-secondary"></p-button>
-  <p-button label="Editar" type="button" [disabled]="isSubmitting" (click)="actualizarOrden()"></p-button>
-</!--div-->
+
 </form>
 
 <div class="card mt-2">
@@ -388,9 +384,9 @@ class="text-xs"
                      
                         <td>
             
-                            <p-dropdown [options]="almacenSeleccionado" [style]="{'width': dropdownWidth3}"   
+                            <p-dropdown [options]="almacenSeleccionado" [style]="{'width': dropdownWidth3}" [(ngModel)]="orden.Almacen"  
                              placeholder="" appendTo="body"
-                             (onChange)="onAlmacenSeleccionadoChange($event)"
+                             (onChange)="onAlmacenSeleccionadoChange($event)" 
                              ></p-dropdown>
                              
                         </td>
@@ -670,20 +666,20 @@ class="text-xs"
                 <tr>
                     <td>
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-10rem w-full" [(ngModel)]="terceros.Proveedor"  />
+                            <input type="text" pInputText class="w-10rem w-full" [(ngModel)]="terceros.U_CardCode"  />
                             <i class="pi pi-search" style="color: blue;"(click)="openTerceros()"></i>
                         </div>
                     </td>
-                    <td> {{terceros.Nombre}} </td>
+                    <td> {{terceros.U_CardName}} </td>
                     <td>
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-full" [(ngModel)]="terceros.OrdenCompra"  />
+                            <input type="text" pInputText class="w-full" [(ngModel)]="terceros.U_DocNumOC"  />
                             <i class="pi pi-search" style="color: blue;"(click)="openOrdenCompra()"></i>
                         </div>
                     </td>
 
                     <td>
-                        {{terceros.Total}}
+                        {{terceros.U_DocTotal}}
                     </td>
 
                     <td>
@@ -839,15 +835,15 @@ class="text-xs"
                 <tr>
                     <td>
                         <div class="flex gap-1 align-items-center">
-                            <input type="text" pInputText class="w-full" [(ngModel)]="recomendacion.NoParte" />
+                            <input type="text" pInputText class="w-full" [(ngModel)]="recomendacion.U_ItemCode" />
                             <i class="pi pi-search" style="color: blue;"(click)="recomendacionesModal()"></i>
                         </div>
                     </td>
                     <td>
-                    {{recomendacion.Descripcion}}
+                    {{recomendacion.U_ItemName}}
                     </td>
                     <td>
-                        <p-inputNumber  inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0"
+                        <p-inputNumber  inputId="minmax" mode="decimal" [min]="0" [max]="" placeholder="0" [(ngModel)]="recomendacion.U_Quantity"
                         > </p-inputNumber>
                     </td>
                     <td>
@@ -987,6 +983,10 @@ class="text-xs"
 </div>
 
 
+
+<ng-container *ngIf="grabandoDatos">
+  <app-progres></app-progres>
+</ng-container>
 
 
 

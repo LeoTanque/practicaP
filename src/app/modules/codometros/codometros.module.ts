@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { EntregaRoutingModule } from './entrega-routing.module';
-import { EntregaComponent } from './entrega/entrega.component';
+import { CodometrosRoutingModule } from './codometros-routing.module';
+import { CodometrosComponent } from './codometros/codometros.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
@@ -11,13 +11,14 @@ import { TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { CardModule } from 'primeng/card';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 @NgModule({
-  declarations: [ 
-    EntregaComponent
+  declarations: [
+    CodometrosComponent
   ],
   imports: [
     CommonModule,
-    EntregaRoutingModule,
+    CodometrosRoutingModule,
     ReactiveFormsModule,
     FormsModule,
     DropdownModule,
@@ -26,7 +27,8 @@ import { CardModule } from 'primeng/card';
     TableModule,
     CalendarModule,
     CheckboxModule,
-    CardModule
+    CardModule,
+    InputTextareaModule
   ]
 })
-export class EntregaModule { }
+export class CodometrosModule { }

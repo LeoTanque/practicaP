@@ -117,7 +117,7 @@
      
 <div class="card">
     <p-table
-        [value]="refacciones"
+        [value]="Entregas"
         [paginator]="true"
         [rows]="5"
         [showCurrentPageReport]="true"
@@ -146,12 +146,12 @@
                 <td>
                     <p-checkbox  name="ejecutada" value="ejecutada" label="" [binary]="true" inputId="binary" ></p-checkbox>
                 </td>
-                <td>{{ refaccion.series }}</td>
-                <td>{{ refaccion.OT }}</td>
-                <td>{{ refaccion.Articulo }}</td>
-                <td>{{ refaccion.Nombre }}</td>
-                <td>{{ refaccion.Cantidad}}</td>
-                <td>{{ refaccion.Almacen }}</td>
+                <td>{{ refaccion.Serie }}</td>
+                <td>{{ refaccion.DocEntry }}</td>
+                <td>{{ refaccion.ItemCode }}</td>
+                <td>{{ refaccion.ItemName }}</td>
+                <td>{{ refaccion.Quantity}}</td>
+                <td>{{ refaccion.WhsCode }}</td>
                 <td>{{ refaccion.Existencia }}</td>
                 <td>{{ refaccion.Norma }}</td>
             </tr>

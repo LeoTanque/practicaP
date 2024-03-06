@@ -14,6 +14,7 @@ const routes: Routes = [
       { path: 'ordenes/:docEntry', loadChildren: () => import('./modules/ordenes/ordenes.module').then(m => m.OrdenesModule) },
       { path:'creacion', loadChildren: () => import('./modules/creacion/creacion.module').then(m=>m.CreacionModule)},
       { path:'entrega', loadChildren: () => import('./modules/entrega/entrega.module').then(m=>m.EntregaModule)},
+      {path: 'codometros', loadChildren: ()=> import('./modules/codometros/codometros.module').then(m=>m.CodometrosModule)}
   ]
   },
  

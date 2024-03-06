@@ -21,8 +21,12 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { CheckboxModule } from 'primeng/checkbox';
 import { CustomFilterPipe } from 'src/app/services/pipe';
 
-
 import { FileUploadModule } from 'primeng/fileupload';
+
+import { ProgressBarModule } from 'primeng/progressbar';
+// For dynamic progressbar demo
+import { ToastModule } from 'primeng/toast';
+import { ProgresModule } from '../progres/progres.module';
 
 @NgModule({
   declarations: [
@@ -50,7 +54,11 @@ import { FileUploadModule } from 'primeng/fileupload';
     //ConfirmDialogModule,
     InputNumberModule,
     CheckboxModule,
-    FileUploadModule
+    FileUploadModule,
+    ProgressBarModule,
+    ToastModule,
+    
+    ProgresModule
   ]
 })
 export class OrdenesModule { }

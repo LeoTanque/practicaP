@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { Observable, catchError, exhaustMap, finalize, map, of, throwError } from 'rxjs';
 import { CreacionOrdenesService } from 'src/app/services/creacion-ordenes.service';
@@ -9,7 +10,8 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-ordenes',
   templateUrl: './ordenes.component.html',
-  styleUrls: ['./ordenes.component.scss']
+  styleUrls: ['./ordenes.component.scss'],
+ // providers: [MessageService]
 })
 export class OrdenesComponent implements OnInit {
 
@@ -19,6 +21,9 @@ export class OrdenesComponent implements OnInit {
 
 @ViewChild('tuTabView') tabView: any;
  globalFilterMC01: string = ''; 
+
+
+ grabandoDatos: boolean = false;
  
  ingredient: any = 'SC';
  TipoExistencia:any = null;
@@ -124,7 +129,7 @@ elementosTablaRefacciones:any[]=[
   {U_ItemCode:'', U_ItemName:'', U_Quantity:'', CC:'', SC:'',U_NorRep:'', Almacen:'', U_Existencia:'',original: true }
 ]
 
-
+Existencia:any = '';
 
 
 selectedU_NReparto: any = '';
@@ -144,6 +149,7 @@ prioridades: any[] = [
   { label: 'Normal', value: 'N' },
   { label: '-', value: '-' },
 ];
+  cardNameInput1:any;
 
 prioridadValidator(control: AbstractControl): { [key: string]: boolean } | null {
   // Asegura que el valor no sea '-'
@@ -154,7 +160,9 @@ estados:any[]=[
   
   {label:'Diagnóstico', value:'D'},
   {label:'Cotización', value: 'C'},
-  {label:'Terminar', value:'T'}
+  {label:'Autorización', value:'A'},
+  {label:'Espera de Partes', value:'P'},
+  {label:'Ejecucion', value:'E'}
 ]
 
 original!: boolean;
@@ -341,7 +349,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       dropdownCotizaciones: [''],
       U_ProRep:[''],
       cliente: [''],
-      nombre: [''],
+      U_CardName: [''],
       direccion: [''],
       ciudad: [''],
       telefono: [''],
@@ -364,7 +372,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     this.actualizarIndiceActivo();
    
    // this.onEstadoSeleccionadoChange1({ value: 'D' });  
-    
+   
   }
 
   get f() {
@@ -453,6 +461,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
   
   private cargarDatosOrden(docEntry: number): void {
     // Llama al servicio para obtener detalles y actualiza tu formulario
+    
     this.creacionOrdenesService.obtenerDetalleOrden(docEntry).subscribe(
         (response: any) => {
             if (response && response.data) {
@@ -476,7 +485,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     dropdownCotizaciones: response.data.U_DocCot,
                     U_ProRep: response.data.U_ProRep,
                     cliente: response.data.U_CardCode,
-                    nombre: response.data.U_CardName,
+                    U_CardName: response.data.U_CardName,
                     direccion: response.data.U_Address,
                     ciudad: response.data.U_City,
                     telefono: response.data.U_Phone,
@@ -490,14 +499,24 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                 
                 };
 
+                if (response.data.U_Series) {
+                  this.cargarDatosSeriealmacen(response.data.U_Series);
+                  this.elementosTablaRefacciones.forEach(orden => {
+                    orden.Almacen = this.almacenSeleccionado;
+                    
+                  });
+                }
+
+                
+
 
                 if (response.data.DVP_WOR1Collection && Array.isArray(response.data.DVP_WOR1Collection)) {
                   this.elementosTablaRefacciones = response.data.DVP_WOR1Collection.map((cotizacion: any) => ({
                   
                     LineId: cotizacion.LineId,
-                    U_ItemCode: cotizacion.ItemCode,
-                    U_ItemName: cotizacion.Dscription,
-                    U_Quantity: cotizacion.Quantity,
+                    U_ItemCode: cotizacion.U_ItemCode,
+                    U_ItemName: cotizacion.U_ItemName,
+                    U_Quantity: cotizacion.U_Quantity,
                     U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
                     U_CarEmp: "N",
                     U_InCot: null,
@@ -506,7 +525,8 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     U_DocEnt: null,
                     U_DocSal: null,
                     U_LinDocSal: null,
-                    U_AlmEnt: "08", // Ajusta según tus necesidades
+                    U_AlmEnt: cotizacion.U_AlmEnt,
+                   // U_AlmEnt: this.almacenSeleccionado , // Ajusta según tus necesidades
                     U_AlmSal: null,
                    // U_CotVen: 4534,
                     U_CotVen: cotizacion.DocEntry,// Ajusta según tus necesidades
@@ -528,38 +548,74 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     U_End: null,
                     U_HorSer: 0.0,
                     U_HorSerR: 0.0,
-                    U_Existencia: 0.0,
+                    U_Existencia: cotizacion.U_Existencia,
                     U_NorRep: cotizacion.U_NorRep,
+                    
                     
              
            
                   }));
                 }
 
+
+
+                this.elementosTablaRefacciones.forEach(orden => {
+                  this.selectedU_NReparto = orden.U_NorRep;
+                  if(orden.original){
+                    orden.original = 'SC';
+                  }else{
+                    orden.original = 'CC'
+                  }
+                 
+                 
+              });
+
                 if (!this.fechaSeleccionadatablas) {
                   this.fechaSeleccionadatablas = new Date(response.data.U_DocDate);
               }
 
                 if (response.data.DVP_WOR2Collection && Array.isArray(response.data.DVP_WOR2Collection)) {
-                  this.elementosTablaManoDeObra = response.data.DVP_WOR2Collection.map((nuevaManoDeObra: any) => ({
-                    LineId: nuevaManoDeObra.LineId,
-                    U_ItemCode: nuevaManoDeObra.U_ItemCode,
-                    U_ItemName: nuevaManoDeObra.U_ItemName,
-                    U_CodTec: nuevaManoDeObra.U_CodTec, 
-                    U_NomTec: nuevaManoDeObra.U_NomTec,
-                    U_FecSer: nuevaManoDeObra.U_FecSer,
-                    U_End: nuevaManoDeObra.U_End === 'S',
-                    U_HorSer: nuevaManoDeObra.U_HorSer, 
-                    U_HorSerR: nuevaManoDeObra.U_HorSerR, 
-                    U_Quantity: nuevaManoDeObra.U_Quantity, 
+                  this.elementosTablaManoDeObra = response.data.DVP_WOR2Collection.map((ManoDeObra: any) => ({
+                    LineId: ManoDeObra.LineId,
+                    U_ItemCode: ManoDeObra.U_ItemCode,
+                    U_ItemName: ManoDeObra.U_ItemName,
+                    U_CodTec: ManoDeObra.U_CodTec, 
+                    U_NomTec: ManoDeObra.U_NomTec,
+                    U_FecSer: ManoDeObra.U_FecSer,
+                    U_End: ManoDeObra.U_End === 'S',
+                    U_HorSer: ManoDeObra.U_HorSer, 
+                    U_HorSerR: ManoDeObra.U_HorSerR, 
+                    U_Quantity:ManoDeObra.U_Quantity, 
                   }));
                 }
 
+                if (response.data.DVP_WOR3Collection && Array.isArray(response.data.DVP_WOR3Collection)) {
+                  this.elementosTablaTerceros = response.data.DVP_WOR3Collection.map((terceros: any) => ({
+                     // LineId: archivo.LineId,
+                      LineId: terceros.LineId,
+                      U_CardCode: terceros.U_CardCode,
+                      U_CardName: terceros.U_CardName,
+                      U_DocNumOC: terceros.U_DocNumOC, 
+                      U_DocTotal: terceros.U_DocTotal
+                  }));
+              }
 
+              if (response.data.DVP_WOR4Collection && Array.isArray(response.data.DVP_WOR4Collection)) {
+                this.elementosTablaRecomendaciones = response.data.DVP_WOR4Collection.map((recomendacion: any) => ({
+                    LineId: recomendacion.LineId,
+                   U_ItemCode: recomendacion.U_ItemCode,
+                   U_ItemName: recomendacion.U_ItemName,
+                   U_Quantity: recomendacion.U_Quantity, 
+                }));
+            }
+                
+
+
+                
 
                 if (response.data.DVP_WOR5Collection && Array.isArray(response.data.DVP_WOR5Collection)) {
                   this.archivos = response.data.DVP_WOR5Collection.map((archivo: any) => ({
-                     // LineId: archivo.LineId,
+                      LineId: archivo.LineId,
                       VisOrder: archivo.VisOrder,
                       Object: archivo.Object,
                       LogInst: archivo.LogInst,
@@ -592,6 +648,8 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     
                     }
 
+                    
+                    
                    
                     if (this.elementosTabla.length > 0) {
                       // Asigna el valor de U_TipEqu para cada fila en elementosTabla
@@ -627,7 +685,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     
                 }
 
-
+                
 
 
                 this.miFormulario.patchValue(datosMapeados);
@@ -648,7 +706,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
 
 
 
-  grabarOrden() {
+  grabarOrden1() {
     
       // El formulario es válido, procede a enviar los datos al servicio
       const valoresFormulario = this.miFormulario.value;
@@ -892,7 +950,257 @@ const fecha = this.fechaSeleccionadatablas;
     
   }
 
+  
 
+  grabarOrden() {
+    // El formulario es válido, procede a enviar los datos al servicio
+    const valoresFormulario = this.miFormulario.value;
+    const tipoEquipoNombre = this.tipoTrabajoSeleccionado;
+    const uNorRepValue = this.selectedU_NReparto;
+    const almacen = this.almacenSeleccionado;
+    const valoresUOdomNue = this.elementosTabla.map(elemento => elemento.U_OdomNue !== undefined ? elemento.U_OdomNue : null);
+    const valoresUExistencia = this.elementosTablaRefacciones.map((elemento) => elemento.Existencia);
+  
+    
+
+    const detallesCotizacionesParaAPI1 = this.elementosTablaRefacciones.map((detalle, index) => ({
+      //LineId: null,
+      LineId: index + 1,
+      U_ItemCode: detalle.U_ItemCode,
+      U_ItemName: detalle.U_ItemName,
+      U_Quantity: detalle.U_Quantity,
+      U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
+      U_CarEmp: "N",
+      U_InCot: null,
+      U_Ins: null,
+      U_StaAlm: null,
+      U_DocEnt: null,
+      U_DocSal: null,
+      U_LinDocSal: null,
+      U_AlmEnt: detalle.Almacen, // Ajusta según tus necesidades
+      U_AlmSal: null,
+     // U_CotVen: 4534,
+      U_CotVen: detalle.DocEntry,// Ajusta según tus necesidades
+      U_LinCot: null,
+      U_OrdVen: null,
+      U_LinOrdVen: null,
+      U_StaSol: null,
+      U_OrdCom: null,
+      U_LinOrdCom: null,
+      U_TipDocSal: null,
+      U_Factura: null,
+      U_LinFactura: null,
+      U_Entregado: null,
+      U_InvIt: null,
+      U_EsSer: null,
+      U_CodTec: null,
+      U_NomTec: null,
+      U_FecSer: null,
+      U_End: null,
+      U_HorSer: 0.0,
+      U_HorSerR: 0.0,
+      U_Existencia: detalle.U_Existencia,
+      U_NorRep: uNorRepValue, // Ajusta según tus necesidades
+      //U_NorRep: detalle.U_NorRep
+    }));
+
+    const elementosFiltrados = this.elementosTablaManoDeObra.filter((manoDeObra, index) => index !== 0 && manoDeObra.Articulo !== '');
+    const fecha = this.fechaSeleccionadatablas;
+
+    const dvpWor2Collection = elementosFiltrados.map((nuevaManoDeObra, index) => ({
+      LineId: index + 1,
+      U_ItemCode: nuevaManoDeObra.U_ItemCode,
+      U_ItemName: nuevaManoDeObra.U_ItemName,
+      U_CodTec: this.codigoTecnicoSeleccionado, 
+      U_NomTec: this.nombreTecnicoSeleccionado,
+      U_FecSer: fecha,
+      U_End: nuevaManoDeObra.U_End ? 'S' : 'N',
+      U_HorSer: nuevaManoDeObra.U_HorSer, 
+      U_HorSerR: nuevaManoDeObra.U_HorSerR, 
+      U_Quantity: nuevaManoDeObra.U_Quantity,
+    }));
+
+    const dvpWor3Collection = this.elementosTablaTerceros.map((terceros, index)=>({
+      LineId: index + 1,
+      U_CardCode: terceros.U_CardCode,
+      U_CardName: terceros.U_CardName,
+      U_DocNumOC: terceros.U_DocNumOC, 
+      U_DocTotal: terceros.U_DocTotal,
+      
+    }))
+
+    const dvpWor4Collection = this.elementosTablaRecomendaciones.map((recomendacion, index)=>({
+      LineId: index + 1,
+      U_ItemCode: recomendacion.U_ItemCode,
+      U_ItemName: recomendacion.U_ItemName,
+      U_Quantity: recomendacion.U_Quantity, 
+     
+      
+    }))
+  
+
+    const DVP_WOR5Collection = this.archivos.map((archivo, index) => ({
+      LineId: index + 1,
+      VisOrder: index,
+      Object: null,
+      LogInst: null,
+      U_Descripcion: archivo.U_Descripcion,
+      U_NomFile: archivo.U_NomFile,
+      U_TipAnex: archivo.U_TipAnex,
+      U_Filebase64: archivo.U_Filebase64, 
+      U_absentry: '10'
+    }));
+
+    const dvpWor7Collection = this.elementosTabla.slice(0, -1).map((elemento, index) => ({
+      LineId: index + 1,
+      U_TipEqu: elemento.U_TipEqu,
+      U_NumEcon: elemento.U_NumEcon,
+      U_NorRep: elemento.U_NReparto,
+      U_Marca: elemento.U_GoodsBrand,
+      U_Modelo: elemento.U_GoodsModel,
+      U_Serie: elemento.U_GoodsSerial,
+      U_OdomAct: elemento.U_OdoAct,
+      U_OdomNue: elemento.U_OdomNue !== undefined ? elemento.U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+    }));
+  
+    const bodyParaAPI = {
+      DocEntry: 64,
+      DocNum: 64,
+      Series: -1,
+      U_LastPref: null,
+      U_ConFlo: null,
+      U_DocNum: valoresFormulario.selectedSeriesInput,
+      U_Series: valoresFormulario.selectedSeries,
+      U_Prefix: null,
+      U_TipTra: valoresFormulario.tipoTrabajo,
+      U_RefOrdTra: null,
+      U_CardCode: valoresFormulario.cliente,
+      U_CardName: valoresFormulario.U_CardName,
+      U_Address: valoresFormulario.direccion,
+      U_City: valoresFormulario.ciudad,
+      U_Phone: valoresFormulario.telefono,
+      U_OrdCom: null,
+      U_PDFOC: null,
+      U_NomSysOC: null,
+      U_Status: valoresFormulario.estadoSeleccionado,
+      U_DocDate: valoresFormulario.fechaSeleccionada,
+      U_FecEspPar: null,
+      U_Prior: valoresFormulario.prioridadSeleccionada,
+      U_AgVent: valoresFormulario.codigoAgente,
+      U_NomAgVent: valoresFormulario.seleccionAgente, // Ajusta según tu lógica
+      U_PerAut: valoresFormulario.autorizadoPor,
+      U_PerRep: valoresFormulario.reportadoPor,
+      U_CodFall: valoresFormulario.selectedFallos,
+      U_ProRep: valoresFormulario.U_ProRep,
+      U_ComTra: valoresFormulario.textoDiagnostico,
+      U_ComRec: null,
+      U_ComRef: null,
+      U_ComMan: null,
+      U_ComRep: null,
+      U_Com: null,
+      U_ComClosed: null,
+      U_TipEqu: null,
+      U_NumEcon: null,
+      U_Marca: null,
+      U_Modelo: null,
+      U_Serie: null,
+      U_Closed: null,
+      U_Ended: null,
+      U_Odom: null,
+      U_EndRec: null,
+      U_StartD: null,
+      U_EndD: null,
+      U_HasD: null,
+      U_HorasMan: null,
+      U_StartC: null,
+      U_EndC: null,
+      U_HasC: null,
+      U_StartA: null,
+      U_EndA: null,
+      U_HasA: null,
+      U_StartP: null,
+      U_EndP: null,
+      U_HasP: null,
+      U_StartE: null,
+      U_EndE: null,
+      U_HasE: null,
+      U_DocT: null,
+      U_DocR: null,
+      U_DocCot: null,
+      U_DocFac: null,
+      U_EnTras: null,
+      U_FueSer: null,
+      U_NorRep: null,
+      U_TecResp: valoresFormulario.seleccionTecnico,
+      U_Coord: valoresFormulario.seleccionCoordinador,
+      U_ManObrCap: null,
+      DVP_WOR1Collection: detallesCotizacionesParaAPI1,
+     // DVP_WOR1Collection:elementos,
+     // DVP_WOR2Collection: null,
+      DVP_WOR2Collection: dvpWor2Collection,
+      DVP_WOR3Collection: dvpWor3Collection,
+      DVP_WOR4Collection: dvpWor4Collection,
+      DVP_WOR5Collection: DVP_WOR5Collection,
+      DVP_WOR6Collection: null,
+      DVP_WOR7Collection: dvpWor7Collection,
+     
+    };
+
+    console.log('Valores mandados al api', bodyParaAPI);
+    // Llama al servicio para guardar los datos en el API
+    const jsonBody = JSON.stringify(bodyParaAPI);
+  console.log(jsonBody)
+  
+    if (this.miFormulario.valid) {
+      // Mostrar SweetAlert con la pregunta
+      Swal.fire({
+        //title: '¿Está seguro que desea grabar estos datos?',
+        text: '¿Está seguro de grabar esta orden ?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.grabandoDatos = true;
+          // Usuario hizo clic en "Sí, grabar", llama al servicio para enviar los datos
+          this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI).subscribe(
+            (respuesta) => {
+              // Manejar la respuesta del servicio según sea necesario
+              console.log('Respuesta del servicio:', respuesta);
+              this.grabandoDatos = false;
+              Swal.fire({
+                title: 'Éxito',
+                text: 'OT Grabado con Éxito',
+                icon: 'success'
+              });
+            },
+            (error) => {
+              // Manejar errores si es necesario
+              console.error('Error en la petición:', error);
+              this.grabandoDatos = false;
+              Swal.fire({
+                title: 'Error',
+                text: 'Error al llamar al API',
+                icon: 'error'
+              });
+            }
+          );
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // Usuario hizo clic en "Cancelar"
+          Swal.fire('Cancelado', 'No se han grabado los datos', 'info');
+        }
+      });
+    } else {
+      // El formulario no es válido, muestra un mensaje con SweetAlert
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Debe llenar los campos del formulario',
+      });
+    }
+  }
+  
 
 
   onSubmit(): void {
@@ -904,7 +1212,7 @@ const fecha = this.fechaSeleccionadatablas;
   }
 
 
-  actualizarOrden() {
+  actualizarOrden1() {
     if (this.docEntry !== null) {
 
     const valoresFormulario = this.miFormulario.value;
@@ -960,8 +1268,8 @@ const fecha = this.fechaSeleccionadatablas;
     //U_Existencia: 0.0,
     U_Existencia: this.elementosTablaRefacciones[index +1]?.Existencia || '',
     //U_Existencia: detalle.Existencia !== undefined ? detalle.Existencia : 0, // Se usa un valor por defecto (0) si Existencia es undefined
-    //U_NorRep: detalle.NorRep,
-     U_NorRep: uNorRepValue, // Ajusta según tus necesidades
+    //U_NorRep: uNorRepValue,
+     U_NorRep: detalle.U_NorRep, // Ajusta según tus necesidades
   }));
 
 
@@ -1203,6 +1511,284 @@ const DVP_WOR5Collection = this.archivos.map((archivo, index) => ({
     // Puedes manejar el caso en el que no se pueda obtener DocEntry
   }
 }
+
+
+
+actualizarOrden() {
+  if (this.docEntry !== null) {
+    const valoresFormulario = this.miFormulario.value;
+    const tipoEquipoSeleccionado = this.miFormulario.get('U_TipEqu')?.value;
+    const tipoEquipoNombre = tipoEquipoSeleccionado ? tipoEquipoSeleccionado.Code : '';
+    const uNorRepValue = this.selectedU_NReparto;
+
+    const detallesCotizacionesParaAPI = this.dDetallesCotizaciones.map((detalle, index) => ({
+      LineId: index + 1,
+      U_ItemCode: detalle.ItemCode,
+      U_ItemName: detalle.Dscription,
+      U_Quantity: detalle.Quantity,
+      U_CarCli: "Y",
+      U_CarEmp: "N",
+      U_AlmEnt: "08",
+      U_CotVen: detalle.DocEntry,
+      U_Existencia: this.elementosTablaRefacciones[index +1]?.Existencia || '',
+      U_NorRep: uNorRepValue,
+    }));
+
+    const detallesCotizacionesParaAPI1 = this.elementosTablaRefacciones.map((detalle, index) => ({
+      //LineId: null,
+      LineId: index + 1,
+      U_ItemCode: detalle.U_ItemCode,
+      U_ItemName: detalle.U_ItemName,
+      U_Quantity: detalle.U_Quantity,
+      U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
+      U_CarEmp: "N",
+      U_InCot: null,
+      U_Ins: null,
+      U_StaAlm: null,
+      U_DocEnt: null,
+      U_DocSal: null,
+      U_LinDocSal: null,
+      U_AlmEnt: detalle.Almacen, // Ajusta según tus necesidades
+      U_AlmSal: null,
+     // U_CotVen: 4534,
+      U_CotVen: detalle.DocEntry,// Ajusta según tus necesidades
+      U_LinCot: null,
+      U_OrdVen: null,
+      U_LinOrdVen: null,
+      U_StaSol: null,
+      U_OrdCom: null,
+      U_LinOrdCom: null,
+      U_TipDocSal: null,
+      U_Factura: null,
+      U_LinFactura: null,
+      U_Entregado: null,
+      U_InvIt: null,
+      U_EsSer: null,
+      U_CodTec: null,
+      U_NomTec: null,
+      U_FecSer: null,
+      U_End: null,
+      U_HorSer: 0.0,
+      U_HorSerR: 0.0,
+      U_Existencia: detalle.U_Existencia,
+      U_NorRep: detalle.U_NorRep, // Ajusta según tus necesidades
+    }));
+
+    const elementosFiltrados = this.elementosTablaManoDeObra.filter((manoDeObra, index) => index !== 0 && manoDeObra.Articulo !== '');
+    const fecha = this.fechaSeleccionadatablas || new Date();;
+
+    const dvpWor2Collection = elementosFiltrados.map((nuevaManoDeObra, index) => ({
+      LineId: index + 1,
+      U_ItemCode: nuevaManoDeObra.U_ItemCode,
+      U_ItemName: nuevaManoDeObra.U_ItemName,
+      U_CodTec: this.codigoTecnicoSeleccionado, 
+      U_NomTec: this.nombreTecnicoSeleccionado,
+      U_FecSer: fecha,
+      U_End: nuevaManoDeObra.U_End ? 'S' : 'N',
+      U_HorSer: nuevaManoDeObra.U_HorSer, 
+      U_HorSerR: nuevaManoDeObra.U_HorSerR, 
+      U_Quantity: nuevaManoDeObra.U_Quantity,
+    }));
+
+    const dvpWor3Collection = this.elementosTablaTerceros.map((terceros, index)=>({
+      LineId: index + 1,
+      U_CardCode: terceros.U_CardCode,
+      U_CardName: terceros.U_CardName,
+      U_DocNumOC: terceros.U_DocNumOC, 
+      U_DocTotal: terceros.U_DocTotal,
+      
+    }))
+
+
+
+    const dvpWor4Collection = this.elementosTablaRecomendaciones.map((recomendacion, index)=>({
+      LineId: index + 1,
+      U_ItemCode: recomendacion.U_ItemCode,
+      U_ItemName: recomendacion.U_ItemName,
+      U_Quantity: recomendacion.U_Quantity, 
+     
+      
+    }))
+  
+
+
+    const DVP_WOR5Collection = this.archivos.map((archivo, index) => ({
+      LineId: index + 1,
+      VisOrder: index,
+      Object: null,
+      LogInst: null,
+      U_Descripcion: archivo.U_Descripcion,
+      U_NomFile: archivo.U_NomFile,
+      U_TipAnex: archivo.U_TipAnex,
+      U_Filebase64: archivo.U_Filebase64,
+      U_absentry: '10'
+    }));
+
+    const filasNoVacias = this.elementosTabla.filter(fila => fila.U_TipEqu !== null);
+    const dvpWor7Collection = filasNoVacias.map((fila, index) => ({
+      LineId: index + 1,
+      U_TipEqu: fila.U_TipEqu,
+      U_NumEcon: fila.U_NumEcon,
+      U_NorRep: fila.U_NReparto,
+      U_Marca: fila.U_GoodsBrand,
+      U_Modelo: fila.U_GoodsModel,
+      U_Serie: fila.U_GoodsSerial,
+      U_OdomAct: fila.U_OdoAct,
+      U_OdomNue: fila.U_OdomNue !== undefined ? fila.U_OdomNue : null,
+    }));
+    
+    const bodyParaActualizacion = {
+      DocEntry: this.docEntry,
+      DocNum: this.docEntry,
+      Series: -1,
+      U_LastPref: null,
+      U_ConFlo: null,
+      U_DocNum: valoresFormulario.selectedSeriesInput,
+      U_Series: valoresFormulario.selectedSeries,
+      U_Prefix: null,
+      U_TipTra: valoresFormulario.tipoTrabajo,
+      U_RefOrdTra: null,
+      U_CardCode: valoresFormulario.cliente,
+      U_CardName: valoresFormulario.U_CardName,
+      U_Address: valoresFormulario.direccion,
+      U_City: valoresFormulario.ciudad,
+      U_Phone: valoresFormulario.telefono,
+      U_OrdCom: null,
+      U_PDFOC: null,
+      U_NomSysOC: null,
+      U_Status: valoresFormulario.estadoSeleccionado,
+      U_DocDate: valoresFormulario.fechaSeleccionada,
+      U_FecEspPar: null,
+      U_Prior: valoresFormulario.prioridadSeleccionada,
+      U_NomAgVent: valoresFormulario.seleccionAgente, 
+      U_AgVent: valoresFormulario.codigoAgente,
+     // Ajusta según tu lógica
+      U_PerAut: valoresFormulario.autorizadoPor,
+      U_PerRep: valoresFormulario.reportadoPor,
+      U_CodFall: valoresFormulario.selectedFallos,
+      U_ProRep: valoresFormulario.U_ProRep,
+      U_ComTra: valoresFormulario.textoDiagnostico,
+      U_ComRec: null,
+      U_ComRef: null,
+      U_ComMan: null,
+      U_ComRep: null,
+      U_Com: null,
+      U_ComClosed: null,
+      U_TipEqu: null,
+      U_NumEcon: null,
+      U_Marca: null,
+      U_Modelo: null,
+      U_Serie: null,
+      U_Closed: null,
+      U_Ended: null,
+      U_Odom: null,
+      U_EndRec: null,
+      U_StartD: null,
+      U_EndD: null,
+      U_HasD: null,
+      U_HorasMan: null,
+      U_StartC: null,
+      U_EndC: null,
+      U_HasC: null,
+      U_StartA: null,
+      U_EndA: null,
+      U_HasA: null,
+      U_StartP: null,
+      U_EndP: null,
+      U_HasP: null,
+      U_StartE: null,
+      U_EndE: null,
+      U_HasE: null,
+      U_DocT: null,
+      U_DocR: null,
+      U_DocCot: null,
+      U_DocFac: null,
+      U_EnTras: null,
+      U_FueSer: null,
+      U_NorRep: null,
+      U_TecResp: valoresFormulario.seleccionTecnico,
+      U_Coord: valoresFormulario.seleccionCoordinador,
+      U_ManObrCap: null,
+      DVP_WOR1Collection: detallesCotizacionesParaAPI1,
+      DVP_WOR2Collection: dvpWor2Collection,
+      DVP_WOR3Collection: dvpWor3Collection,
+      DVP_WOR4Collection: dvpWor4Collection,
+      DVP_WOR5Collection: DVP_WOR5Collection,
+      DVP_WOR6Collection: null,
+      DVP_WOR7Collection: dvpWor7Collection,
+     
+     /* DVP_WOR7Collection: []= [{
+        LineId: 1, // Asegura que LineId sea único
+       
+        U_TipEqu:tipoEquipoNombre,
+        U_NumEcon: this.elementosTabla[0].U_NumEcon,
+        U_NorRep: this.elementosTabla[0].U_NReparto,
+        U_Marca: this.elementosTabla[0].U_GoodsBrand,
+        U_Modelo: this.elementosTabla[0].U_GoodsModel,
+        U_Serie: this.elementosTabla[0].U_GoodsSerial,
+        U_OdomAct: this.elementosTabla[0].U_OdoAct,
+        U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[0].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
+
+        
+      }],*/
+    };
+    
+
+    console.log('body para actualizacion', bodyParaActualizacion)
+    const jsonBody = JSON.stringify(bodyParaActualizacion);
+    console.log(jsonBody)
+
+   
+
+    // Mostrar SweetAlert con la pregunta antes de actualizar la orden
+    Swal.fire({
+     // title: '¿Desea actualizar esta orden?',
+      text: '¿Está seguro que desea actualizar esta orden?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Actualizar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.grabandoDatos = true;
+        // Usuario confirmó la actualización, llamar al servicio para actualizar la orden
+        this.creacionOrdenesService.updateOrden(bodyParaActualizacion).subscribe(
+          response => {
+            console.log('Respuesta del API al actualizar la orden', response);
+            this.grabandoDatos = false;
+            // Mostrar mensaje de éxito
+            Swal.fire({
+              title: 'Éxito',
+              text: 'OT actualizada con éxito',
+              icon: 'success'
+            });
+          },
+          error => {
+            console.error('Error al actualizar la orden', error);
+            this.grabandoDatos = false;
+            // Mostrar mensaje de error
+            Swal.fire({
+              title: 'Error',
+              text: 'Error al actualizar la orden',
+              icon: 'error'
+            });
+          }
+        );
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        // Usuario canceló la actualización, mostrar mensaje informativo
+        Swal.fire('Cancelado', 'La orden no se ha actualizado', 'info');
+      }
+    });
+  } else {
+    console.error('No se pudo obtener un valor válido de DocEntry');
+    // Puedes manejar el caso en el que no se pueda obtener DocEntry
+  }
+}
+
+
+
+
+
   
 /*
 onFileSelected(event: any) {
@@ -1479,7 +2065,7 @@ onFileSelected(event: any) {
         
         this.dAdicionales = response.data[0];
         this.miFormulario.get('cliente')?.setValue(this.dAdicionales.CardCode);
-        this.miFormulario.get('nombre')?.setValue(this.dAdicionales.CardName);
+        this.miFormulario.get('U_CardName')?.setValue(this.dAdicionales.CardName);
         this.miFormulario.get('direccion')?.setValue(this.dAdicionales.Street);
         this.miFormulario.get('ciudad')?.setValue(this.dAdicionales.City);
         this.miFormulario.get('telefono')?.setValue(this.dAdicionales.Phone1);
@@ -1515,6 +2101,7 @@ cargarDatosSeriealmacen(serie: any) {
       console.error('Error de conexión al API');
     }
   );
+ 
 }
 
 
@@ -1522,9 +2109,11 @@ cargarDatosSeriealmacen(serie: any) {
 
   cargarDatosCotizaciones1(codigo: any) {
     // Obtén el CardName del input dAdicionales
-    const cardNameInput = this.dAdicionales?.CardName || '';
+    
+   // const cardNameInput = this.dAdicionales?.CardName || '';
+    const cardNameInput = this.miFormulario.get('U_CardName')?.value || '';
     console.log('Este es el dato del input', cardNameInput);
-  
+    
     // Verifica si el CardName coincide con el valor del CardName en las cotizaciones
     this.creacionOrdenesService.traerCotizaciones(codigo).subscribe(
       (response) => {
@@ -1846,10 +2435,17 @@ onFilterChange() {
   
       // Actualiza el valor de almacenSeleccionado
       this.cargarDatosSeriealmacen(selectedObject.Code);
+
+     
       this.almacenSeleccionado = selectedObject.Code; // Asegúrate de que la propiedad almacen exista en tu objeto
       this.checked= true
       
       console.log('Datos de almacen Seleccionado antes', this.almacenSeleccionado);
+      
+      this.elementosTablaRefacciones.forEach((orden: any) => {
+        orden.Almacen = this.almacenSeleccionado;
+        console.log('ghff', orden.Almacen)
+      });
 
     }
   }
@@ -2109,6 +2705,10 @@ this.visibleMC01Modal=false
     } else if (this.elementosTabla.length === 1 && this.elementosTabla[0].U_TipEqu === null) {
       this.agregarNuevoEquipo(rowData);
     }
+/*
+    this.elementosTablaRefacciones.forEach((elemento: any) => {
+      elemento.U_NorRep = rowData.U_NReparto;
+    });*/
   }
   
   private puedeAgregarEquipo(seleccion: string): boolean {
@@ -2146,6 +2746,14 @@ this.visibleMC01Modal=false
     this.clienteProp = rowData.U_CliProp;
     this.nombreProp = rowData.U_NCliProp;
     this.selectedU_NReparto = rowData.U_NReparto;
+
+
+    this.elementosTablaRefacciones.forEach((orden: any) => {
+     
+      //this.selectedU_NReparto = rowData.U_NReparto;
+      orden.U_NorRep = this.selectedU_NReparto;
+      console.log(orden.U_NorRep)
+    });
   }
   
 
@@ -2158,7 +2766,7 @@ onrowDobleClickref(orden: any) {
     // Verifica si SerieAlmacen tiene al menos un elemento
     if (this.SerieAlmacen.length > 0) {
       if (this.selectedU_NReparto) {
-        // Verifica si la serie de la fila seleccionada coincide con alguna entrada en SerieAlmacen
+        
         const coincideConAlgunAlmacen = this.SerieAlmacen.some(almacen => 
           orden.WhsName === almacen.WhsName || orden.WhsCode === almacen.WhsCode
         );
@@ -2171,8 +2779,8 @@ onrowDobleClickref(orden: any) {
             U_Quantity: '',
             CC: '',
             SC: '',
-            U_NorRep: '',
-            Almacen: orden.WhsName,
+            U_NorRep: this.selectedU_NReparto,
+            Almacen: orden.Almacen,
             U_Existencia: '',
             original: true,
           };
@@ -2194,7 +2802,9 @@ onrowDobleClickref(orden: any) {
             icon: 'error'
           });
         }
-      } else {
+      
+      }
+       else {
         // Muestra un mensaje de error si el select de Reparto está vacío
         Swal.fire({
           title: 'Error',
@@ -2203,6 +2813,7 @@ onrowDobleClickref(orden: any) {
         });
         console.error('Error: N.Reparto está vacío');
       }
+    
     } else {
       // Muestra un mensaje de error si SerieAlmacen está vacío
       Swal.fire({
@@ -2341,8 +2952,8 @@ onrowDobleClickcotizacion1(cotizacion: any) {
                     U_Quantity: detalle.Quantity,
                     CC: 'CC',
                     SC: '',
-                    U_NorRep: '',
-                    Almacen: cotizacion.SeriesName,
+                    U_NorRep: this.selectedU_NReparto,
+                    Almacen: cotizacion.Almacen,
                     U_Existencia: '',
                     //Existencia: detalle.stocktotal,
                     original: false,
@@ -2352,6 +2963,7 @@ onrowDobleClickcotizacion1(cotizacion: any) {
                   // Agregar la nueva fila a la tabla
                   this.elementosTablaRefacciones.push(nuevaFila);
                   this.elementosTablaRefacciones = [...this.elementosTablaRefacciones];
+                  console.log(this.elementosTablaRefacciones)
                 });
               } else {
                 // Muestra un mensaje de error si los detalles ya están cargados
@@ -2509,10 +3121,10 @@ onrowDobloClickProveedoresTerceros(proveedor: any) {
   
     // Resto del código para agregar la fila a la tabla
     const nuevaProveedores = {
-      Proveedor: proveedor.CardCode,
-      Nombre: proveedor.CardName,
-      OrdenCompra: '',
-      Total: ''
+      U_CardCode: proveedor.CardCode,
+      U_CardName: proveedor.CardName,
+      U_DocNumOC: '',
+      U_DocTotal: ''
     };
   
     this.elementosTablaTerceros.push(nuevaProveedores);
@@ -2529,8 +3141,8 @@ onrowDobloClickProveedoresTerceros(proveedor: any) {
 onrowDobloClickOrdenCompraProveedor(ordenCompra: any) {
   // Verifica si hay una posición creada
   if (this.ultimaPosicionCreada !== -1) {
-    this.elementosTablaTerceros[this.ultimaPosicionCreada].OrdenCompra = ordenCompra.DocNum;
-    this.elementosTablaTerceros[this.ultimaPosicionCreada].Total = ordenCompra.DocTotal;
+    this.elementosTablaTerceros[this.ultimaPosicionCreada].U_DocNumOC = ordenCompra.DocNum;
+    this.elementosTablaTerceros[this.ultimaPosicionCreada].U_DocTotal = ordenCompra.DocTotal;
   } else { 
     // Si nuevaManoDeObra no está creada, muestra un mensaje o realiza alguna acción necesaria
     Swal.fire({
@@ -2576,9 +3188,10 @@ onrowDobloClickREcomendaciones(recomendacion: any) {
 
 onrowDobloClickREcomendaciones(recomendacion: any) {
   const nuevaRecomendacion = {
-    NoParte: recomendacion.ItemCode,
-    Descripcion: recomendacion.ItemName,
-    Cantidad: recomendacion.stocktotal,
+    U_ItemCode: recomendacion.ItemCode,
+    U_ItemName: recomendacion.ItemName,
+    U_Quantity: null,
+    //U_Quantity: recomendacion.stocktotal,
   };
 
   this.elementosTablaRecomendaciones.push(nuevaRecomendacion);

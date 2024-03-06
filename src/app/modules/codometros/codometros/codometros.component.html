@@ -1,0 +1,164 @@
+<div class="container">
+    <p-card  header="Corrección/ Cambio Odometro" [style]="{ width: '50rem' }">
+
+        <form >
+            <div class=" grid col-12 ">
+        
+                <div class="col-12">
+            
+                    <div class="grid  align-items-center">
+                        <div class="col-4">
+                           <p>
+                            Norma de Reparto
+                           </p>
+                        </div>
+                        <div class="col-8">
+                            <input pInputText type="text"  class="w-full" placeholder="N A">
+                        </div>
+                        
+                       
+                    </div>
+                    
+                    <div class="grid  align-items-center">
+                        <div class="col-4">
+                           <p>
+                            Código Vehículo
+                           </p>
+                        </div>
+                        <div class="col-8">
+                            <input pInputText type="text"  class="w-full" placeholder="MN45451">
+                        </div>
+                        
+                       
+                    </div>
+                
+                    <div class="grid  align-items-center">
+                        <div class="col-4">
+                           <p>
+                            Marca
+                           </p>
+                        </div>
+                        <div class="col-8">
+                            <input pInputText type="text"  class="w-full" placeholder="Marca">
+                        </div>
+                       
+                       
+                    </div>
+                
+                    <div class="grid  align-items-center">
+                        <div class="col-4">
+                           <p>
+                            Modelo
+                           </p>
+                        </div>
+                        <div class="col-8">
+                            <input pInputText type="text"  class="w-full" placeholder="XHK-645">
+                        </div>
+                        
+                       
+                    </div>
+                
+                    <div class="grid  align-items-center">
+                        <div class="col-4">
+                           <p>
+                            Serie
+                           </p>
+                        </div>
+                        <div class="col-8">
+                            <input pInputText type="text"  class="w-full" placeholder="7154A" >
+                        </div>
+                       
+                       
+                        
+                    </div>
+    
+                    <div class="grid  align-items-center">
+                        <div class="col-4">
+                           <p>
+                            Odometro Acumulado
+                           </p>
+                        </div>
+                        <div class="col-8">
+                            <input pInputText type="text"  class="w-full" placeholder="0" >
+                        </div>
+                       
+                       
+                        
+                    </div>
+                    <div class="grid  align-items-center">
+                        <div class="col-4">
+                           <p>
+                            Odometro Actual
+                           </p>
+                        </div>
+                        <div class="col-8">
+                            <!--input pInputText type="text"  class="md:w-20rem" placeholder="Desde" -->
+                            <input pInputText type="text"  class="w-full" placeholder="0" >
+                        </div>
+                       
+                       
+                        
+                    </div>
+                    <div class="grid  align-items-center">
+                        <div class="col-4">
+                           <p>
+                            Razón Cambio
+                           </p>
+                        </div>
+                        <div class="col-8">
+                            <p-dropdown [style]="{'width': dropdownWidth}"  class=" w-full " containerStyleClass="w-full" placeholder="003"      >
+                              </p-dropdown>
+                        </div>
+                       
+                       
+                        
+                    </div>
+    
+                    <div class="grid  align-items-center">
+                        <div class="col-4">
+                           <p>
+                            Nuevo Odometro
+                           </p>
+                        </div>
+                        <div class="col-8">
+                            <input pInputText type="text"  class="w-full" placeholder="-1" >
+                        </div>
+                       
+                       
+                        
+                    </div>
+    
+                    <div class="grid  align-items-center">
+                        <div class="col-4">
+                           <p>
+                            Cometarios
+                           </p>
+                        </div>
+                        <div class="col-8">
+                            <textarea rows="5" cols="35" class="w-full" pInputTextarea ></textarea>
+                        </div>
+                       
+                       
+                        
+                    </div>
+                    
+                </div>
+            
+                
+            
+            </div>
+            <div class="flex gap-2">
+                <div class="flex gap-2">
+                  <p-button type="submit" label="Aceptar"  ></p-button>
+                  <p-button label="Cancelar" styleClass="p-button-secondary" ></p-button>
+                  <!--p-button label="Editar" type="button" [disabled]="isSubmitting" (click)="actualizarOrden()"></!--p-button-->
+                </div>
+                
+            </div>
+
+            
+        </form>
+    
+    </p-card>
+</div>
+
