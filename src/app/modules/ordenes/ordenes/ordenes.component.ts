@@ -181,7 +181,7 @@ almacenSeleccionado: any | undefined;
 opcionesCotizaciones: string[] = [];
 compararAlmacen:any
 
-cardcode: string = '';
+cardcode: any = '';
 
 cotizacionSeleccionadaDocEntry: number | undefined;
 
@@ -348,7 +348,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
      // listaTrabajos:[''],
       dropdownCotizaciones: [''],
       U_ProRep:[''],
-      cliente: [''],
+      U_CardCode: [''],
       U_CardName: [''],
       direccion: [''],
       ciudad: [''],
@@ -484,7 +484,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     seleccionarFormato: response.data.U_ComTra,
                     dropdownCotizaciones: response.data.U_DocCot,
                     U_ProRep: response.data.U_ProRep,
-                    cliente: response.data.U_CardCode,
+                    U_CardCode: response.data.U_CardCode,
                     U_CardName: response.data.U_CardName,
                     direccion: response.data.U_Address,
                     ciudad: response.data.U_City,
@@ -507,8 +507,13 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                   });
                 }
 
-                
-
+                if(response.data.U_TipTra){
+                  let codigo = response.data.U_CardCode;
+                  let tipo = response.data.U_TipTra
+               this.cargarDatosAdicionalesMC01(tipo, codigo)
+               console.log('datos adicionales', tipo, codigo)
+                }
+              
 
                 if (response.data.DVP_WOR1Collection && Array.isArray(response.data.DVP_WOR1Collection)) {
                   this.elementosTablaRefacciones = response.data.DVP_WOR1Collection.map((cotizacion: any) => ({
@@ -1074,7 +1079,7 @@ const fecha = this.fechaSeleccionadatablas;
       U_Prefix: null,
       U_TipTra: valoresFormulario.tipoTrabajo,
       U_RefOrdTra: null,
-      U_CardCode: valoresFormulario.cliente,
+      U_CardCode: valoresFormulario.U_CardCode,
       U_CardName: valoresFormulario.U_CardName,
       U_Address: valoresFormulario.direccion,
       U_City: valoresFormulario.ciudad,
@@ -1398,8 +1403,8 @@ const DVP_WOR5Collection = this.archivos.map((archivo, index) => ({
       U_Prefix: null,
       U_TipTra: valoresFormulario.tipoTrabajo,
       U_RefOrdTra: null,
-      U_CardCode: valoresFormulario.cliente,
-      U_CardName: valoresFormulario.nombre,
+      U_CardCode: valoresFormulario.U_CardCode,
+      U_CardName: valoresFormulario.U_CardName,
       U_Address: valoresFormulario.direccion,
       U_City: valoresFormulario.ciudad,
       U_Phone: valoresFormulario.telefono,
@@ -2064,12 +2069,13 @@ onFileSelected(event: any) {
       if(response.ResultCode === 0 && response.data){
         
         this.dAdicionales = response.data[0];
-        this.miFormulario.get('cliente')?.setValue(this.dAdicionales.CardCode);
+        this.miFormulario.get('U_CardCode')?.setValue(this.dAdicionales.CardCode);
         this.miFormulario.get('U_CardName')?.setValue(this.dAdicionales.CardName);
         this.miFormulario.get('direccion')?.setValue(this.dAdicionales.Street);
         this.miFormulario.get('ciudad')?.setValue(this.dAdicionales.City);
         this.miFormulario.get('telefono')?.setValue(this.dAdicionales.Phone1);
         console.log('Datos dicionales de MC01',this.dAdicionales);
+        
       }else{
         console.error('Error al obtener datos MC01 del API');
       }
@@ -2109,10 +2115,13 @@ cargarDatosSeriealmacen(serie: any) {
 
   cargarDatosCotizaciones1(codigo: any) {
     // Obtén el CardName del input dAdicionales
-    
+    const cardCode = this.miFormulario.get('U_CardCode')?.value;
+    console.log('este es el carnCode',cardCode )
    // const cardNameInput = this.dAdicionales?.CardName || '';
     const cardNameInput = this.miFormulario.get('U_CardName')?.value || '';
     console.log('Este es el dato del input', cardNameInput);
+
+    
     
     // Verifica si el CardName coincide con el valor del CardName en las cotizaciones
     this.creacionOrdenesService.traerCotizaciones(codigo).subscribe(
@@ -2164,6 +2173,56 @@ cargarDatosSeriealmacen(serie: any) {
 
     
   }
+
+
+  cargarDatosCotizaciones(codigo: any) {
+    const cardCode = this.miFormulario.get('U_CardCode')?.value || '';
+    const cardNameInput = this.miFormulario.get('U_CardName')?.value || '';
+  
+    console.log(this.cardNameInput1, this.cardcode)
+    
+    if (!cardCode || !cardNameInput) {
+      console.error('CardCode o CardName no definidos.');
+      return;
+    }
+  
+    this.creacionOrdenesService.traerCotizaciones(codigo).subscribe(
+      (response) => {
+        if (response.ResultCode === 0 && response.data) {
+          this.dCotizaciones = response.data;
+  
+          const cotizacionCoincide = this.dCotizaciones.some(cotizacion => cotizacion.CardName === cardNameInput);
+  
+          if (cotizacionCoincide) {
+            this.cotizaciones = true;
+            this.cotizacionSeleccionada = this.dCotizaciones.find(cotizacion => cotizacion.CardName === cardNameInput);
+          } else {
+            this.mostrarError('El CardName no coincide con las cotizaciones.');
+          }
+        } else {
+          this.mostrarError('No se encontraron cotizaciones asociadas.');
+        }
+      },
+      (error) => {
+        this.mostrarError('Error de conexión al API.');
+      }
+    );
+  }
+  
+  mostrarError(mensaje: string) {
+    Swal.fire({
+      title: 'Error',
+      text: mensaje,
+      icon: 'error'
+    });
+  }
+  
+
+
+
+
+
+  
   
 /*
   cargarDatosCotizaciones(codigo: any) {
