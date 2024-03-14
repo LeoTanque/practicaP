@@ -20,7 +20,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }
                 ] 
             },
-            {
+            { 
                 label:'Ordenes de trabajo',
                 items: [
                     { label: 'Ordenes de trabajo ', icon: 'pi pi-cog ' ,
@@ -36,6 +36,24 @@ export class AppMenuComponent implements OnInit {
                    },
                       
                 ]
+            },
+{ 
+    label:'Ventas - Clientes',
+    items: [
+        { label: 'Ventas - Clientes ', icon: 'pi pi-cog ' ,
+
+    
+    items: [
+       
+        { label: 'Cotización de Venta ', icon: 'pi pi-cog ', routerLink: ['/coventa'] },
+       /* { label: 'Busca de Órdenes de Trabajo ', icon: 'pi pi-cog ', routerLink: ['/buscaOrdenes'] },
+        { label: 'Entrega Refacciones ', icon: 'pi pi-cog ', routerLink: ['/entrega'] }, 
+        { label: 'Cambio de Odometro ', icon: 'pi pi-cog ', routerLink: ['/codometros'] },*/
+           ]
+    
+       },
+          
+    ]
             },
 
         ];

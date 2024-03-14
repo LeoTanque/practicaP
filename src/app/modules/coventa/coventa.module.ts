@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 
-import { CodometrosRoutingModule } from './codometros-routing.module';
-import { CodometrosComponent } from './codometros/codometros.component';
+import { CoventaRoutingModule } from './coventa-routing.module';
+import { CoventaComponent } from './coventa/coventa.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
@@ -12,13 +12,16 @@ import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { CardModule } from 'primeng/card';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-@NgModule({
+import { PanelModule } from 'primeng/panel';
+import { TabViewModule } from 'primeng/tabview';
+
+@NgModule({ 
   declarations: [
-    CodometrosComponent
+    CoventaComponent
   ],
   imports: [
     CommonModule,
-    CodometrosRoutingModule,
+    CoventaRoutingModule,
     ReactiveFormsModule,
     FormsModule,
     DropdownModule,
@@ -28,7 +31,9 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     CalendarModule,
     CheckboxModule,
     CardModule,
-    InputTextareaModule
+    InputTextareaModule,
+    PanelModule,
+    TabViewModule
   ]
 })
-export class CodometrosModule { }
+export class CoventaModule { }
