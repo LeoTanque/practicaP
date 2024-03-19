@@ -101,7 +101,7 @@ class="text-xs"
                     <div class="col-6  ">
                         
                         <div class=" flex justify-content-center">
-                           <span class="p-input-icon-left w-30rem ">
+                           <span class="p-input-icon-left custom-width w-full ">
                                 <i class="pi pi-search"></i>
                                
                                 <input type="text" pInputText formControlName="U_CardCode"  class="custom-width w-full" placeholder="Cliente" />
@@ -691,117 +691,6 @@ class="text-xs"
              </div>
           
 
-             <!--p-dialog 
-             [(visible)]="terceros" 
-             [style]="{ width: '800px' }" 
-             header="Lista de Socios de Negocios" 
-             [modal]="true" 
-             styleClass="p-fluid">
-
-                <ng-template pTemplate="content">
-               <div class="flex mb-2">
-                  
-                   <span class="p-input-icon-left ml-auto">
-                     <i class="pi pi-search"></i>
-                     <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
-                          placeholder="Buscar..." />
-                   </span>
-                 </div>
-               
-                 <p-table 
-                 #dt3 
-                 [value]="dProveedores" 
-                 [paginator]="true" 
-                 [rows]="5" 
-                 [rowsPerPageOptions]="[5, 10, 15]"
-                 dataKey="id"
-                 [globalFilterFields]="['CardCode', 'CardName', 'Balance']"
-                 >
-                   <ng-template pTemplate="header">
-                     <tr >
-                       <th scope="col" style="width:20%">Código</th>
-                       <th scope="col" style="width:50%">Nombre del Cliente</th>
-                       <th scope="col" style="width:20%">Saldo SN</th> 
-                      
-                     </tr>
-       
-                   </ng-template>
-                   <ng-template pTemplate="body" let-proveedor>
-                     <tr  [pSelectableRow]="proveedor" (dblclick)="onrowDobloClickProveedoresTerceros(proveedor)"  >
-                       <td>{{ proveedor.CardCode }}</td>
-                       <td>{{ proveedor.CardName}}</td>
-                       <td>{{ proveedor.Balance}}</td>
-                       
-                       
-                       
-                     </tr>
-                   </ng-template>
-                 </p-table>
-               
-                 <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
-                   <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
-                 </div>
-     </ng-template>
-        
-            </!--p-dialog>
-            
-            <p-dialog-- 
-             [(visible)]="ordenCompra" 
-             [style]="{ width: '950px' }" 
-             header="Lista de Orden de Compra" 
-             [modal]="true" 
-             styleClass="p-fluid text-xs text-center">
-
-                <ng-template pTemplate="content">
-               <div class="flex mb-2">
-                  
-                   <span class="p-input-icon-left ml-auto">
-                     <i class="pi pi-search"></i>
-                     <input pInputText type="text"   (input)="dt3?.filterGlobal(filtroGlobal, 'contains')"  [(ngModel)]="filtroGlobal"
-                          placeholder="Buscar..." />
-                   </span>
-                 </div>
-               
-                 <p-table 
-                 #dt3 
-                 [value]="ordenesCompraAsociadas" 
-                 [paginator]="true" 
-                 [rows]="5" 
-                 [rowsPerPageOptions]="[5, 10, 15]"
-                 dataKey="id"
-                 [globalFilterFields]="['DocNum', 'docdate','CardName' , 'Comments', 'DocDueDate', 'DocTotal']"
-                 >
-                   <ng-template pTemplate="header">
-                     <tr >
-                       <th scope="col" style="width:10%">DocNum</th>
-                       <th scope="col" style="width:15%">Fecha</th>
-                       <th scope="col" style="width:50%">Proveedor</th> 
-                       <th scope="col" style="width:15%">Comentario</th>
-                       <th scope="col" style="width:15%">Fecha Vencimiento</th>
-                       <th scope="col" style="width:5%">Total</th>
-                     </tr>
-       
-                   </ng-template>
-                   <ng-template pTemplate="body" let-ordenCompra>
-                     <tr  [pSelectableRow]="ordenCompra" (dblclick)="onrowDobloClickOrdenCompraProveedor(ordenCompra)"  >
-                       <td>{{ ordenCompra.DocNum }}</td>
-                       <td>{{ ordenCompra.docdate}}</td>
-                       <td>{{ordenCompra.CardName}}</td>
-                       <td>{{ ordenCompra.Comments}}</td>
-                       <td>{{ ordenCompra.DocDueDate}}</td>
-                       <td>{{ ordenCompra.DocTotal}}</td>
-                       
-                     </tr>
-                   </ng-template>
-                 </p-table>
-               
-                 <div class="ui-dialog-footer flex justify-content-center mt-5 me-4">
-                   <p-button type="button" label="Cerrar" (click)="hideDialog()" styleClass="p-button-danger" class="me-4"></p-button>
-                 </div>
-     </ng-template>
-        
-            </p-dialog-->
-            
         </p-tabPanel>
 
         
@@ -856,58 +745,6 @@ class="text-xs"
 
           </div>
 
-<!--form-- [formGroup]="miFormulario">
-  <div class="pb-5">
-                
-    <p-table
-    styleClass="p-datatable-gridlines"
-    [value]="elementosTablaRecomendaciones"
-    dataKey="id"
-    [paginator]="true"
-    [rows]="10"
-    [rowsPerPageOptions]="[5, 10, 20]"
-    [responsive]="true"
-    styleClass="p-datatable-gridlines align-items-center mt-3 me-5"
-    class="text-xs"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th scope="col" style="width:25%">No.Parte</th>
-        <th scope="col" style="width:40%">Descripción</th>
-        <th scope="col" style="width:25%">Cantidad</th>
-        <th scope="col" style="width:25%">Eliminar</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-recomendacion>
-      <tr>
-        <td>
-          <div class="flex gap-1 align-items-center">
-            <input type="text" pInputText class="w-full" [(ngModel)]="recomendacion.NoParte"   formControlName="NoParte" />
-            <i class="pi pi-search" style="color: blue;" (click)="recomendacionesModal()"></i>
-          </div>
-        </td>
-        <td>
-          {{recomendacion.Descripcion}}
-        </td>
-        <td>
-          <p-inputNumber inputId="minmax" mode="decimal" [min]="0" [max]="" [(ngModel)]="recoemdacion.Cantidad"  formControlName="Cantidad"></p-inputNumber>
-        </td>
-        <td>
-          <p-button icon="pi pi-times" severity="danger" styleClass="p-button-danger" (click)="onEliminarFilaRecomendacion(recomendacion)"></p-button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-
-    <div class="flex justify-content-center col-12 mt-5">
-        <textarea rows="5" cols="30" pInputTextarea class=" w-full" placeholder="Comentarios" ></textarea>
-    </div>
-         
-        
-       
-      </div>
-</!--form-->
-          
 
         </p-tabPanel>
       

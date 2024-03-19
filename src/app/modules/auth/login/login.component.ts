@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private router: Router, private authService: AuthService) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required,]],
+      email: ['', [Validators.required]],
       password: [
         '',
         [
@@ -32,8 +32,8 @@ export class LoginComponent implements OnInit {
   }
 
 
-
-  submitForm() {
+/*
+  submitForm1() {
     if (this.loginForm.valid) {
       
       const email = this.loginForm.get('email')?.value;
@@ -55,6 +55,102 @@ export class LoginComponent implements OnInit {
       this.showValidationError();
     }
   }
+
+  submitForm2() {
+    if (this.loginForm.valid) {
+      const email = this.loginForm.get('email')?.value;
+      const password = this.loginForm.get('password')?.value;
+      this.authService.login(email, password).subscribe(
+        (res: any) => {
+          console.log(res)
+          if (res.Detail.Active === '1') {
+            this.authService.updateActivoState('1');
+            this.router.navigate(['/'])
+          } else {
+            this.showInvalidCredentialsError();
+          }
+        },
+        (error) => {
+          if (error.status === 401) {
+            this.showInvalidUserError();
+          } else if (error.status === 403) {
+            this.showInvalidPasswordError();
+          } else {
+            console.error(error);
+            this.showGeneralError();
+          }
+        }
+      );
+    } else {
+      this.showValidationError();
+    }
+  }
+
+  submitForm3() {
+    if (this.loginForm.valid) {
+      const email = this.loginForm.get('email')?.value;
+      const password = this.loginForm.get('password')?.value;
+      this.authService.login(email, password).subscribe(
+        (res: any) => {
+          console.log(res)
+          if (res.ResultCode === 0 && res.Detail && res.Detail.Active === '1') {
+            this.authService.updateActivoState('1');
+            this.router.navigate(['/'])
+          } else {
+            this.showInvalidCredentialsError();
+          }
+        },
+        (error) => {
+          if (error?.error?.ResultMessage === 'Error de autenticación') {
+            this.showInvalidCredentialsError();
+          } else {
+            console.error(error);
+            this.showGeneralError();
+          }
+        }
+      );
+    } else {
+      this.showValidationError();
+    }
+  }*/
+
+
+  
+  submitForm() {
+    if (this.loginForm.valid) {
+      const email = this.loginForm.get('email')?.value;
+      const password = this.loginForm.get('password')?.value;
+      this.authService.login(email, password).subscribe(
+        (res: any) => {
+          console.log(res);
+          if (res.ResultCode === 0 && res.Detail && res.Detail.Active === '1') {
+            this.authService.updateActivoState('1');
+            this.router.navigate(['/']);
+          } else {
+            this.showInvalidCredentialsError();
+          }
+        },
+        (error) => {
+          if (error?.error?.ResultMessage === 'Error de autenticación') {
+            const detail = error?.error?.Detail;
+            if (detail === null) {
+              this.showInvalidCredentialsError(); // Usuario y contraseña incorrectos
+            } else if (detail?.Active !== '1') {
+              this.showInvalidUserError(); // Usuario incorrecto
+            } else {
+              this.showInvalidPasswordError(); // Contraseña incorrecta
+            }
+          } else {
+            console.error(error);
+            this.showGeneralError();
+          }
+        }
+      );
+    } else {
+      this.showValidationError();
+    }
+  }
+  
   
   showInvalidCredentialsError() {
     Swal.fire({
@@ -99,4 +195,27 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  showInvalidUserError() {
+    Swal.fire({
+      title: 'Error de autenticación',
+      text: 'Usuario incorrecto. Por favor, verifique su usuario.',
+      icon: 'error',
+    });
+  }
+
+  showInvalidPasswordError() {
+    Swal.fire({
+      title: 'Error de autenticación',
+      text: 'Contraseña incorrecta. Por favor, verifique su contraseña.',
+      icon: 'error',
+    });
+  }
+
+  showGeneralError() {
+    Swal.fire({
+      title: 'Error',
+      text: 'Se produjo un error. Por favor, inténtelo de nuevo más tarde.',
+      icon: 'error',
+    });
+  }
 }

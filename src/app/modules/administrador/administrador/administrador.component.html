@@ -1,0 +1,570 @@
+<div class="container">
+    <p-card  header="Equipos" [style]="{ width: '60rem' }" >
+
+        <form >
+            <div class="mb-2 pr-4">
+                <div class="grid align-items-center">
+                    <div class="col-2">
+                        <div class="align-items-center">
+                            <p>
+                                Equipo
+                               </p>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="justify-content-center ">
+                            <input pInputText type="text"  class="w-full" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="justify-content-center  ">
+                            <input pInputText type="text"  class="w-full" placeholder="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid align-items-center">
+                    <div class="col-2">
+                        <div class="align-items-center">
+                            <p>
+                                Código Renta
+                               </p>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <div class="justify-content-center ">
+                            <input pInputText type="text"  class="w-full" placeholder="">
+                        </div>
+                    </div>
+                   
+                </div>
+
+                <div class="grid align-items-center">
+                    <div class="col-2">
+                        <div class="align-items-center">
+                            <p>
+                                Artículo Asociado
+                               </p>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="justify-content-center ">
+                            <input pInputText type="text"  class="w-full" placeholder="">
+                        </div>
+                    </div>
+                   
+                    <div class="col-5">
+                        <div class="justify-content-center  ">
+                            <p-dropdown [style]="{'width': dropdownWidth}"  class=" w-full  " containerStyleClass="w-full" placeholder="Numero de serie"      >
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+          
+
+                <div class="grid align-items-center">
+                    <div class="col-2">
+                        <div class="align-items-center">
+                            <p>
+                                Código Extranjero
+                               </p>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <div class="justify-content-center ">
+                            <input pInputText type="text"  class="w-full" placeholder="">
+                        </div>
+                    </div>
+                   
+                </div>
+
+                <div class="grid align-items-center">
+                    <div class="col-2">
+                        <div class="align-items-center">
+                            <p>
+                                Estado
+                               </p>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="justify-content-center ">
+                            <input pInputText type="text"  class="w-full" placeholder="Taller">
+                        </div>
+                    </div>
+                   
+                    <div class="col-5">
+                        <div class="justify-content-center  ">
+                            <input pInputText type="text"  class="w-full" placeholder="Ciente">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+          
+
+            <p-tabView>
+
+                <p-tabPanel header="General">
+                    <div class="mb-2 pr-4">
+                        <div class="grid align-items-center">
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                        Familia
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="justify-content-center ">
+                                    <p-dropdown [style]="{'width': dropdownWidth1}"  class=" w-full  " containerStyleClass="w-full" placeholder="Numero de serie"      >
+                                    </p-dropdown>
+                                </div>
+                            </div>
+
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                        Sub-Familia
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="justify-content-center  ">
+                                    <p-dropdown [style]="{'width': dropdownWidth1}"  class=" w-full  " containerStyleClass="w-full" placeholder="Numero de serie"      >
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+        
+                        
+        
+                        <div class="grid align-items-center">
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                        Activo Fijo
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="justify-content-center ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                       Valor venta
+                                       </p>
+                                </div>
+                            </div>
+                           
+                            <div class="col">
+                                <div class="justify-content-center  ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                  
+        
+                        <div class="grid align-items-center">
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                        Centro de Costo
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <!--div class="justify-content-center ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </-div-->
+                                <div class="flex gap-1 align-items-center">
+                                    <input type="text" pInputText class="w-16rem"  />
+                                    <i class="pi pi-search" style="color: blue;"></i>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                       Proyecto
+                                       </p>
+                                </div>
+                            </div>
+                           
+                            <div class="col">
+                                <div class="justify-content-center  ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--div class="grid align-items-center">
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                        Responsable
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="justify-content-center ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                           
+                            <div class="col">
+                                <div class="justify-content-center  ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                        </!--div-->
+
+                        <div class="grid align-items-center">
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                        Responsable
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="justify-content-center ">
+                                    <input pInputText type="text"  class="w-full" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <div class="justify-content-center  ">
+                                    <input pInputText type="text"  class="w-full" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid align-items-center">
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                       Modelo
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col-fixed">
+                                <div class="justify-content-center ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                       No de Serie
+                                       </p>
+                                </div>
+                            </div>
+                           
+                            <div class="col">
+                                <div class="justify-content-center  ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid align-items-center">
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                       Proveedor
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="justify-content-center ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                       Tipo de Documento
+                                       </p>
+                                </div>
+                            </div>
+                           
+                            <div class="col">
+                                <div class="justify-content-center  ">
+                                    <p-dropdown [style]="{'width': dropdownWidth1}"  class=" w-full  " containerStyleClass="w-full" placeholder="Documento"      >
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid align-items-center">
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                       Expiración de Garantía
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="justify-content-center ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                       No de Documento
+                                       </p>
+                                </div>
+                            </div>
+                           
+                            <div class="col">
+                                <div class="justify-content-center  ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid align-items-center">
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                       Activo
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="justify-content-center ">
+                                    <p-checkbox  [binary]="true" inputId="binary"></p-checkbox>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                       Ubicación
+                                       </p>
+                                </div>
+                            </div>
+                           
+                            <div class="col">
+                                <div class="justify-content-center  ">
+                                    <p-dropdown [style]="{'width': dropdownWidth1}"  class=" w-full  " containerStyleClass="w-full" placeholder=""      >
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid align-items-center">
+                            <div class="col-2">
+                                <div class="align-items-center">
+                                    <p>
+                                      Propietario
+                                       </p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="justify-content-center ">
+                                    <input pInputText type="text"  class="corto" placeholder="">
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        <div class="col-12">
+                            <textarea rows="5" cols="35" class="w-full" pInputTextarea placeholder="Notas Técnicas" ></textarea>
+                        </div>
+                    </div>
+
+
+                </p-tabPanel>
+
+                <p-tabPanel header="Especificaciones">
+                    <p-card>
+                        <div class="pb-2">
+
+                            <div class="grid align-items-center">
+                                <div class="col-2">
+                                    <div class="align-items-center">
+                                        <p>
+                                            Lectura # 1
+                                           </p>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Nombre">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center  ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Valor">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid align-items-center mb-4">
+                                <div class="col-2">
+                                    <div class="align-items-center">
+                                        <p>
+                                            Lectura # 2
+                                           </p>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Nombre">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center  ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Valor">
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="grid align-items-center">
+                                <div class="col-2">
+                                    <div class="align-items-center">
+                                        <p>
+                                            Ultima Lectura
+                                           </p>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Nombre">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center  ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Valor">
+                                    </div>
+                                </div>
+    
+                            </div>
+    
+                            <p-table 
+                            
+                            [value]="Especificacion"
+                            dataKey="id"
+                            [paginator]="true"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[5, 10, 20]"
+                            [responsive]="true"
+                            styleClass="p-datatable-gridlines align-items-center mt-3 me-5"
+                            class="text-xs"
+                            >         
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th scope="col" style="width:60%">Especificación</th>
+                                        <th scope="col" style="width:40%">Valor</th>
+                                       
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-especificacion>
+                                    <tr>
+                                        <td> {{especificacion.U_CardName}} </td>
+                                        <td>
+                                            {{especificacion.U_DocTotal}}
+                                        </td>
+                    
+                                      
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                                 </div>
+                    </p-card>
+                    
+                </p-tabPanel>
+
+                <p-tabPanel header="Mantenimientos">
+                 
+                    <p-card>
+
+                        <p-table 
+                            
+                    [value]="Mantenimiento"
+                    dataKey="id"
+                    [paginator]="true"
+                    [rows]="10"
+                    [rowsPerPageOptions]="[5, 10, 20]"
+                    [responsive]="true"
+                    styleClass="p-datatable-gridlines align-items-center mt-3 me-5"
+                    class="text-xs"
+                    >         
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th scope="col" style="width:20%">Estado</th>
+                                <th scope="col" style="width:30%">Número OM</th>
+                                <th scope="col" style="width:15%">Fecha</th>
+                                <th scope="col" style="width:20%">Plan</th>
+                                <th scope="col" style="width:20%">Prioridad</th>
+                                <th scope="col" style="width:20%">Responsable</th>
+                                <th scope="col" style="width:20%">Nombre</th>
+                                <th scope="col" style="width:10%">Especificación</th>
+                                <th scope="col" style="width:10%">Valor</th>
+                               
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-mantenimiento>
+                            <tr>
+                                <td> {{mantenimiento.U_CardName}} </td>
+                                <td>
+                                    {{mantenimiento.U_DocTotal}}
+                                </td>
+            
+                                <td> {{mantenimiento.U_CardName}} </td>
+                                <td>
+                                    {{mantenimiento.U_DocTotal}}
+                                </td>
+                                <td> {{mantenimiento.U_CardName}} </td>
+                                <td>
+                                    {{mantenimiento.U_DocTotal}}
+                                    <td>
+                                        {{mantenimiento.U_DocTotal}}
+                                    </td>
+                                    <td> {{mantenimiento.U_CardName}} </td>
+                                    <td>
+                                        {{mantenimiento.U_DocTotal}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    </p-card>
+
+                    
+
+                </p-tabPanel>
+
+                <p-tabPanel header="Planes Asociados">
+                    <p>
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
+                        qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                    </p>
+                </p-tabPanel>
+
+                <p-tabPanel  header="Adjuntos">
+                    
+                </p-tabPanel>
+
+                <p-tabPanel  header="Componentes">
+
+                </p-tabPanel>
+
+            </p-tabView>
+
+          
+
+           
+
+            <div class="flex justify-content-between mt-3"> 
+                <div class="flex gap-2">
+                    <p-button type="submit" label="OK" styleClass="w-7rem"></p-button>
+                    <p-button label="Cancelar" styleClass="p-button-secondary w-7rem"></p-button>
+                </div>
+               
+            </div>
+            
+        </form>
+    
+    </p-card>
+</div>

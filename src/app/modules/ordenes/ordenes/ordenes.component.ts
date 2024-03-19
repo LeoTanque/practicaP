@@ -111,12 +111,9 @@ otroInput: string = '';
 
 valorActual: any;
 
-tipoTrabajoSeleccionado: string = ''; // Puedes inicializarla con un valor predeterminado si es necesario
+tipoTrabajoSeleccionado: string = ''; 
 
-/*
-elementosTabla: any[]=[
-  {tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:'', U_OdomNue:''},
-] */
+
 
 
 elementosTabla: any[] = [
@@ -152,10 +149,7 @@ prioridades: any[] = [
   cardNameInput1:any;
   estadosFiltrados!: any[] ;
 
-prioridadValidator(control: AbstractControl): { [key: string]: boolean } | null {
-  // Asegura que el valor no sea '-'
-  return control.value === '-' ? { 'invalidPrioridad': true } : null;
-}
+
 
 estados:any[]=[
   
@@ -222,7 +216,7 @@ elementosTablaRecomendaciones:any[]=[
 fechaSeleccionadatablas: Date = new Date();
 datos:any[]=[]
 
-selectedOrden: any; // Definir el tipo adecuado según la estructura de tus órdenes
+selectedOrden: any; 
 ordenes: any[]=[];
 
 modoEdicion = false;
@@ -241,74 +235,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     
       if (this.docEntry) {
         this.modoEdicion = true;
-        // Estás editando, llama al servicio para obtener detalles y actualiza tu formulario
-
-        /*
-        this.creacionOrdenesService.obtenerDetalleOrden(this.docEntry).subscribe(
-          (response: any) => {
-            if (response && response.data) {
-              // Actualiza tu formulario con los detalles de la orden
-              const datosMapeados = {
-                tipoTrabajo: response.data.U_TipTra,
-                selectedSeries: response.data.U_Series,
-                otroInput: response.data.U_OtroInput,
-                selectedSeriesInput: response.data.U_DocNum,
-                selectedFallos: response.data.U_CodFall,
-                reportadoPor: response.data.U_PerRep,
-                autorizadoPor: response.data.U_PerAut,
-                fueraDeServicio: response.data.U_FueSer,
-                prioridadSeleccionada: response.data.U_Prior,
-                fechaSeleccionada: new Date(response.data.U_DocDate),
-                estadoSeleccionado: response.data.U_Status,
-                seleccionAgente: response.data.U_AgVent,
-                seleccionTecnico: response.data.U_TecResp,
-                seleccionCoordinador: response.data.U_Coord,
-                seleccionarFormato: response.data.U_ComTra,
-                dropdownCotizaciones: response.data.U_DocCot,
-                U_ProRep: response.data.U_ProRep,
-                cliente: response.data.U_CardCode,
-                nombre: response.data.U_CardName,
-                direccion: response.data.U_Address,
-                ciudad: response.data.U_City,
-                telefono: response.data.U_Phone,
-                contrato: response.data.U_OrdCom,
-                textoDiagnostico: response.data.U_ComTra,
-                // ... continua mapeando las demás propiedades ...
-
-
-              };
-              this.miFormulario.patchValue(datosMapeados);
-   
-               
-              if (response.data.DVP_WOR7Collection && Array.isArray(response.data.DVP_WOR7Collection) && response.data.DVP_WOR7Collection.length > 0) {
-                this.elementosTabla = [{
-                  //tipo: response.data.tipoEquipoNombre,
-              U_TipEqu: response.data.DVP_WOR7Collection[0].U_TipEqu,
-              U_NumEcon: response.data.DVP_WOR7Collection[0].U_NumEcon,
-              U_NReparto: response.data.DVP_WOR7Collection[0].U_NorRep,
-              U_GoodsBrand: response.data.DVP_WOR7Collection[0].U_Marca,
-              U_GoodsModel: response.data.DVP_WOR7Collection[0].U_Modelo,
-              U_GoodsSerial: response.data.DVP_WOR7Collection[0].U_Serie,
-              U_OdoAct: response.data.DVP_WOR7Collection[0].U_OdomAct,
-                  U_OdomNue: response.data.DVP_WOR7Collection[0].U_OdomNue !== undefined ? response.data.DVP_WOR7Collection[0].U_OdomNue : null,
-                }];
-                if (this.elementosTabla.length > 0) {
-                  this.miFormulario.controls['U_OdomNue'].setValue(this.elementosTabla[0].U_OdomNue);
-                }
-              }
-
-              
-              console.log('Carga de datos', response.data);
-            } else {
-              console.error('La respuesta no tiene la estructura esperada', response);
-              // Puedes manejar el caso en el que la respuesta no tenga la estructura esperada
-            }
-          },
-          error => {
-            console.error('Error al obtener detalles de la orden para editar', error);
-            // Puedes manejar el error según tus necesidades
-          }
-        );*/
+      
 
         this.cargarDatosOrden(this.docEntry)
       }
@@ -915,7 +842,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       U_Coord: valoresFormulario.seleccionCoordinador,
       U_ManObrCap: null,
       DVP_WOR1Collection: detallesCotizacionesParaAPI1,
-     // DVP_WOR1Collection:elementos,
+  
      // DVP_WOR2Collection: null,
       DVP_WOR2Collection: dvpWor2Collection,
       DVP_WOR3Collection: dvpWor3Collection,
@@ -927,12 +854,12 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     };
 
     console.log('Valores mandados al api', bodyParaAPI);
-    // Llama al servicio para guardar los datos en el API
+
     const jsonBody = JSON.stringify(bodyParaAPI);
   console.log(jsonBody)
   
     if (this.miFormulario.valid) {
-      // Mostrar SweetAlert con la pregunta
+      
       Swal.fire({
         //title: '¿Está seguro que desea grabar estos datos?',
         text: '¿Está seguro de grabar esta orden ?',
@@ -943,10 +870,8 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       }).then((result) => {
         if (result.isConfirmed) {
           this.grabandoDatos = true;
-          // Usuario hizo clic en "Sí, grabar", llama al servicio para enviar los datos
           this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI).subscribe(
             (respuesta) => {
-              // Manejar la respuesta del servicio según sea necesario
               console.log('Respuesta del servicio:', respuesta);
               this.grabandoDatos = false;
               Swal.fire({
@@ -956,7 +881,6 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
               });
             },
             (error) => {
-              // Manejar errores si es necesario
               console.error('Error en la petición:', error);
               this.grabandoDatos = false;
               Swal.fire({
@@ -967,12 +891,10 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
             }
           );
         } else if (result.dismiss === Swal.DismissReason.cancel) {
-          // Usuario hizo clic en "Cancelar"
           Swal.fire('Cancelado', 'No se han grabado los datos', 'info');
         }
       });
     } else {
-      // El formulario no es válido, muestra un mensaje con SweetAlert
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -1156,7 +1078,6 @@ actualizarOrden() {
       U_Prior: valoresFormulario.prioridadSeleccionada,
       U_NomAgVent: valoresFormulario.seleccionAgente, 
       U_AgVent: valoresFormulario.codigoAgente,
-     // Ajusta según tu lógica
       U_PerAut: valoresFormulario.autorizadoPor,
       U_PerRep: valoresFormulario.reportadoPor,
       U_CodFall: valoresFormulario.selectedFallos,
@@ -1210,21 +1131,7 @@ actualizarOrden() {
       DVP_WOR5Collection: DVP_WOR5Collection,
       DVP_WOR6Collection: null,
       DVP_WOR7Collection: dvpWor7Collection,
-     
-     /* DVP_WOR7Collection: []= [{
-        LineId: 1, // Asegura que LineId sea único
-       
-        U_TipEqu:tipoEquipoNombre,
-        U_NumEcon: this.elementosTabla[0].U_NumEcon,
-        U_NorRep: this.elementosTabla[0].U_NReparto,
-        U_Marca: this.elementosTabla[0].U_GoodsBrand,
-        U_Modelo: this.elementosTabla[0].U_GoodsModel,
-        U_Serie: this.elementosTabla[0].U_GoodsSerial,
-        U_OdomAct: this.elementosTabla[0].U_OdoAct,
-        U_OdomNue: this.elementosTabla[0].U_OdomNue !== undefined ? this.elementosTabla[0].U_OdomNue : this.miFormulario.get('U_OdomNue')?.value,
 
-        
-      }],*/
     };
     
 
@@ -1279,11 +1186,6 @@ actualizarOrden() {
   }
  
 }
-
-
-
-
-
   
 /*
 onFileSelected(event: any) {
@@ -1341,142 +1243,6 @@ onFileSelected(event: any) {
       console.log(this.archivos); // Verifica la lista de archivos en la consola
   }
 }
-
-
-  /*
-  onSubmit() {
-    if (this.isSubmitting) {
-      return;
-    }
-  
-    this.isSubmitting = true;
-  
-    const valoresFormulario = this.miFormulario.value;
-    console.log('Valores del formulario', valoresFormulario);
-  
-    const bodyParaAPI = {
-      DocEntry: 64,
-      DocNum: 64,
-      Series: -1,
-      U_LastPref: null,
-      U_ConFlo: null,
-      U_DocNum: valoresFormulario.selectedSeriesInput,
-      U_Series: valoresFormulario.selectedSeries,
-      U_Prefix: null,
-      U_TipTra: valoresFormulario.tipoTrabajo,
-      U_RefOrdTra: null,
-      U_CardCode: valoresFormulario.cliente,
-      U_CardName: valoresFormulario.nombre,
-      U_Address: valoresFormulario.direccion,
-      U_City: valoresFormulario.ciudad,
-      U_Phone: valoresFormulario.telefono,
-      U_OrdCom: null,
-      U_PDFOC: null,
-      U_NomSysOC: null,
-      U_Status: valoresFormulario.estadoSeleccionado,
-      U_DocDate: valoresFormulario.fechaSeleccionada.toISOString(),
-      U_FecEspPar: null,
-      U_Prior: valoresFormulario.prioridadSeleccionada,
-      U_AgVent: valoresFormulario.seleccionAgente,
-      U_NomAgVent: null, // Ajusta según tu lógica
-      U_PerAut: valoresFormulario.autorizadoPor,
-      U_PerRep: valoresFormulario.reportadoPor,
-      U_CodFall: valoresFormulario.selectedFallos,
-      U_ProRep: valoresFormulario.U_ProRep,
-      U_ComTra: null,
-      U_ComRec: null,
-      U_ComRef: null,
-      U_ComMan: null,
-      U_ComRep: null,
-      U_Com: null,
-      U_ComClosed: null,
-      U_TipEqu: null,
-      U_NumEcon: null,
-      U_Marca: null,
-      U_Modelo: null,
-      U_Serie: null,
-      U_Closed: null,
-      U_Ended: null,
-      U_Odom: null,
-      U_EndRec: null,
-      U_StartD: null,
-      U_EndD: null,
-      U_HasD: null,
-      U_HorasMan: null,
-      U_StartC: null,
-      U_EndC: null,
-      U_HasC: null,
-      U_StartA: null,
-      U_EndA: null,
-      U_HasA: null,
-      U_StartP: null,
-      U_EndP: null,
-      U_HasP: null,
-      U_StartE: null,
-      U_EndE: null,
-      U_HasE: null,
-      U_DocT: null,
-      U_DocR: null,
-      U_DocCot: null,
-      U_DocFac: null,
-      U_EnTras: null,
-      U_FueSer: null,
-      U_NorRep: null,
-      U_TecResp: valoresFormulario.seleccionTecnico,
-      U_Coord: valoresFormulario.seleccionCoordinador,
-      U_ManObrCap: null,
-      DVP_WOR1Collection: null,
-      DVP_WOR2Collection: null,
-      DVP_WOR3Collection: null,
-      DVP_WOR4Collection: null,
-      DVP_WOR5Collection: null,
-      DVP_WOR6Collection: null,
-      DVP_WOR7Collection: [
-        {
-          LineId: 1,
-          U_TipEqu: "MC01",
-          U_NumEcon: "bds8888",
-          U_NorRep: "jhgh555",
-          U_Marca: "BOSH",
-          U_Modelo: "BSH547",
-          U_Serie: "557896",
-          U_OdomAct: 21,
-          U_OdomNue: 22
-        }
-      ]
-    };
-  
-    console.log('Valores mandados al API', bodyParaAPI);
-  
-    this.creacionOrdenesService.grabarOrdenTrabajo(bodyParaAPI)
-      .pipe(
-        exhaustMap(response => {
-          console.log('Respuesta del API', response);
-          Swal.fire({
-            title: "Éxito",
-            text: "OT Grabado con Éxito",
-            icon: "success"
-          });
-          // Puedes retornar un observable vacío o con algún valor si es necesario
-          return of(null);
-        }),
-        catchError(error => {
-          console.error('Error al llamar al API', error);
-          Swal.fire({
-            title: "Error",
-            text: "Error al llamar al API",
-            icon: "error"
-          });
-          // Puedes retornar un observable vacío o con algún valor si es necesario
-          return throwError(error);
-        }),
-        finalize(() => {
-          this.isSubmitting = false;
-        })
-      )
-      .subscribe();
-  }*/
-
 
 
   
@@ -2000,138 +1766,7 @@ onFilterChange() {
   }
   
  
-  
-/*
-  onTipoChange(event: any) {
-    console.log('Tipo changed:', event.value);
-  
-    // Verifica si se ha seleccionado previamente un tipo de trabajo
-    if (this.miFormulario.get('tipoTrabajo')?.value ) {
-      if(this.miFormulario.get('selectedSeries')?.value){
-// Establece las variables en función de la opción seleccionada
-this.isBT01Selected = event.value === 'BT01';
-this.isMC01Selected = event.value === 'MC01';
 
-// Evalúa la opción seleccionada en el segundo p-dropdown
-if (this.isBT01Selected) {
-  this.visibleBT01Modal = true;
-} else if (this.isMC01Selected) {
-  this.visibleMC01Modal = true;
-} else {
-  // Muestra una alerta o realiza alguna acción si la opción no coincide
-  console.error('Error: La opción seleccionada en el segundo p-dropdown no coincide.');
-  // Aquí puedes mostrar un mensaje de error o realizar alguna otra acción.
-}
-   }else{
-        Swal.fire({
-          title: 'Error',
-          text: 'Debes seleccionar una serie antes de seleccionar el tipo.',
-          icon: 'error'
-        });
-      }
-      
-    } else {
-      // Muestra una alerta o realiza alguna acción si no se ha seleccionado un tipo de trabajo
-      Swal.fire({
-        title: 'Error',
-        text: 'Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.',
-        icon: 'error'
-      });
-      console.error('Error: Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.');
-      // Aquí puedes mostrar un mensaje de error o realizar alguna otra acción.
-    }
-  }*/
-
-/*
-  onTipoChange(event: any) {
-    console.log('Tipo changed:', event.value);
-    
-    // Verifica si se ha seleccionado previamente un tipo de trabajo
-    if (this.miFormulario.get('tipoTrabajo')?.value) {
-
-      const tipoSeleccionado = this.listaTrabajos.find(tipo => tipo.Code === event.value);
-      
-      // Asigna el nombre del tipo de equipo seleccionado en el formulario reactivo
-      if (tipoSeleccionado) {
-        this.miFormulario.get('U_TipEqu')?.setValue(tipoSeleccionado);
-  
-        // Resto de tu código...
-        // Establece las variables en función de la opción seleccionada
-        this.isBT01Selected = event.value === 'BT01';
-        this.isMC01Selected = event.value === 'MC01';
-  
-        // Evalúa la opción seleccionada en el segundo p-dropdown
-        if (this.isBT01Selected) {
-          this.visibleBT01Modal = true;
-        } else if (this.isMC01Selected) {
-          this.visibleMC01Modal = true;
-        } else {
-          // Muestra una alerta o realiza alguna acción si la opción no coincide
-          console.error('Error: La opción seleccionada en el segundo p-dropdown no coincide.');
-          // Aquí puedes mostrar un mensaje de error o realizar alguna otra acción.
-        }
-      } else {
-        // Manejar el caso cuando no se encuentra el tipo seleccionado
-        Swal.fire({
-          title: 'Error',
-          text: 'No se pudo encontrar el tipo de equipo seleccionado.',
-          icon: 'error'
-        });
-        // Puedes mostrar un mensaje de error o realizar otra acción según tu lógica
-      }
-    } else {
-      // Muestra una alerta o realiza alguna acción si no se ha seleccionado un tipo de trabajo
-      Swal.fire({
-        title: 'Error',
-        text: 'Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.',
-        icon: 'error'
-      });
-      console.error('Error: Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.');
-      // Aquí puedes mostrar un mensaje de error o realizar alguna otra acción.
-    }
-  }*/
-  
-
-  /*
-  onTipoChange(event: any) {
-    console.log('Tipo changed:', event.value);
-  
-    if (this.miFormulario.get('tipoTrabajo')?.value) {
-      const tipoSeleccionado = this.listaTrabajos.find(tipo => tipo.Code === event.value);
-  
-
-
-      if (tipoSeleccionado) {
-      this.miFormulario.get('U_TipEqu')?.setValue(tipoSeleccionado);
-      this.tipoTrabajoSeleccionado = event.value;
-        this.isBT01Selected = this.tipoTrabajoSeleccionado === 'BT01';
-        this.isMC01Selected = this.tipoTrabajoSeleccionado === 'MC01';
-
-         console.log('tipo', this.tipoTrabajoSeleccionado)
-        if (this.isBT01Selected) {
-          this.visibleBT01Modal = true;
-        } else if (this.isMC01Selected) {
-          this.visibleMC01Modal = true;
-        } else {
-          console.error('Error: La opción seleccionada en el segundo p-dropdown no coincide.');
-        }
-      } else {
-        Swal.fire({
-          title: 'Error',
-          text: 'No se pudo encontrar el tipo de equipo seleccionado.',
-          icon: 'error'
-        });
-      }
-    } else {
-      Swal.fire({
-        title: 'Error',
-        text: 'Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.',
-        icon: 'error'
-      });
-      console.error('Error: Debes seleccionar un tipo de trabajo antes de seleccionar el tipo.');
-    }
-  }*/
-  
   
   onTipoChange(event: any, index: number) {
     console.log('Tipo changed:', event.value);
@@ -2171,65 +1806,6 @@ if (this.isBT01Selected) {
     }
   }
   
-
-/*
-  onRowDoubleClick(event: any, rowData: any, tipo: string, codigo:any) {
-    this.cargarDatosAdicionalesMC01(tipo, codigo)
-    console.log(tipo,codigo)
-  let seleccion= this.miFormulario.value.tipoTrabajo
-   if(this.elementosTabla.length>0 && this.elementosTabla[0].tipo !== null ){
-      if(seleccion=== 'MP1200' || seleccion==='MP1000'|| seleccion==='MP200'|| seleccion==='MP2000'|| 
-      seleccion==='MP2400'|| seleccion==='MP250'|| seleccion==='MP500'|| seleccion==='MP600'){
-        this.elementosTabla[this.elementosTabla.length-1]={tipo:1, U_NReparto: rowData.U_NReparto, U_NumEcon:rowData.U_NumEcon,
-           U_GoodsBrand:rowData.U_GoodsBrand,
-          U_GoodsModel:rowData.U_GoodsModel, U_GoodsSerial:rowData.U_GoodsSerial, U_OdoAct:rowData.U_OdoAct, U_OdomNue:rowData.U_OdomNue}
-          this.visibleBT01Modal= false;
-         this.visibleMC01Modal=false;
-         
-        this.elementosTabla.push({tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:'', U_OdomNue:''})
-     
-        this.selectedRowData = rowData;
-        
-        this.clienteProp = rowData.U_CliProp;
-        this.nombreProp = rowData.U_NCliProp;
-        //this.direccionProp = rowData.dAdicionales.Street;
-        console.log(this.direccionProp)
-        this.ciudad = rowData.City
-        
-        
-        this.selectedU_NReparto = rowData.U_NReparto;
-       
-      }else{
-        Swal.fire({
-          title: "Error",
-          text: "No se puede agregar mas equipos",
-          icon: "error"
-        });
-this.visibleBT01Modal=false;
-this.visibleMC01Modal=false
-      }
-   }
-   else if(this.elementosTabla.length===1 && this.elementosTabla[0].tipo === null ){
-    this.elementosTabla[0]={tipo:1, U_NReparto: rowData.U_NReparto, U_NumEcon:rowData.U_NumEcon, U_GoodsBrand:rowData.U_GoodsBrand,
-       U_GoodsModel:rowData.U_GoodsModel, U_GoodsSerial:rowData.U_GoodsSerial, U_OdoAct:rowData.U_OdoAct, U_OdomNue:rowData.U_OdomNue}
-       this.visibleBT01Modal= false;
-       this.visibleMC01Modal=false;
-
-       this.elementosTabla.push({tipo:null, U_NReparto:'', U_NumEcon:'', U_GoodsBrand:'', U_GoodsModel:'',U_GoodsSerial:'', U_OdoAct:'', U_OdomNue:''})
-
-      
-
-       this.selectedRowData = rowData;
-
-       this.clienteProp = rowData.U_CliProp;
-      
-       this.nombreProp = rowData.U_NCliProp;
-       //this.direccionProp = rowData.dAdicionales.Street;
-      
-       this.selectedU_NReparto = rowData.U_NReparto;
-   }
-  }*/
-
 
   
   onRowDoubleClick(event: any, rowData: any, tipo: string, codigo: any) {
@@ -2385,69 +1961,6 @@ onrowDobleClickref(orden: any) {
   this.refacciones = false;
 }
 
-
-/*
-onrowDobleClickref(orden: any) {
-  // Verifica si la opción "Cotización" está seleccionada en el dropdown de estados
-  if (this.miFormulario.get('estadoSeleccionado')?.value === 'C') {
-    // Resto de tu lógica...
-    console.log('Datos de la fila seleccionada:', orden);
-
-    // Verifica si SerieAlmacen tiene al menos un elemento
-    if (this.SerieAlmacen.length > 0) {
-      // Verifica si la serie de la fila seleccionada coincide con la serie seleccionada en SerieAlmacen
-      if (this.selectedU_NReparto && (orden.WhsName === this.selectedU_NReparto || orden.WhsCode === this.selectedU_NReparto)) {
-        // Crea una nueva fila con los datos de la orden seleccionada
-        const nuevaFila = {
-          NoParte: '',
-          Descripcion: orden.ItemName,
-          Cantidad: '',
-          CC: '',
-          SC: '',
-          U_GoodsSerial: '',
-          Almacen: orden.WhsName,
-          Existencia: '',
-          original: true,
-        };
-
-        // Agrega la nueva fila a elementosTablaRefacciones
-        this.elementosTablaRefacciones.push(nuevaFila);
-
-        // Muestra un mensaje de éxito
-        Swal.fire({
-          title: 'Éxito',
-          text: 'La fila seleccionada coincide con la serie por reparto seleccionada.',
-          icon: 'success'
-        });
-      } else {
-        // Muestra un mensaje de error si la serie no coincide con la seleccionada
-        Swal.fire({
-          title: 'Error',
-          text: 'La fila seleccionada no coincide con la serie por reparto seleccionada.',
-          icon: 'error'
-        });
-      }
-    } else {
-      // Muestra un mensaje de error si SerieAlmacen está vacío
-      Swal.fire({
-        title: 'Error',
-        text: 'El select de Serie Almacen está vacío.',
-        icon: 'error'
-      });
-      console.error('Error: SerieAlmacen está vacío');
-    }
-  } else {
-    // Si la opción "Cotización" no está seleccionada, muestra un mensaje de error
-    Swal.fire({
-      title: 'Error',
-      text: 'La opción "Cotización" no está seleccionada.',
-      icon: 'error'
-    });
-    console.error('Error: La opción "Cotización" no está seleccionada en el select de estados.');
-  }
-
-  this.refacciones = false;
-}*/
 
 
 onAlmacenSeleccionadoChange(event: any) {
@@ -2617,30 +2130,6 @@ onrowDobloClickTecnico(manoTecnicos: any) {
   this.manoDeObraTecnicos = false;
 }
 
-/*
-onrowDobloClickTecnico(manoTecnicos: any, index: number) {
-  if (index >= 0 && index < this.elementosTablaManoDeObra.length) {
-      this.elementosTablaManoDeObra[index].Tecnico = manoTecnicos.Code;
-      this.elementosTablaManoDeObra[index].Nombre = manoTecnicos.Name;
-
-      this.tecnicosSeleccionados[index] = {
-          codigo: manoTecnicos.Code,
-          nombre: manoTecnicos.Name
-      };
-
-      
-  } else {
-      Swal.fire({
-          title: 'Error',
-          text: 'No se pudo actualizar la fila seleccionada. Índice de fila inválido.',
-          icon: 'error'
-      });
-      console.error('Error: Índice de fila inválido en onrowDobloClickTecnico');
-  }
-  this.manoDeObraTecnicos = false;
-}*/
-
-
 
 
 onrowDobloClickProveedoresTerceros(proveedor: any) {
@@ -2705,33 +2194,6 @@ onrowDobloClickOrdenCompraProveedor(ordenCompra: any) {
   this.ordenCompra = false;
 }
 
-
-/*
-onrowDobloClickREcomendaciones(recomendacion: any) {
-  
- 
-    const nuevaRecomendacion = {
-      NoParte: recomendacion.ItemCode,
-      Descripcion: recomendacion.ItemName,
-      Cantidad: recomendacion.stocktotal,
-      
-      
-    };
-
-  
-    this.elementosTablaRecomendaciones.push(nuevaRecomendacion);
-   console.log(nuevaRecomendacion)
-   
-    this.elementosTablaRecomendaciones = [...this.elementosTablaRecomendaciones];
-    console.log(this.elementosTablaRecomendaciones)
-    // Limpia el formulario si es necesario
-    
-    this.miFormulario.reset();
-  
-    
-  
-  this.recomendaciones = false
-}*/
 
 
 
@@ -3028,28 +2490,6 @@ openManoTecnico(){
 
     this.actualizarIndiceActivo();
   }
-/*
-  private actualizarIndiceActivo() {
-    let estadoSeleccionado = this.miFormulario.value.estadoSeleccionado;
-
-    this.diagnosticoHabilitado = estadoSeleccionado === 'D';
-    this.refaccionesHabilitado = estadoSeleccionado !== 'D';
-    this.manoDeObraHabilitado = estadoSeleccionado !== 'D';
-    this.tercerosHabilitado = estadoSeleccionado !== 'D';
-    this.recomendacionesHbilitado = estadoSeleccionado !== 'D';
-    this.anexosHabilitado = estadoSeleccionado !== 'D';
-
-    if (estadoSeleccionado === 'D' && this.panelActivo !== 'diagnosticoPanel') {
-      const panelActual = this.tabView.tabs.find((tab:any) => tab.header === this.panelActivo);
-      if (panelActual) {
-        panelActual.selected = false; // Oculta el panel actual
-      }
-      this.panelActivo = 'diagnosticoPanel'; // Establece el panel "Diagnóstico" como activo
-    }else {
-      this.mostrarContenidoPanelActual();
-    }
-    
-  }*/
 
 
   private actualizarIndiceActivo() {

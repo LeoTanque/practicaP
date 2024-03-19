@@ -31,6 +31,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Busca de Órdenes de Trabajo ', icon: 'pi pi-cog ', routerLink: ['/buscaOrdenes'] },
                     { label: 'Entrega Refacciones ', icon: 'pi pi-cog ', routerLink: ['/entrega'] }, 
                     { label: 'Cambio de Odometro ', icon: 'pi pi-cog ', routerLink: ['/codometros'] },
+                    { label: 'Planificacion de mantenimiento ', icon: 'pi pi-cog ', routerLink: ['/administradorOrden'] },
                        ]
                 
                    },
