@@ -561,6 +561,44 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                       U_Filebase64: archivo.U_Filebase64
                   }));
               }
+
+              /*
+
+              if (response.data.DVP_WOR5Collection && Array.isArray(response.data.DVP_WOR5Collection)) {
+                this.archivos = response.data.DVP_WOR5Collection.map((archivo: any) => {
+                    // Verificar si U_Filebase64 está presente y tiene algún valor
+                    if (archivo.U_Filebase64) {
+                        return {
+                            LineId: archivo.LineId,
+                            VisOrder: archivo.VisOrder,
+                            Object: archivo.Object,
+                            LogInst: archivo.LogInst,
+                            U_Descripcion: archivo.U_Descripcion,
+                            U_File: archivo.U_File,
+                            U_NomFile: archivo.U_NomFile,
+                            U_NomSys: archivo.U_NomSys,
+                            U_TipAnex: archivo.U_TipAnex,
+                            U_Filebase64: archivo.U_Filebase64
+                        };
+                    } else {
+                        // Si U_Filebase64 está ausente o es undefined, regresa un objeto con U_Filebase64 vacío
+                        console.error('U_Filebase64 está ausente o es undefined para el archivo:', archivo);
+                        return {
+                            LineId: archivo.LineId,
+                            VisOrder: archivo.VisOrder,
+                            Object: archivo.Object,
+                            LogInst: archivo.LogInst,
+                            U_Descripcion: archivo.U_Descripcion,
+                            U_File: archivo.U_File,
+                            U_NomFile: archivo.U_NomFile,
+                            U_NomSys: archivo.U_NomSys,
+                            U_TipAnex: archivo.U_TipAnex,
+                            U_Filebase64: ''
+                        };
+                    }
+                });
+            }*/
+            
                 
                 if (response.data.DVP_WOR7Collection && Array.isArray(response.data.DVP_WOR7Collection)) {
                     this.elementosTabla = response.data.DVP_WOR7Collection.map((elemento: any) => ({
@@ -1037,7 +1075,7 @@ actualizarOrden() {
       U_NomFile: archivo.U_NomFile,
       U_TipAnex: archivo.U_TipAnex,
       U_Filebase64: archivo.U_Filebase64,
-      U_absentry: '10'
+      //U_absentry: '10'
     }));
 
     const filasNoVacias = this.elementosTabla.filter(fila => fila.U_TipEqu !== null);
