@@ -16,7 +16,8 @@ const routes: Routes = [
       { path:'entrega', loadChildren: () => import('./modules/entrega/entrega.module').then(m=>m.EntregaModule)},
       {path: 'codometros', loadChildren: ()=> import('./modules/codometros/codometros.module').then(m=>m.CodometrosModule)},
       {path: 'coventa', loadChildren: () => import('./modules/coventa/coventa.module').then(m=>m.CoventaModule)},
-      {path: 'administradorOrden', loadChildren: () => import('./modules/administrador/administrador.module').then(m=>m.AdministradorModule)}
+      {path: 'administradorOrden', loadChildren: () => import('./modules/administrador/administrador.module').then(m=>m.AdministradorModule)},
+      {path: 'gantt', loadChildren: () => import('./modules/gantt/gantt.module').then(m=>m.GanttModule)}
   ]
   },
  
