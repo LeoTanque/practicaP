@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+
+
+
 import { OrdenesRoutingModule } from './ordenes-routing.module';
 import { OrdenesComponent } from './ordenes/ordenes.component';
 import { TreeSelectModule } from 'primeng/treeselect';
@@ -27,6 +30,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
 // For dynamic progressbar demo
 import { ToastModule } from 'primeng/toast';
 import { ProgresModule } from '../progres/progres.module';
+
+
 
 @NgModule({
   declarations: [
