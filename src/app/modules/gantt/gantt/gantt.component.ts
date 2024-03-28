@@ -18,9 +18,11 @@ export class GanttComponent implements OnInit{
     { id: 6, tarea: 'Revision de Pernos' },
     { id: 7, tarea: 'Desmontaje y Revision de ornillas' },
     { id: 8, tarea: 'Revisión del clutch' },
-    { id: 9, tarea: 'Limpieza y Revición de resortes' }
+    { id: 9, tarea: 'Limpieza y Revición de resortes' },
+    
 
   ];
+  
 
   ngOnInit() {
     const documentStyle = getComputedStyle(document.documentElement);
@@ -39,7 +41,7 @@ export class GanttComponent implements OnInit{
           borderWidth: 1,
           borderSkipped: false,
           borderRadius: 5,
-          data: [
+         /* data: [
             { x: [0, 1], y: 1, diferenciaTiempo: 1 },
             { x: [1, 2], y: 2, diferenciaTiempo: 1 },
             { x: [2, 3], y: 3, diferenciaTiempo: 1 },
@@ -49,10 +51,31 @@ export class GanttComponent implements OnInit{
             { x: [8, 9], y: 7, diferenciaTiempo: 1 },
             { x: [9, 10], y: 8, diferenciaTiempo: 1 },
             { x: [10, 12], y: 9, diferenciaTiempo: 2 },
+          ],*/
+
+          data: [
+            { x: [0, 1], y: 1 },
+            { x: [1, 2], y: 2 },
+            { x: [2, 3], y: 3 },
+            { x: [3, 6], y: 4 },
+            { x: [6, 7], y: 5 },
+            { x: [7, 8], y: 6 },
+            { x: [8, 9], y: 7 },
+            { x: [9, 10], y: 8 },
+            { x: [10, 12], y: 9 },
           ],
+
         },
       ]
     };
+
+
+
+  
+    this.data.datasets[0].data.forEach((item: { x: number[]; diferenciaTiempo: number; }) => {
+      const diferenciaTiempo = item.x[1] - item.x[0];
+      item.diferenciaTiempo = diferenciaTiempo;
+    });
 
     this.options = {
       indexAxis: 'y',
@@ -135,5 +158,14 @@ export class GanttComponent implements OnInit{
       const tarea = this.tareas[dataset.data[0].y - 1].tarea; // Obtén el nombre de la tarea para el primer punto del dataset
       dataset.label = ` ${tarea}`;
     });
+  }
+
+  agregarTarea(tarea: string) {
+    const id = this.tareas.length + 1; // Asigna el ID automáticamente
+    this.tareas.push({ id: id, tarea: tarea });
+    // Actualiza las etiquetas del eje Y
+    this.options.scales.y.labels = this.generarEtiquetasY();
+    // Actualiza el label del dataset con el nombre de la tarea
+    this.actualizarLabelsDataset();
   }
 }
