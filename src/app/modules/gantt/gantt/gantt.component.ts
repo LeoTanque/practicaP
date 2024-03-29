@@ -9,20 +9,17 @@ export class GanttComponent implements OnInit{
   data: any;
   options: any;
   tareas: any[] = [
+    { id: 1, tarea: 'Desarmar parte inferior', duracion: [[0, 1]] },
+    { id: 2, tarea: 'Desarmar la cuchilla', duracion: [[1, 2]] },
+    { id: 3, tarea: 'Revisión el estado', duracion: [[2, 3]] },
+    { id: 4, tarea: 'Revisión de sistema eléctrico', duracion: [[3, 6]] },
+    { id: 5, tarea: 'Engrasar y Lubricar', duracion: [[6, 7]] },
+    { id: 6, tarea: 'Revision de Pernos', duracion: [[7, 8]] },
+    { id: 7, tarea: 'Desmontaje y Revision de ornillas', duracion: [[8, 9]] },
+    { id: 8, tarea: 'Revisión del clutch', duracion: [[9, 10]] },
+    { id: 9, tarea: 'Limpieza y Revición de resortes', duracion: [[10, 12]] },
     
-    { id: 1, tarea: 'Desarmar parte inferior' },
-    { id: 2, tarea: 'Desarmar la cuchilla' },
-    { id: 3, tarea: 'Revisión el estado' },
-    { id: 4, tarea: 'Revisión de sistema eléctrico' },
-    { id: 5, tarea: 'Engrasar y Lubricar' },
-    { id: 6, tarea: 'Revision de Pernos' },
-    { id: 7, tarea: 'Desmontaje y Revision de ornillas' },
-    { id: 8, tarea: 'Revisión del clutch' },
-    { id: 9, tarea: 'Limpieza y Revición de resortes' },
-    
-
   ];
-  
 
   ngOnInit() {
     const documentStyle = getComputedStyle(document.documentElement);
@@ -31,6 +28,7 @@ export class GanttComponent implements OnInit{
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
     const etiquetasY = this.generarEtiquetasY();
+    const datos = this.generarDatos();
 
     this.data = {
       datasets: [
@@ -41,47 +39,15 @@ export class GanttComponent implements OnInit{
           borderWidth: 1,
           borderSkipped: false,
           borderRadius: 5,
-         /* data: [
-            { x: [0, 1], y: 1, diferenciaTiempo: 1 },
-            { x: [1, 2], y: 2, diferenciaTiempo: 1 },
-            { x: [2, 3], y: 3, diferenciaTiempo: 1 },
-            { x: [3, 6], y: 4, diferenciaTiempo: 3 },
-            { x: [6, 7], y: 5, diferenciaTiempo: 1 },
-            { x: [7, 8], y: 6, diferenciaTiempo: 1 },
-            { x: [8, 9], y: 7, diferenciaTiempo: 1 },
-            { x: [9, 10], y: 8, diferenciaTiempo: 1 },
-            { x: [10, 12], y: 9, diferenciaTiempo: 2 },
-          ],*/
-
-          data: [
-            { x: [0, 1], y: 1 },
-            { x: [1, 2], y: 2 },
-            { x: [2, 3], y: 3 },
-            { x: [3, 6], y: 4 },
-            { x: [6, 7], y: 5 },
-            { x: [7, 8], y: 6 },
-            { x: [8, 9], y: 7 },
-            { x: [9, 10], y: 8 },
-            { x: [10, 12], y: 9 },
-          ],
-
+          data: datos,
         },
       ]
     };
-
-
-
-  
-    this.data.datasets[0].data.forEach((item: { x: number[]; diferenciaTiempo: number; }) => {
-      const diferenciaTiempo = item.x[1] - item.x[0];
-      item.diferenciaTiempo = diferenciaTiempo;
-    });
 
     this.options = {
       indexAxis: 'y',
       maintainAspectRatio: false,
       aspectRatio: 0.8,
-      //responsive: true,
       layout: {
         padding: {}
       },
@@ -93,16 +59,31 @@ export class GanttComponent implements OnInit{
         },
         tooltip: {
           callbacks: {
+            /*
+            label: (context: { dataset: any; dataIndex: string | number; }) => {
+              const dataset = context.dataset;
+              const data = dataset.data[context.dataIndex];
+              const tarea = this.tareas[data.y - 1].tarea;
+              return `${tarea} dura ${data.diferenciaTiempo} Horas`;
+            }*/
+
             label: (context: { dataset: any; dataIndex: string | number; }) => {
               const dataset = context.dataset;
               const data = dataset.data[context.dataIndex];
               if (data.diferenciaTiempo !== undefined) {
-                const tarea = this.tareas[data.y - 1].tarea;
-                return `${tarea} dura ${data.diferenciaTiempo} Horas`;
+                const tarea = this.tareas.find((t: any) => t.id === data.y)?.tarea;
+                if (tarea) {
+                  return `${tarea} dura ${data.diferenciaTiempo} Horas`;
+                } else {
+                  return `Tarea no encontrada`;
+                }
               } else {
                 return `${dataset.label}: [${data.x[0]} , ${data.x[1]}]`;
               }
             }
+            
+
+
           }
         }
       },
@@ -143,7 +124,6 @@ export class GanttComponent implements OnInit{
       }
     };
 
-    // Actualiza el label del dataset con el nombre de la tarea
     this.actualizarLabelsDataset();
   }
 
@@ -153,19 +133,21 @@ export class GanttComponent implements OnInit{
     return this.tareas.map(t => `${t.id.toString().padEnd(maxLengthId)}   ${t.tarea.padEnd(maxLengthTarea)}`);
   }
 
+  generarDatos() {
+    const datos:any = [];
+    this.tareas.forEach(tarea => {
+      tarea.duracion.forEach((intervalo: number[]) => {
+        const diferenciaTiempo = intervalo[1] - intervalo[0];
+        datos.push({ x: intervalo, y: tarea.id, diferenciaTiempo: diferenciaTiempo });
+      });
+    });
+    return datos;
+  }
+
   actualizarLabelsDataset() {
     this.data.datasets.forEach((dataset: { label: string; data: { y: number; }[]; }) => {
       const tarea = this.tareas[dataset.data[0].y - 1].tarea; // Obtén el nombre de la tarea para el primer punto del dataset
       dataset.label = ` ${tarea}`;
     });
-  }
-
-  agregarTarea(tarea: string) {
-    const id = this.tareas.length + 1; // Asigna el ID automáticamente
-    this.tareas.push({ id: id, tarea: tarea });
-    // Actualiza las etiquetas del eje Y
-    this.options.scales.y.labels = this.generarEtiquetasY();
-    // Actualiza el label del dataset con el nombre de la tarea
-    this.actualizarLabelsDataset();
   }
 }
