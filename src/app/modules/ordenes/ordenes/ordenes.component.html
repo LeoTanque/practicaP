@@ -358,21 +358,35 @@ class="text-xs"
 
                         <td>
                            
-                           <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="CC" label="" [binary]="true" inputId="binary"  [disabled]="true" ></p-checkbox>
+                           <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="U_CarCli" label="" [binary]="true" inputId="binary"  [disabled]="true" ></p-checkbox>
                            <div *ngIf="!orden.original">
-                            <p-checkbox name="tipoExistencia" value="CC" label="" [binary]="true" inputId="binary" [(ngModel)]="TipoExistencia1"  ></p-checkbox>
+                            <p-checkbox name="tipoExistencia" value="U_CarCli" label="" [binary]="true" inputId="binary"  [(ngModel)]="TipoExistencia1" ></p-checkbox>
                         </div>
                         </td>
 
                         <td>
-                            
-                          <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="SC" label="" [binary]="true" inputId="binary" [(ngModel)]="checked" ></p-checkbox>
+                           <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="U_CarEmp" label="" [binary]="true" inputId="binary" [(ngModel)]="checked" ></p-checkbox>
                             <div *ngIf="!orden.original">
-                                <p-checkbox name="tipoExistencia" value="SC" label="" [binary]="true" inputId="binary" [disabled]="true" ></p-checkbox>
+                                <p-checkbox name="tipoExistencia" value="U_CarEmp" label="" [binary]="true" inputId="binary" [disabled]="true"
+                                 ></p-checkbox>
                             </div>
                         </td>
- 
+                        
+                        <!--td>
+                           
+                          <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="CC" label="" [binary]="true" inputId="binary"  [disabled]="true" ></p-checkbox>
+                          <div *ngIf="!orden.original">
+                           <p-checkbox name="tipoExistencia" value="CC" label="" [binary]="true" inputId="binary" [(ngModel)]="TipoExistencia1"  ></p-checkbox>
+                       </div>
+                       </!--td-->
 
+                       <!--td>
+                           
+                         <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="SC" label="" [binary]="true" inputId="binary" [(ngModel)]="checked" ></p-checkbox>
+                           <div *ngIf="!orden.original">
+                               <p-checkbox name="tipoExistencia" value="SC" label="" [binary]="true" inputId="binary" [disabled]="true" ></p-checkbox>
+                           </div>
+                       </!--td-->
                         
                         <td>   
                              <p-dropdown [options]="[selectedU_NReparto]"  placeholder="" appendTo="body" [(ngModel)]="orden.U_NorRep" ></p-dropdown>

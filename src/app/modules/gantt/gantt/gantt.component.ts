@@ -9,17 +9,19 @@ export class GanttComponent implements OnInit{
   data: any;
   options: any;
   tareas: any[] = [
-    { id: 1, tarea: 'Desarmar parte inferior', duracion: [[0, 1]] },
-    { id: 2, tarea: 'Desarmar la cuchilla', duracion: [[1, 2]] },
-    { id: 3, tarea: 'Revisión el estado', duracion: [[2, 3]] },
-    { id: 4, tarea: 'Revisión de sistema eléctrico', duracion: [[3, 6]] },
-    { id: 5, tarea: 'Engrasar y Lubricar', duracion: [[6, 7]] },
-    { id: 6, tarea: 'Revision de Pernos', duracion: [[7, 8]] },
-    { id: 7, tarea: 'Desmontaje y Revision de ornillas', duracion: [[8, 9]] },
-    { id: 8, tarea: 'Revisión del clutch', duracion: [[9, 10]] },
-    { id: 9, tarea: 'Limpieza y Revición de resortes', duracion: [[10, 12]] },
-    
+    { id: 1, tarea: 'Desarmar parte inferior', duracion: [[0, 1]], tecnico:'leo' },
+    { id: 2, tarea: 'Desarmar la cuchilla', duracion: [[1, 2]] , tecnico:'leo' },
+    { id: 3, tarea: 'Revisión el estado', duracion: [[2, 3]], tecnico:'leo' },
+    { id: 4, tarea: 'Revisión de sistema eléctrico', duracion: [[3, 6]], tecnico:'leo' },
+    { id: 5, tarea: 'Engrasar y Lubricar', duracion: [[6, 7]], tecnico:'leo' },
+    { id: 6, tarea: 'Revision de Pernos', duracion: [[7, 8]], tecnico:'leo' },
+    { id: 7, tarea: 'Desmontaje y Revision de ornillas', duracion: [[8, 9]], tecnico:'leo' },
+    { id: 8, tarea: 'Revisión del clutch', duracion: [[9, 10]] , tecnico:'leo'},
+    { id: 9, tarea: 'Limpieza y Revición de resortes', duracion: [[10, 12]], tecnico:'leo' },
+      
   ];
+
+  intervalos: boolean = false;
 
   ngOnInit() {
     const documentStyle = getComputedStyle(document.documentElement);
@@ -40,6 +42,7 @@ export class GanttComponent implements OnInit{
           borderSkipped: false,
           borderRadius: 5,
           data: datos,
+          
         },
       ]
     };
@@ -150,4 +153,14 @@ export class GanttComponent implements OnInit{
       dataset.label = ` ${tarea}`;
     });
   }
+
+  
+
+  showDialog1() {
+    this.intervalos = true;
+  }
+
+
+
+  
 }

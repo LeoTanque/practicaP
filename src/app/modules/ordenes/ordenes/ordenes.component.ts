@@ -123,7 +123,7 @@ elementosTabla: any[] = [
 
 
 elementosTablaRefacciones:any[]=[
-  {U_ItemCode:'', U_ItemName:'', U_Quantity:'', CC:'', SC:'',U_NorRep:'', Almacen:'', U_Existencia:'',original: true }
+  {U_ItemCode:'', U_ItemName:'', U_Quantity:'', U_CarCli:'', U_CarEmp:'',U_NorRep:'', Almacen:'', U_Existencia:'',original: true }
 ]
 
 Existencia:any = '';
@@ -451,7 +451,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     U_ItemCode: cotizacion.U_ItemCode,
                     U_ItemName: cotizacion.U_ItemName,
                     U_Quantity: cotizacion.U_Quantity,
-                    U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
+                    U_CarCli: 'Y', // Supongo que estos valores son fijos, ajusta según tus necesidades
                     U_CarEmp: "N",
                     U_InCot: null,
                     U_Ins: null,
@@ -975,27 +975,19 @@ actualizarOrden() {
    
 
 
-    const detallesCotizacionesParaAPI = this.dDetallesCotizaciones.map((detalle, index) => ({
-      LineId: index + 1,
-      U_ItemCode: detalle.ItemCode,
-      U_ItemName: detalle.Dscription,
-      U_Quantity: detalle.Quantity,
-      U_CarCli: "Y",
-      U_CarEmp: "N",
-      U_AlmEnt: "08",
-      U_CotVen: detalle.DocEntry,
-      U_Existencia: this.elementosTablaRefacciones[index +1]?.Existencia || '',
-      U_NorRep: uNorRepValue,
-    }));
-
     const detallesCotizacionesParaAPI1 = this.elementosTablaRefacciones.map((detalle, index) => ({
+      
       //LineId: null,
       LineId: index + 1,
       U_ItemCode: detalle.U_ItemCode,
       U_ItemName: detalle.U_ItemName,
       U_Quantity: detalle.U_Quantity,
-      U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
-      U_CarEmp: "N",
+      //U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
+      //U_CarCli: detalle.TipoExistencia1 === 'CC' ? 'Y' : 'N',
+      U_CarCli: detalle.U_CarCli ? 'Y' : 'N',
+      //U_CarCli: detalle.U_CarCli,
+      U_CarEmp: detalle.original ? 'Y' : 'N',
+      
       U_InCot: null,
       U_Ins: null,
       U_StaAlm: null,
@@ -1940,8 +1932,11 @@ onrowDobleClickref(orden: any) {
             U_ItemCode: orden.ItemCode,
             U_ItemName: orden.ItemName,
             U_Quantity: '',
-            CC: '',
-            SC: '',
+          //U_CarCli: '',
+           // U_CarEmp: '',
+            U_CarCli: orden.original ? 'Y' : 'N',
+            //U_CarEmp: '',
+            U_CarEmp: orden.original ? 'N' : 'Y',
             U_NorRep: this.selectedU_NReparto,
             Almacen: orden.Almacen,
             U_Existencia: '',
@@ -1950,7 +1945,7 @@ onrowDobleClickref(orden: any) {
 
           // Agrega la nueva fila a elementosTablaRefacciones
           this.elementosTablaRefacciones.push(nuevaFila);
-
+          console.log('sin cargo',this.elementosTablaRefacciones)
           // Muestra un mensaje de éxito
           Swal.fire({
             title: 'Éxito',
@@ -2050,8 +2045,10 @@ onrowDobleClickcotizacion1(cotizacion: any) {
                     U_ItemCode: detalle.ItemCode,
                     U_ItemName: detalle.Dscription,
                     U_Quantity: detalle.Quantity,
-                    CC: 'CC',
-                    SC: '',
+                    //U_CarCli: '',
+                    U_CarCli: detalle.original ? 'N' : 'Y',
+                    //U_CarEmp: '',
+                    U_CarEmp: detalle.original ? 'Y' : 'N',
                     U_NorRep: this.selectedU_NReparto,
                     Almacen: cotizacion.Almacen,
                     U_Existencia: '',
