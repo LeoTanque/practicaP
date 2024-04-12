@@ -17,7 +17,9 @@ const routes: Routes = [
       {path: 'codometros', loadChildren: ()=> import('./modules/codometros/codometros.module').then(m=>m.CodometrosModule)},
       {path: 'coventa', loadChildren: () => import('./modules/coventa/coventa.module').then(m=>m.CoventaModule)},
       {path: 'administradorOrden', loadChildren: () => import('./modules/administrador/administrador.module').then(m=>m.AdministradorModule)},
-      {path: 'gantt', loadChildren: () => import('./modules/gantt/gantt.module').then(m=>m.GanttModule)}
+      {path: 'gantt', loadChildren: () => import('./modules/gantt/gantt.module').then(m=>m.GanttModule)},
+      {path: 'mantenimiento', loadChildren: () => import('./modules/mantenimiento/mantenimiento.module').then(m=>m.MantenimientoModule)},
+
   ]
   },
  

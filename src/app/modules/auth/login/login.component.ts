@@ -114,7 +114,21 @@ export class LoginComponent implements OnInit {
     }
   }*/
 
-
+  submitForm1() {
+    const staticUsername = 'leo';
+    const staticPassword = '123';
+  
+    // Verificar si el usuario y la contraseña son correctos
+    if (this.loginForm.get('email')?.value === staticUsername && this.loginForm.get('password')?.value === staticPassword) {
+      // Usuario y contraseña son correctos
+      this.authService.updateActivoState('1');
+      this.router.navigate(['/']);
+    } else {
+      // Usuario o contraseña son incorrectos
+      this.showInvalidCredentialsError();
+    }
+  }
+  
   
   submitForm() {
     if (this.loginForm.valid) {

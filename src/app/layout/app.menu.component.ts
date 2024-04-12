@@ -33,6 +33,8 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Cambio de Odometro ', icon: 'pi pi-cog ', routerLink: ['/codometros'] },
                     { label: 'Planificacion de mantenimiento ', icon: 'pi pi-cog ', routerLink: ['/administradorOrden'] },
                     { label: 'Gantt ', icon: 'pi pi-cog ', routerLink: ['/gantt'] },
+                    { label: 'Manteniento ', icon: 'pi pi-cog ', routerLink: ['/mantenimiento'] },
+
                        ]
                 
                    },

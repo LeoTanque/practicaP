@@ -1,0 +1,481 @@
+<div class="grid container">
+    <p-card  header="Plan de Mantenimiento" [style]="{ width: '60rem' }" >
+
+        <form >
+            <div class="mb-2 pr-4 ">
+                <div class="grid align-items-center">
+                    <div class="col-2">
+                        <div class="align-items-center">
+                            <p>Equipo 1</p>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <div class="grid">
+                            <div class="col-3">
+                                <div class="justify-content-center">
+                                    <input pInputText type="text" class="w-full" placeholder="">
+                                    <div class="input">
+                                        <p-checkbox  [binary]="true" inputId="binary"></p-checkbox>
+                                        <p class="checkbox-label">Activo</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="justify-content-center">
+                                    <input pInputText type="text" class="w-full" placeholder="">
+                                    <div class="input">
+                                        <p-checkbox  [binary]="true" inputId="binary"></p-checkbox>
+                                        <p class="checkbox-label">Usar un ciclo de mantenimiento</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="justify-content-center">
+                                    <input pInputText type="text" class="w-full" placeholder="">
+                                    <div class="input">
+                                       
+                                        <p class="checkbox-label">Costo estimado</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="justify-content-center">
+                                    <input pInputText type="text" class="w-full" placeholder="">
+                                    <div class="input">
+                                        <input pInputText type="text" class="w-full" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid align-items-center">
+                    <div class="col-2">
+                        <div class="align-items-center">
+                            <p>Supervisor</p>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <div class="grid">
+                            <div class="col-3">
+                                <div class="justify-content-center">
+                                    <input pInputText type="text" class="w-full" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="justify-content-center">
+                                    <input pInputText type="text" class="w-full" placeholder="">
+                                </div>
+                            </div>
+                             <div class="col-3">
+                        <div class="input">
+                            <p class="checkbox-label">Total Tiempo</p>
+                        </div>
+                    </div>
+
+                            <div class="col-3">
+                                <div class="justify-content-center">
+                                    <input pInputText type="text" class="w-full" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+             
+
+               
+<div class=" flex justify-content-center mb-2">
+    <textarea rows="5" cols="30" pInputTextarea pInputTextarea class=" w-full" [(ngModel)]="value" placeholder="Notas"
+     [ngModelOptions]="{ standalone: true }"></textarea>
+</div>
+          
+
+            
+             
+            </div>
+
+          
+
+            <p-tabView>
+
+                <p-tabPanel header="General">
+                  
+                       
+                            <div class="align-items-start mb-2">
+                                <p>Metodo de Planificacion</p>
+                            </div>
+                            <div class="flex ">
+                                <div class="col-9">
+                                    <div class="grid card ">
+                                        <div class="margen">
+                                            <p-checkbox [binary]="true"  inputId="binary" ></p-checkbox>
+                                            <label class="p-checkbox-label">Activar generación usando registros de lectura</label>
+                                        </div>
+                                        <div class="input">
+                                            <p-checkbox [binary]="true"  inputId="binary"></p-checkbox>
+                                            <label class="p-checkbox-label">Generar predicción basado en fechas</label>
+                                        </div>
+                                    </div>
+                                </div>
+                              
+                               
+                            </div>
+                      
+                           <div class="flex col-12 gap-4">
+                            <div class="col-9">
+                                <div class="grid card ">
+                                
+                                    <div class="col-8">
+                                        <div class="justify-content-center">
+                                            
+                                            <div class="margen gap-4">
+                                                <p-checkbox  [binary]="true" inputId="binary"></p-checkbox>
+                                                <p class="">Desde última planificación (última OM planificada)</p>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 ">
+                                        <div class="justify-content-center ">
+                                            <div class="margen gap-4">
+                                                <input pInputText type="text" class="w-full" placeholder="">
+                                                <p class="">Días</p>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+        
+                                    <div class="col-8">
+                                        <div class="justify-content-center">
+                                            
+                                            <div class="margen gap-4">
+                                                <p-checkbox  [binary]="true" inputId="binary"></p-checkbox>
+                                                <p class="">Desde última planificación (última OM planificada)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 ">
+                                        <div class="justify-content-center ">
+                                            <div class="margen gap-4">
+                                                <input pInputText type="text" class="w-full" placeholder="">
+                                                <p class="">Días</p>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+        
+                                    <div class="col-8">
+                                        <div class="justify-content-center">
+                                            
+                                            <div class="margen gap-4">
+                                                <p-checkbox  [binary]="true" inputId="binary"></p-checkbox>
+                                                <p class="">Desde última planificación (última OM planificada)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 ">
+                                        <div class="justify-content-center ">
+                                            <div class="margen gap-4">
+                                                <input pInputText type="text" class="w-full" placeholder="">
+                                                <p class="">Días</p>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+    
+                                
+    
+                                    
+                                </div>
+                              
+
+                               
+                                    <div class="grid  ">
+                                        <div class="margen mb-4">
+                                            <p-checkbox [binary]="true"  inputId="binary" ></p-checkbox>
+                                            <label class="p-checkbox-label">Activar generación usando registros de lectura</label>
+                                        </div>
+                                     
+                                    </div>
+                                     <div class="grid card ">
+                                
+                                    <div class="col-8">
+                                        <div class="justify-content-center">
+                                            
+                                            <div class="margen gap-4">
+                                                <p-checkbox  [binary]="true" inputId="binary"></p-checkbox>
+                                                <p class="">Desde última planificación (última OM planificada)</p>
+                                                <p-checkbox  [binary]="true" inputId="binary"></p-checkbox>
+                                                <p class="">Desde última planificación (última OM planificada)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 ">
+                                        <div class="justify-content-center ">
+                                            <div class="margen gap-4">
+                                                <input pInputText type="text" class="w-full" placeholder="">
+                                                <p class="">Días</p>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+        
+                                    <div class="col-8">
+                                        <div class="justify-content-center">
+                                            
+                                            <div class="margen gap-4">
+                                                <p-checkbox  [binary]="true" inputId="binary"></p-checkbox>
+                                                <p class="">Desde última planificación (última OM planificada)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="justify-content-center ">
+                                            <div class="margen gap-4">
+                                                <input pInputText type="text" class="w-full" placeholder="">
+                                                <p class="">Días</p>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+        
+                                    <div class="col-8">
+                                        <div class="justify-content-center">
+                                            
+                                            <div class="margen gap-4">
+                                                <p-checkbox  [binary]="true" inputId="binary"></p-checkbox>
+                                                <p class="">Desde última planificación (última OM planificada)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="justify-content-center ">
+                                            <div class="margen gap-4">
+                                                <input pInputText type="text" class="w-full" placeholder="">
+                                                <p class="">Días</p>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+    
+                                
+    
+                                    
+                                </div>
+                               
+
+
+                            </div>
+                          
+                            <div class="col-3">
+                                <div class="card">
+                                    hjgf
+                                </div>
+                              
+                
+                            </div>
+                           </div>
+                          
+                  
+                      
+                 
+                   
+                   
+                    
+
+
+
+                </p-tabPanel>
+
+                <p-tabPanel header="Especificaciones">
+                    <p-card>
+                        <div class="pb-2">
+
+                            <div class="grid align-items-center">
+                                <div class="col-2">
+                                    <div class="align-items-center">
+                                        <p>
+                                            Lectura # 1
+                                           </p>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Nombre">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center  ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Valor">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid align-items-center mb-4">
+                                <div class="col-2">
+                                    <div class="align-items-center">
+                                        <p>
+                                            Lectura # 2
+                                           </p>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Nombre">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center  ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Valor">
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="grid align-items-center">
+                                <div class="col-2">
+                                    <div class="align-items-center">
+                                        <p>
+                                            Ultima Lectura
+                                           </p>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Nombre">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="justify-content-center  ">
+                                        <input pInputText type="text"  class="w-full" placeholder="Valor">
+                                    </div>
+                                </div>
+    
+                            </div>
+    
+                            <p-table 
+                            
+                            [value]="Especificacion"
+                            dataKey="id"
+                            [paginator]="true"
+                            [rows]="10"
+                            [rowsPerPageOptions]="[5, 10, 20]"
+                            [responsive]="true"
+                            styleClass="p-datatable-gridlines align-items-center mt-3 me-5"
+                            class="text-xs"
+                            >         
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th scope="col" style="width:60%">Especificación</th>
+                                        <th scope="col" style="width:40%">Valor</th>
+                                       
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-especificacion>
+                                    <tr>
+                                        <td> {{especificacion.U_CardName}} </td>
+                                        <td>
+                                            {{especificacion.U_DocTotal}}
+                                        </td>
+                    
+                                      
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                                 </div>
+                    </p-card>
+                    
+                </p-tabPanel>
+
+                <p-tabPanel header="Mantenimientos">
+                 
+                    <p-card>
+
+                        <p-table 
+                            
+                    [value]="Mantenimiento"
+                    dataKey="id"
+                    [paginator]="true"
+                    [rows]="10"
+                    [rowsPerPageOptions]="[5, 10, 20]"
+                    [responsive]="true"
+                    styleClass="p-datatable-gridlines align-items-center mt-3 me-5"
+                    class="text-xs"
+                    >         
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th scope="col" style="width:20%">Estado</th>
+                                <th scope="col" style="width:30%">Número OM</th>
+                                <th scope="col" style="width:15%">Fecha</th>
+                                <th scope="col" style="width:20%">Plan</th>
+                                <th scope="col" style="width:20%">Prioridad</th>
+                                <th scope="col" style="width:20%">Responsable</th>
+                                <th scope="col" style="width:20%">Nombre</th>
+                                <th scope="col" style="width:10%">Especificación</th>
+                                <th scope="col" style="width:10%">Valor</th>
+                               
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-mantenimiento>
+                            <tr>
+                                <td> {{mantenimiento.U_CardName}} </td>
+                                <td>
+                                    {{mantenimiento.U_DocTotal}}
+                                </td>
+            
+                                <td> {{mantenimiento.U_CardName}} </td>
+                                <td>
+                                    {{mantenimiento.U_DocTotal}}
+                                </td>
+                                <td> {{mantenimiento.U_CardName}} </td>
+                                <td>
+                                    {{mantenimiento.U_DocTotal}}
+                                    <td>
+                                        {{mantenimiento.U_DocTotal}}
+                                    </td>
+                                    <td> {{mantenimiento.U_CardName}} </td>
+                                    <td>
+                                        {{mantenimiento.U_DocTotal}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    </p-card>
+
+                    
+
+                </p-tabPanel>
+
+                <p-tabPanel header="Planes Asociados">
+                    <p>
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
+                        qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                    </p>
+                </p-tabPanel>
+
+                <p-tabPanel  header="Adjuntos">
+                    
+                </p-tabPanel>
+
+                <p-tabPanel  header="Componentes">
+
+                </p-tabPanel>
+
+            </p-tabView>
+
+          
+
+           
+
+            <div class="flex justify-content-between mt-3"> 
+                <div class="flex gap-2">
+                    <p-button type="submit" label="OK" styleClass="w-7rem"></p-button>
+                    <p-button label="Cancelar" styleClass="p-button-secondary w-7rem"></p-button>
+                </div>
+               
+            </div>
+            
+        </form>
+    
+    </p-card>
+</div>

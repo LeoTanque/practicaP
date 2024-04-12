@@ -6,7 +6,7 @@ import { Table } from 'primeng/table';
 import { Observable, catchError, exhaustMap, finalize, map, of, throwError } from 'rxjs';
 import { CreacionOrdenesService } from 'src/app/services/creacion-ordenes.service';
 import Swal from 'sweetalert2';
-
+ 
 @Component({
   selector: 'app-ordenes',
   templateUrl: './ordenes.component.html',
@@ -123,7 +123,7 @@ elementosTabla: any[] = [
 
 
 elementosTablaRefacciones:any[]=[
-  {U_ItemCode:'', U_ItemName:'', U_Quantity:'', U_CarCli:'', U_CarEmp:'',U_NorRep:'', Almacen:'', U_Existencia:'',original: true }
+  {U_ItemCode:'', U_ItemName:'', U_Quantity:'', U_CarCli:'N', U_CarEmp:'Y',U_NorRep:'', Almacen:'', U_Existencia:'',original: true }
 ]
 
 Existencia:any = '';
@@ -451,8 +451,8 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     U_ItemCode: cotizacion.U_ItemCode,
                     U_ItemName: cotizacion.U_ItemName,
                     U_Quantity: cotizacion.U_Quantity,
-                    U_CarCli: 'Y', // Supongo que estos valores son fijos, ajusta según tus necesidades
-                    U_CarEmp: "N",
+                    U_CarCli: cotizacion.U_CarCli, 
+                    U_CarEmp: cotizacion.U_CarEmp,
                     U_InCot: null,
                     U_Ins: null,
                     U_StaAlm: null,
@@ -463,7 +463,7 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                    // U_AlmEnt: this.almacenSeleccionado , // Ajusta según tus necesidades
                     U_AlmSal: null,
                    // U_CotVen: 4534,
-                    U_CotVen: cotizacion.DocEntry,// Ajusta según tus necesidades
+                    U_CotVen: cotizacion.DocEntry,
                     U_LinCot: null,
                     U_OrdVen: null,
                     U_LinOrdVen: null,
@@ -491,19 +491,16 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                   }));
                 }
 
-
-
                 this.elementosTablaRefacciones.forEach(orden => {
                   this.selectedU_NReparto = orden.U_NorRep;
-                  if(orden.original){
-                    orden.original = 'SC';
-                  }else{
-                    orden.original = 'CC'
+                  if (orden.U_CarCli === 'Y') {
+                      orden.original = false; 
+                  } else {
+                      orden.original = true; 
                   }
-                 
-                 
               });
 
+                  
                 if (!this.fechaSeleccionadatablas) {
                   this.fechaSeleccionadatablas = new Date(response.data.U_DocDate);
               }
@@ -665,6 +662,9 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
                     this.estados.splice(0, indiceEstadoSeleccionado);
                 }
 
+
+              
+
                 /*
                 const indexOpcionAnterior = this.estados.findIndex(estado => estado.value === estadoSeleccionado) - 1;
 
@@ -713,8 +713,8 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
       U_ItemCode: detalle.U_ItemCode,
       U_ItemName: detalle.U_ItemName,
       U_Quantity: detalle.U_Quantity,
-      U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
-      U_CarEmp: "N",
+      U_CarCli: detalle.U_CarCli, // Supongo que estos valores son fijos, ajusta según tus necesidades
+      U_CarEmp: detalle.U_CarEmp,
       U_InCot: null,
       U_Ins: null,
       U_StaAlm: null,
@@ -951,6 +951,37 @@ constructor(private creacionOrdenesService:CreacionOrdenesService, private fb: F
     }
   }
 
+  onSubmit1(): void {
+    // Obtener el estado seleccionado del dropdown
+    const estadoSeleccionado = this.miFormulario.get('estadoSeleccionado')?.value;
+
+    // Si el estado seleccionado es 'Autorización', ejecutar un método específico
+    if (estadoSeleccionado === 'A') {
+        this.ejecutarMetodoAutorizacion();
+    } else {
+        // Restaurar el comportamiento por defecto
+        if (this.modoEdicion) {
+            this.actualizarOrden();
+        } else {
+            this.grabarOrden();
+        }
+    }
+}
+
+
+ejecutarMetodoAutorizacion(): void {
+  // Verificar si la propiedad U_CarCli es "Y"
+  const esConCargo = this.elementosTablaRefacciones.some(orden => orden.U_CarCli === 'Y');
+
+  // Mostrar el mensaje correspondiente en la consola
+  if (esConCargo) {
+      console.log('Es con cargo');
+
+  } else {
+      console.log('Es sin cargo');
+  }
+}
+
 
 
 
@@ -973,7 +1004,7 @@ actualizarOrden() {
      console.log('estados', this.estados)
    }
    
-
+   const detallesFiltrados = this.elementosTablaRefacciones.filter((detalle, index) => index !== 0 && detalle.Articulo !== '');
 
     const detallesCotizacionesParaAPI1 = this.elementosTablaRefacciones.map((detalle, index) => ({
       
@@ -982,12 +1013,10 @@ actualizarOrden() {
       U_ItemCode: detalle.U_ItemCode,
       U_ItemName: detalle.U_ItemName,
       U_Quantity: detalle.U_Quantity,
-      //U_CarCli: "Y", // Supongo que estos valores son fijos, ajusta según tus necesidades
-      //U_CarCli: detalle.TipoExistencia1 === 'CC' ? 'Y' : 'N',
-      U_CarCli: detalle.U_CarCli ? 'Y' : 'N',
-      //U_CarCli: detalle.U_CarCli,
-      U_CarEmp: detalle.original ? 'Y' : 'N',
-      
+      //U_CarCli: detalle.U_CarCli ? 'Y' : 'N',
+      //U_CarEmp: detalle.original ? 'N' : 'Y',
+      U_CarCli: detalle.U_CarCli,
+      U_CarEmp:detalle.U_CarEmp,
       U_InCot: null,
       U_Ins: null,
       U_StaAlm: null,
@@ -1082,6 +1111,17 @@ actualizarOrden() {
       U_OdomAct: fila.U_OdoAct,
       U_OdomNue: fila.U_OdomNue !== undefined ? fila.U_OdomNue : null,
     }));
+
+/*
+    const estadoSeleccionadoA = valoresFormulario.estadoSeleccionado;
+    
+    // Comprobar si el estado seleccionado es 'Autorización'
+    if (estadoSeleccionadoA === 'A') {
+      console.log('Estado en Autorización jhgh');
+      
+    } else {
+      console.log('Estado no es Autorización');
+    }*/
     
     const bodyParaActualizacion = {
       DocEntry: this.docEntry,
@@ -2591,6 +2631,8 @@ if(estadoSeleccionado === 'D'){
     this.recomendacionesHbilitado = true;
     this.anexosHabilitado = true;
 }
+
+
   }
 
   onEstadoSeleccionadoChange2(event: any) {

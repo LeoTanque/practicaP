@@ -292,7 +292,7 @@ class="text-xs"
    </div>
        </div>
    
-    
+     
 </div>
 
 
@@ -360,9 +360,36 @@ class="text-xs"
                            
                            <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="U_CarCli" label="" [binary]="true" inputId="binary"  [disabled]="true" ></p-checkbox>
                            <div *ngIf="!orden.original">
-                            <p-checkbox name="tipoExistencia" value="U_CarCli" label="" [binary]="true" inputId="binary"  [(ngModel)]="TipoExistencia1" ></p-checkbox>
+                            <p-checkbox name="tipoExistencia" value="U_CarCli" label="" [binary]="true" inputId="binary"  [(ngModel)]="checked" ></p-checkbox>
                         </div>
+                        
                         </td>
+
+                        <td>
+                          <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="U_CarEmp" label="" [binary]="true" inputId="binary" [(ngModel)]="checked" ></p-checkbox>
+                           <div *ngIf="!orden.original">
+                               <p-checkbox name="tipoExistencia" value="U_CarEmp" label="" [binary]="true" inputId="binary" [disabled]="true"
+                                ></p-checkbox>
+                           </div>
+                       </td>
+
+                         <!--td>
+                          <div *ngIf="orden.original">
+                              <p-checkbox name="tipoExistencia" value="U_CarEmp" label="" [binary]="true" inputId="binary" [ngModel]="true" ></p-checkbox>
+                          </div>
+                          <div *ngIf="!orden.original">
+                              <p-checkbox name="tipoExistencia" value="U_CarEmp" label="" [binary]="true" inputId="binary" [disabled]="true" ></p-checkbox>
+                          </div>
+                      </td-->
+
+                        <!--td>
+                          <div *ngIf="orden.original">
+                              <p-checkbox name="tipoExistencia" value="U_CarCli" label="" [binary]="true" inputId="binary" [ngModel]="false" [disabled]="true"></p-checkbox>
+                          </div>
+                          <div *ngIf="!orden.original">
+                              <p-checkbox name="tipoExistencia" value="U_CarCli" label="" [binary]="true" inputId="binary" [(ngModel)]="orden.U_CarCli"></p-checkbox>
+                          </div>
+                      </td>
 
                         <td>
                            <p-checkbox *ngIf="orden.original" name="tipoExistencia" value="U_CarEmp" label="" [binary]="true" inputId="binary" [(ngModel)]="checked" ></p-checkbox>
@@ -370,7 +397,14 @@ class="text-xs"
                                 <p-checkbox name="tipoExistencia" value="U_CarEmp" label="" [binary]="true" inputId="binary" [disabled]="true"
                                  ></p-checkbox>
                             </div>
-                        </td>
+                        </td-->
+
+                       
+
+                       
+                      
+                    
+                      
                         
                         <!--td>
                            
@@ -836,7 +870,8 @@ class="text-xs"
 
 <div class="flex justify-content-between"> 
   <div class="flex gap-2">
-    <p-button type="submit" label="{{ modoEdicion ? 'Actualizar' : 'Grabar' }}"  [disabled]="isSubmitting"  (onClick)="modoEdicion? actualizarOrden() : grabarOrden()"></p-button>
+    <p-button type="submit" label="{{ modoEdicion ? 'Actualizar' : 'Grabar' }}"  [disabled]="isSubmitting" 
+    (onClick)="onSubmit()"></p-button>
       <p-button label="Cancelar" styleClass="p-button-secondary w-7rem"></p-button>
   </div>
   <div class="flex me-3"> 
