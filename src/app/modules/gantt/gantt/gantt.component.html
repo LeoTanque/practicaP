@@ -1,19 +1,41 @@
 <div class="card" >
-    <p-chart 
-    type="bar" 
-    [data]="data" 
-    [options]="options" 
-    
-    ></p-chart>
+  <p-chart 
+  type="bar" 
+  [data]="data" 
+  [options]="options" 
+  (onDataSelect)="handleDataSelect($event)"
+  ></p-chart>
 </div>
 
 
-<!--div-- class="card flex justify-content-center">
-    
-    <p-dialog header="Header" [(visible)]="intervalos" [style]="{width: '50vw'}">
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </p>
-    </p-dialog>
-</!--div-->
+<p-dialog header="Detalles de la tarea" [(visible)]="displayModal" [modal]="true">
+  <ng-template pTemplate="content">
+    <div class="modal-content">
+      <div class="input-group">
+        <p>Id: {{ selectedTask?.id }} </p>
+      </div>
+      <div class="input-group">
+          <p>Tarea: {{ selectedTask?.tarea }}</p>
+      </div>
+      <div class="input-group">
+        <label for="durationStart">Duración (Inicio):</label>
+      
+        <p-inputNumber inputId="integeronly" [(ngModel)]="duracionInicio" (ngModelChange)="actualizarDuracion($event, 'inicio')" > </p-inputNumber>
+      </div>
+      <div class="input-group">
+        <label for="durationEnd">Duración (Fin):</label>
+       
+        <p-inputNumber inputId="integeronly" [(ngModel)]="duracionFin" (ngModelChange)="actualizarDuracion($event, 'fin')" > </p-inputNumber>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="footer">
+      <p-button icon="pi pi-check"  label="Aceptar" styleClass="p-button-primary" (click)="guardarCambios()" ></p-button>
+      <p-button icon="pi pi-times"  label="Cancelar" styleClass="p-button-danger" (click)="hideDialog()"  ></p-button>
+  </ng-template>
+</p-dialog>
+
+
+
+
+

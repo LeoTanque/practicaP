@@ -8,6 +8,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext'
 import { InputNumberModule } from 'primeng/inputnumber';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
   imports: [
     CommonModule,
     GanttRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
     ChartModule,
     DialogModule,
     ButtonModule,

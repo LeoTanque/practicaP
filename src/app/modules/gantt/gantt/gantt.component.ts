@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { GanttService } from 'src/app/services/gantt.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-gantt',
@@ -6,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./gantt.component.scss']
 })
 export class GanttComponent implements OnInit{
+  
   data: any;
-  options: any;
-  tareas: any[] = [
+  options: any; 
+  tareas: any[]=[];
+
+  /*tareas: any[] = [
     { id: 1, tarea: 'Desarmar parte inferior', duracion: [[0, 1]], tecnico:'leo' },
     { id: 2, tarea: 'Desarmar la cuchilla', duracion: [[1, 2]] , tecnico:'leo' },
     { id: 3, tarea: 'Revisión el estado', duracion: [[2, 3]], tecnico:'leo' },
@@ -19,11 +24,20 @@ export class GanttComponent implements OnInit{
     { id: 8, tarea: 'Revisión del clutch', duracion: [[9, 10]] , tecnico:'leo'},
     { id: 9, tarea: 'Limpieza y Revición de resortes', duracion: [[10, 12]], tecnico:'leo' },
       
-  ];
+  ];*/
 
-  intervalos: boolean = false;
+  displayModal: boolean = false;
+  selectedTask: any;
+  duracionInicio: number = 0;
+  duracionFin: number = 0;
+
+  constructor(private dataService: GanttService,  private cdr: ChangeDetectorRef) {
+   
+   }
+
 
   ngOnInit() {
+    this.tareas = this.dataService.getTareas();
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
     const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
@@ -31,7 +45,7 @@ export class GanttComponent implements OnInit{
 
     const etiquetasY = this.generarEtiquetasY();
     const datos = this.generarDatos();
-
+/*
     this.data = {
       datasets: [
         {
@@ -45,7 +59,9 @@ export class GanttComponent implements OnInit{
           
         },
       ]
-    };
+    };*/
+
+    this.actualizarDatos();
 
     this.options = {
       indexAxis: 'y',
@@ -62,14 +78,6 @@ export class GanttComponent implements OnInit{
         },
         tooltip: {
           callbacks: {
-            /*
-            label: (context: { dataset: any; dataIndex: string | number; }) => {
-              const dataset = context.dataset;
-              const data = dataset.data[context.dataIndex];
-              const tarea = this.tareas[data.y - 1].tarea;
-              return `${tarea} dura ${data.diferenciaTiempo} Horas`;
-            }*/
-
             label: (context: { dataset: any; dataIndex: string | number; }) => {
               const dataset = context.dataset;
               const data = dataset.data[context.dataIndex];
@@ -77,6 +85,7 @@ export class GanttComponent implements OnInit{
                 const tarea = this.tareas.find((t: any) => t.id === data.y)?.tarea;
                 if (tarea) {
                   return `${tarea} dura ${data.diferenciaTiempo} Horas`;
+                 
                 } else {
                   return `Tarea no encontrada`;
                 }
@@ -128,8 +137,35 @@ export class GanttComponent implements OnInit{
     };
 
     this.actualizarLabelsDataset();
+    
   }
 
+
+  actualizarDatos() {
+    this.tareas = this.dataService.getTareas();
+    const etiquetasY = this.generarEtiquetasY();
+    const datos = this.generarDatos();
+    this.actualizarGrafico(datos, etiquetasY);
+  }
+
+
+   actualizarGrafico(datos: any[], etiquetasY: string[]) {
+    this.data = {
+      datasets: [
+        {
+          label: '', 
+          backgroundColor: ['rgba(255, 159, 64, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+          borderColor: ['rgb(255, 159, 64)', 'rgb(75, 192, 192)', 'rgb(54, 162, 235)', 'rgb(153, 102, 255)'],
+          borderWidth: 1,
+          borderSkipped: false,
+          borderRadius: 5,
+          data: datos,
+          
+        },
+      ]
+    };
+  }
+  
   generarEtiquetasY() {
     const maxLengthId = Math.max(...this.tareas.map(t => t.id.toString().length));
     const maxLengthTarea = Math.max(...this.tareas.map(t => t.tarea.length));
@@ -147,20 +183,167 @@ export class GanttComponent implements OnInit{
     return datos;
   }
 
+ 
+
+  
+  
+  handleDataSelect(event: any) {
+    const datasetIndex = event.element.datasetIndex;
+    const dataIndex = event.element.index;
+    const clickedData = this.data.datasets[datasetIndex].data[dataIndex];
+    const taskId = clickedData.y;
+  
+    // Buscar la tarea correspondiente
+    const tareaSeleccionada = this.tareas.find(tarea => tarea.id === taskId);
+  
+    if (tareaSeleccionada) {
+      const nombreTarea = tareaSeleccionada.tarea;
+      const duracion = `${clickedData.x[0]} - ${clickedData.x[1]}`; // Duración en formato de inicio - fin
+      const duracionInicio = clickedData.x[0];
+      const duracionFin = clickedData.x[1];
+      console.log('ID de la tarea seleccionada:', taskId);
+      console.log('Tarea seleccionada:', nombreTarea);
+      console.log('Duración Inicial:', duracionInicio);
+      console.log('Duración (Fin):', duracionFin);
+      const clickedDataset = this.data.datasets[event.datasetIndex];
+      const taskIndex = event.element.index;
+      const selectedTaskData = this.tareas[taskIndex];
+      this.selectedTask = selectedTaskData;
+
+
+      this.duracionInicio = duracionInicio;
+      this.duracionFin = duracionFin;
+      // Abrir el modal
+      this.displayModal = true;
+    } else {
+      console.log('Tarea no encontrada');
+    }
+  }
+
+/*
+  guardarCambios1() {
+    // Buscar la tarea correspondiente en base al ID seleccionado
+    const tareaSeleccionada = this.tareas.find(tarea => tarea.id === this.selectedTask.id);
+    if (tareaSeleccionada) {
+      // Actualizar la duración de la tarea
+      const index = this.tareas.indexOf(tareaSeleccionada);
+      this.tareas[index].duracion = [[this.duracionInicio, this.duracionFin]];
+      console.log(this.duracionFin)
+      // Actualizar el front-end
+      this.actualizarLabelsDataset();
+    }
+    // Cerrar el modal
+    this.hideDialog();
+  }
+
+
+  guardarCambios2() {
+    // Buscar la tarea correspondiente en base al ID seleccionado
+    const tareaSeleccionada = this.tareas.find(tarea => tarea.id === this.selectedTask.id);
+    if (tareaSeleccionada) {
+      // Actualizar la duración de la tarea
+      const index = this.tareas.indexOf(tareaSeleccionada);
+      this.tareas[index].duracion = [[this.duracionInicio, this.duracionFin]];
+
+      const nuevaDuracion = this.duracionFin - this.duracionInicio;
+      // Imprimir los datos de la nueva duración en la consola
+      console.log('Nueva duración:', this.tareas[index].duracion);
+      console.log('Nueva duración:', nuevaDuracion);
+      // Actualizar el front-end
+      this.generarDatos();
+    }
+    // Cerrar el modal
+    this.hideDialog();
+  }
+  
+
+  guardarCambios3() {
+    // Buscar la tarea correspondiente en base al ID seleccionado
+    const tareaIndex = this.tareas.findIndex(tarea => tarea.id === this.selectedTask.id);
+    if (tareaIndex !== -1) {
+      // Actualizar la duración de la tarea
+      this.tareas[tareaIndex].duracion = [[this.duracionInicio, this.duracionFin]];
+  
+      // Calcular la nueva duración
+      const nuevaDuracion = this.duracionFin - this.duracionInicio;
+      // Imprimir los datos de la nueva duración en la consola
+      console.log('Nueva duración:', this.tareas[tareaIndex].duracion);
+      console.log('Nueva duración:', nuevaDuracion);
+      // Actualizar el front-end
+      this.actualizarLabelsDataset();
+    }
+    // Cerrar el modal
+    this.hideDialog();
+  }*/
+  
+ 
+  guardarCambios() {
+    // Buscar la tarea correspondiente en base al ID seleccionado
+    const tareaSeleccionada = this.tareas.find(tarea => tarea.id === this.selectedTask.id);
+    if (tareaSeleccionada) {
+      // Actualizar la duración de la tarea
+      const index = this.tareas.indexOf(tareaSeleccionada);
+      this.tareas[index].duracion = [[this.duracionInicio, this.duracionFin]];
+      const cDuracion =  this.tareas[index].duracion
+      const nuevaDuracion = this.duracionFin - this.duracionInicio;
+      // Imprimir los datos de la nueva duración en la consola
+      console.log('Nueva duración:', cDuracion);
+      console.log('Nueva duración:', nuevaDuracion);
+      // Actualizar el front-end
+
+      this.dataService.guardarTareas(this.tareas);
+      this.actualizarDatos();
+      this.hideDialog();
+      console.log(this.tareas)
+      //this.cdr.detectChanges();
+    }
+    // Cerrar el modal
+    this.hideDialog();
+  }
+  
+
+  actualizarGrafico1() {
+    // Generar nuevamente los datos para el gráfico
+    const datos = this.generarDatos();
+    // Actualizar el gráfico con los nuevos datos
+    this.data.datasets[0].data = datos;
+    // Actualizar etiquetas del gráfico si es necesario
+    this.actualizarLabelsDataset();
+    this.cdr.detectChanges();
+  }
+
   actualizarLabelsDataset() {
-    this.data.datasets.forEach((dataset: { label: string; data: { y: number; }[]; }) => {
-      const tarea = this.tareas[dataset.data[0].y - 1].tarea; // Obtén el nombre de la tarea para el primer punto del dataset
-      dataset.label = ` ${tarea}`;
+    this.data.datasets.forEach((dataset: { data: { y: number; label?: string }[]; }) => {
+      dataset.data.forEach((dataPoint: { y: number; label?: string }) => {
+        const tarea = this.tareas[dataPoint.y - 1].tarea; // Obtén el nombre de la tarea para el punto de datos actual
+        dataPoint.label = ` ${tarea}`;
+      });
     });
   }
-
+  
+  
   
 
-  showDialog1() {
-    this.intervalos = true;
+  actualizarDuracion(nuevoValor: number, tipo: string) {
+    if (tipo === 'inicio') {
+      this.duracionInicio = nuevoValor;
+    } else {
+      this.duracionFin = nuevoValor;
+    }
+  
+    // Actualizar duración en el objeto tareas
+    const tareaSeleccionada = this.tareas.find(tarea => tarea.id === this.selectedTask.id);
+    if (tareaSeleccionada) {
+      const index = this.tareas.indexOf(tareaSeleccionada);
+      this.tareas[index].duracion = [[this.duracionInicio, this.duracionFin]];
+    }
+  }
+  
+
+
+  hideDialog() {
+   this.displayModal = false
   }
 
 
-
-  
 }
