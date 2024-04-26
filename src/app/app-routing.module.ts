@@ -7,7 +7,7 @@ const routes: Routes = [
   {
     path:'', component:AppLayoutComponent, canActivate:[AuthGuard],
     children: [
-      
+      /*
       { path: '', loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule) },
       { path: 'ordenes', loadChildren: () => import('./modules/ordenes/ordenes.module').then(m => m.OrdenesModule),  }, 
       { path: 'buscaOrdenes', loadChildren: () => import('./modules/buscaOrdenes/busca-ordenes.module').then(m =>m.BuscaOrdenesModule),},
@@ -19,7 +19,13 @@ const routes: Routes = [
       {path: 'administradorOrden', loadChildren: () => import('./modules/administrador/administrador.module').then(m=>m.AdministradorModule)},
       {path: 'gantt', loadChildren: () => import('./modules/gantt/gantt.module').then(m=>m.GanttModule)},
       {path: 'mantenimiento', loadChildren: () => import('./modules/mantenimiento/mantenimiento.module').then(m=>m.MantenimientoModule)},
-
+*/
+{ path: '', loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule) },
+{ path: 'socio', loadChildren: () => import('./modules/socio/socio.module').then(m => m.SocioModule) }, 
+{ path: 'compra', loadChildren: () => import('./modules/compra/compra.module').then(m => m.CompraModule) }, 
+{ path: 'ventas', loadChildren: () => import('./modules/ventas/ventas.module').then(m => m.VentasModule) },
+{ path: 'inventarios', loadChildren: () => import('./modules/inventarios/inventarios.module').then(m => m.InventariosModule) }, 
+{ path: 'pedidos', loadChildren: () => import('./modules/pedidos/pedidos.module').then(m => m.PedidosModule) }, 
   ]
   },
  

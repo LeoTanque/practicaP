@@ -1,0 +1,545 @@
+<div class="container">
+    <form >
+        <p-card header="Datos maestros de socios de negocios" [style]="{ width: '70rem' }" >
+            <div class="grid">
+                <div class="grid col-7">
+                
+            
+                    <div class="col-6">
+                        <div class="text-center  font-bold">
+                            <input type="text" pInputText class="input p-inputtext-sm" placeholder="Código" />
+                        </div>
+                       
+                
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center  font-bold">
+                            
+                            <p-dropdown [style]="{'width': dropdownWidth, 'height': dropdownHeight}"  class=" w-full sise" containerStyleClass="w-full" placeholder="Cliente"      >
+                            </p-dropdown>
+                        </div>
+                    </div>
+            
+                    <div class="col-6">
+                        <div class="text-center  font-bold">
+                            <input type="text" pInputText class="input p-inputtext-sm" placeholder="Nombre" />
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center  font-bold">
+                            <input type="text" pInputText class="input p-inputtext-sm" placeholder="DNI/RUC"/>
+                        </div>
+                    </div>
+            
+                    <div class="col-6">
+                        <div class="text-center  font-bold">
+                            
+                            <p-dropdown [style]="{'width': dropdownWidth, 'height': dropdownHeight}"  class=" w-full " containerStyleClass="w-full" placeholder="Registro único"      >
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class=" text-center font-bold">
+                                
+                            <p-dropdown [style]="{'width': dropdownWidth, 'height': dropdownHeight}"  class=" w-full  " containerStyleClass="w-full" placeholder="Soles Peruanos"      >
+                            </p-dropdown>
+                        </div>
+                    </div>
+    
+    
+                    
+    
+                </div>
+                <div class="col-5">
+                    <div class="col-12">
+                        <div class="text-center  font-bold">
+                            <input type="text" pInputText class="input p-inputtext-sm" placeholder="Saldo de cuenta" />
+                        </div>
+                       
+                
+                    </div>
+                    <div class="col-12">
+                        <div class="text-center  font-bold">
+                            
+                            <input type="text" pInputText class="input p-inputtext-sm" placeholder="Venta eficaz" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+            
+            <p-tabView>
+        
+                <p-tabPanel header="General">
+                    <p-card >
+                        <div class="flex">
+                            <div class="col-6">
+                                <div class="field grid">
+                                    <!--label for="firstname3" class="col-fixed" style="width:100px">Teléfono 1</label-->
+                                    <div class="col">
+                                        <input id="telefono1" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Teléfono 1">
+                                    </div>
+                                </div>
+                                <div class="field grid">
+                                    <!--label for="lastname3" class="col-fixed" style="width:100px">Teléfono 2</label-->
+                                    <div class="col">
+                                        <input id="telefono2" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Teléfono 2">
+                                    </div>
+                    
+                                    
+                                </div>    
+                                      
+                                <div class="field grid">
+                                    <!--label for="firstname3" class="col-fixed" style="width:100px">Correo electrónico</label-->
+                                    <div class="col">
+                                        <input id="correo" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Correo electrónico">
+                                    </div>
+                                </div>
+                                <div class="field grid">
+                                    <!--label for="lastname3" class="col-fixed" style="width:100px">Dirección Fiscal</label-->
+                                    <div class="col">
+                                        <input id="direccionF" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Dirección Fiscal">
+                                    </div>
+                    
+                                    
+                                </div>  
+                            </div>
+                          
+                            <div class="col-6">
+                                <div class="field grid justify-content-center">
+                                    <!--label for="lastname3" class="col-fixed" style="width:100px">Persona de Contacto</label-->
+                                    <div class="col">
+                                        <input id="personaContacto" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Persona de Contacto">
+                                    </div>
+                    
+                                    
+                                </div>  
+                
+                
+                
+                               
+                               </div> 
+                
+                              
+                            
+                          </div>
+        
+                          <p-fieldset legend="Estado">
+                            <div class="field-radiobutton">
+                              
+                                <p-radioButton [(ngModel)]="estado" name="estado" value="Si"></p-radioButton>
+                                <label for="city1">Activo</label>
+                                
+                            </div>
+                            <div class="field-radiobutton">
+                                
+                              <p-radioButton [(ngModel)]="estado" name="estado" value="No"></p-radioButton>
+                              <label for="city2">Inactivo</label>
+                              
+                          </div>
+                          </p-fieldset>
+                                
+                          <!--p>Estado</p>
+                          <div class="field-radiobutton">
+                              
+                              <p-radioButton [(ngModel)]="estado" name="estado" value="Si"></p-radioButton>
+                              <label for="city1">Activo</label>
+                              
+                          </div>
+                          <div class="field-radiobutton">
+                              
+                            <p-radioButton [(ngModel)]="estado" name="estado" value="No"></p-radioButton>
+                            <label for="city2">Inactivo</label>
+                            
+                        </div-->
+                    </p-card>
+                  
+                      
+                 
+                   
+                    
+        
+        
+        
+                </p-tabPanel>
+        
+                <p-tabPanel header="Personas de contacto">
+                    <div class="flex align-items-between justify-content-between">
+                        <div class="col-6 me-3 p-1 mr-5">
+                            <p-card [style]="{height:'20rem'}">
+                     
+                            </p-card>
+        
+                            <div class="flex justify-content-center mt-3">
+                               <p-button styleClass="p-button-outlined mt-2" label="Fijar como estandar"></p-button>
+                            </div>
+                        </div>
+                       
+        
+                        <!--div class="col-6 justify-content-center p-1">
+                            <div class="field grid">
+                                <label for="lastname3" class="col-fixed" style="width:100px">ID Contacto</label>
+                                <div class="col">
+                                    <input id="idcontacto" pInputText  type="text" class="p-inputtext-sm text-center" placeholder="ID Contacto">
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <label for="lastname3" class="col-fixed" style="width:100px">Nombre</label>
+                                <div class="col">
+                                    <input id="nombre" pInputText  type="text" class="p-inputtext-sm">
+                                </div>
+                
+                                
+                            </div>    
+                                  
+                            <div class="field grid">
+                                <label for="firstname3" class="col-fixed" style="width:100px">Apellidos</label>
+                                <div class="col">
+                                    <input id="apellidos" pInputText  type="text" class="p-inputtext-sm">
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <label for="lastname3" class="col-fixed" style="width:100px">Teléfono 1</label>
+                                <div class="col">
+                                    <input id="telefono1" pInputText  type="text" class="p-inputtext-sm">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                                <label for="lastname3" class="col-fixed" style="width:100px">Teléfono 2</label>
+                                <div class="col">
+                                    <input id="telefono2" pInputText  type="text" class="p-inputtext-sm">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                                <label for="lastname3" class="col-fixed" style="width:100px">Email</label>
+                                <div class="col">
+                                    <input id="email" pInputText  type="text" class="p-inputtext-sm">
+                                </div>
+                
+                                
+                            </div>  
+        
+                            <div class="flex justify-content-center mt-2">
+                                <p-button styleClass="p-button-outlined mt-2 " label="Agregar Contacto"></p-button>
+                             </div>
+                        </div-->
+
+
+
+                        <div class="col-6 justify-content-center ml-5">
+                            <div class="field grid">
+                              
+                                <div class="col">
+                                    <input id="idcontacto" pInputText  type="text" class="p-inputtext-sm alin" placeholder="ID Contacto">
+                                </div>
+                            </div>
+                            <div class="field grid">
+                               
+                                <div class="col">
+                                    <input id="nombre" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Nombre">
+                                </div>
+                
+                                
+                            </div>    
+                                  
+                            <div class="field grid">
+                               
+                                <div class="col">
+                                    <input id="apellidos" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Apellidos">
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                
+                                <div class="col">
+                                    <input id="telefono1" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Teléfono 1">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                               
+                                <div class="col">
+                                    <input id="telefono2" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Teléfono 2">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                               
+                                <div class="col">
+                                    <input id="email" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Email">
+                                </div>
+                
+                                
+                            </div>  
+        
+                            <div class="flex justify-content-start mt-2">
+                                <p-button styleClass="p-button-outlined mt-2 " label="Agregar Contacto"></p-button>
+                             </div>
+                        </div>
+
+                    </div>
+                  
+                    
+                </p-tabPanel>
+        
+                <p-tabPanel header="Direcciones">
+                 
+                    <div class="flex align-items-between justify-content-between">
+                        <div class="col-6 me-3 p-1 mr-5">
+                            <p-card [style]="{height:'20rem'}">
+                     
+                            </p-card>
+        
+                            <div class="flex justify-content-center mt-2">
+                               <p-button styleClass="p-button-outlined mt-2" label="Fijar como estandar"></p-button>
+                            </div>
+                        </div>
+                       
+        
+                        <div class="col-6 justify-content-center p-1 ml-5">
+                            <div class="field grid">
+                                <!--label for="firstname3" class="col-fixed" style="width:100px">ID Dirección</label-->
+                                <div class="col">
+                                    <input id="iddireccion" pInputText  type="text" class="p-inputtext-sm alin" placeholder="ID Dirección">
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Tipo</label-->
+                                <div class="col">
+                                    <p-dropdown [style]="{'width': dropdownWidth2, 'height':dropdownHeight}"  class=" w-full text-center " containerStyleClass="w-full" placeholder="Tipo"      >
+                                    </p-dropdown>
+                                </div>
+                
+                                
+                            </div>    
+                                  
+                            <div class="field grid">
+                                <!--label for="firstname3" class="col-fixed" style="width:100px">Dirección</label-->
+                                <div class="col">
+                                    <input id="direccion" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Dirección">
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Distrito</label-->
+                                <div class="col">
+                                    <input id="distrito" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Distrito">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Provincia</label-->
+                                <div class="col">
+                                    <input id="provincia" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Provincia">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Departamento</label-->
+                                <div class="col">
+                                    <input id="departamento" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Departamento">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">País</label-->
+                                <div class="col">
+                                    <input id="país" pInputText  type="text" class="p-inputtext-sm alin" placeholder="País">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Ubigueo</label-->
+                                <div class="col">
+                                    <input id="ubigueo" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Ubigueo">
+                                </div>
+                
+                                
+                            </div>  
+        
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Zona</label-->
+                                <div class="col">
+                                    <input id="zona" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Zona">
+                                </div>
+                
+                                
+                            </div> 
+                            <div class="flex justify-content-start mt-2">
+                                <p-button styleClass="p-button-outlined mt-2" label="Agregar Dirección"></p-button>
+                             </div>
+                        </div>
+                    </div>
+        
+                    
+        
+                </p-tabPanel>
+        
+                <p-tabPanel header="Seguimiento de pago">
+                    <div class="flex align-items-between justify-content-between">
+                        <div class="col-6 me-3 p-1 mr-5">
+                            
+
+                            <p-fieldset legend="Fecha de Comunicacion" [style]="{height:'w-full'}" class="mb-4" >
+                               
+                                <div class="mb-3">
+                                    <p-button type="button" icon="pi pi-chevron-left" (click)="prev()" [disabled]="isFirstPage()" styleClass="p-button-text"></p-button>
+                                    <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text"></p-button>
+                                    <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
+                                </div>
+                                <p-table 
+                                
+                                [value]="Seguimiento"
+                                
+                                [paginator]="true"
+                                [showCurrentPageReport]="true"
+                                [rows]="5"
+                                [rowsPerPageOptions]="[5, 25, 50]"
+                                [responsive]="true"
+                                (onPage)="pageChange($event)"
+                                styleClass="p-datatable-gridlines align-items-center mt-3 me-5"
+                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                                class="text-xs"
+                                >         
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th scope="col" style="width:5%">ID</th>
+                                            <th scope="col" style="width:40%">Fecha de llamada</th>
+                                            <th scope="col" style="width:40%">Hora de llamada</th>
+                                            
+                                           
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-seguimiento>
+                                        <tr>
+                                            <td> {{seguimiento.id}} </td>
+                                            <td>
+                                                {{seguimiento.Fecha}}
+                                            </td>
+                        
+                                            <td> {{seguimiento.Hora}} </td>
+                                           
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                                  
+                             
+                              </p-fieldset>
+                            <div class="flex justify-content-center mt-2">
+                               <p-button styleClass="p-button-outlined mt-2" label="Fijar como estandar"></p-button>
+                            </div>
+                        </div>
+                       
+        
+                        <div class="col-6 justify-content-center p-1 ml-5 ">
+                            <div class="field grid">
+                                <!--label for="firstname3" class="col-fixed" style="width:100px">ID Dirección</label-->
+                                <div class="col">
+                                    <input id="iddireccion" pInputText  type="text" class="p-inputtext-sm alin" placeholder="ID Dirección">
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Tipo</label-->
+                                <div class="col">
+                                    <p-dropdown [style]="{'width': dropdownWidth2, 'height':dropdownHeight}"  class=" w-full text-center " containerStyleClass="w-full" placeholder="Tipo"      >
+                                    </p-dropdown>
+                                </div>
+                
+                                
+                            </div>    
+                                  
+                            <div class="field grid">
+                                <!--label for="firstname3" class="col-fixed" style="width:100px">Dirección</label-->
+                                <div class="col">
+                                    <input id="direccion" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Dirección">
+                                </div>
+                            </div>
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Distrito</label-->
+                                <div class="col">
+                                    <input id="distrito" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Distrito">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Provincia</label-->
+                                <div class="col">
+                                    <input id="provincia" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Provincia">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Departamento</label-->
+                                <div class="col">
+                                    <input id="departamento" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Departamento">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">País</label-->
+                                <div class="col">
+                                    <input id="país" pInputText  type="text" class="p-inputtext-sm alin" placeholder="País">
+                                </div>
+                
+                                
+                            </div>  
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Ubigueo</label-->
+                                <div class="col">
+                                    <input id="ubigueo" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Ubigueo">
+                                </div>
+                
+                                
+                            </div>  
+        
+                            <div class="field grid">
+                                <!--label for="lastname3" class="col-fixed" style="width:100px">Zona</label-->
+                                <div class="col">
+                                    <input id="zona" pInputText  type="text" class="p-inputtext-sm alin" placeholder="Zona">
+                                </div>
+                
+                                
+                            </div> 
+                            <div class="flex justify-content-start mt-2">
+                                <p-button styleClass="p-button-outlined mt-2" label="Agregar Dirección"></p-button>
+                             </div>
+                        </div>
+                    </div>
+                </p-tabPanel>
+        
+                <p-tabPanel  header="Comentarios">
+                    <div class="col-12">
+                        <textarea rows="10" cols="35" class="w-full" pInputTextarea placeholder="Comentarios" ></textarea>
+                    </div>
+                </p-tabPanel>
+        
+              
+        
+            </p-tabView>
+          
+            <div class="flex justify-content-between mt-3"> 
+                <div class="flex gap-2">
+                  <p-button type="submit" label="OK" styleClass="p-button-primary w-7rem" ></p-button>
+                    <p-button label="Cancelar" styleClass="p-button-secondary w-7rem"></p-button>
+                </div>
+              </div>
+        </p-card>
+        
+    </form>
+</div>
+
+
+
+
+   

@@ -1,0 +1,123 @@
+import { Component, OnInit } from '@angular/core';
+import { LazyLoadEvent } from 'primeng/api';
+import { Pagination } from 'src/app/services/pagination';
+import { Productos } from 'src/app/services/productos';
+
+@Component({
+  selector: 'app-pedidos',
+  templateUrl: './pedidos.component.html',
+  styleUrls: ['./pedidos.component.scss']
+})
+export class PedidosComponent implements OnInit {
+
+  productos: Productos[] = [ 
+    { name: 'Filas', imageUrl: '../../../../assets/fondo1.jpg', precio: 200 },
+    { name: 'Adidass', imageUrl: '../../../../assets/fondo1.jpg', precio: 100  },
+    { name: 'CR_V', imageUrl: '../../../../assets/fondo1.jpg', precio: 400  },
+    { name: 'PILOT', imageUrl: '../../../../assets/fondo1.jpg', precio: 300  },
+    { name: 'ODDYSSEY', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
+    { name: 'RIDGELINE', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
+    { name: 'FIT', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
+    { name: 'CIVIC', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
+    { name: 'ACCORD', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
+    { name: 'ACCESORIOS', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
+    { name: 'LLANTAS', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
+    { name: 'TODOS REPUESTOS', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
+
+   
+  ];
+
+  productosOriginales: Productos[] = [];
+  productosPaginados: Productos[] = [];
+  totalRegistros: number;
+  paginaActual: number = 1;
+  productosPorPagina: number = 9;
+  filtroTexto: string = '';
+
+
+  currentPage: number = 1;
+  itemsPerPage: number = 9;
+  totalPages!: number ;
+
+  constructor() {
+    this.totalRegistros = this.productos.length;
+    //this.cargarProductos({ first: 0, rows: 9 });
+    
+    this.productosOriginales = [...this.productos];
+    this.cargarProductos({ first: 1, rows: this.productosPorPagina });
+  }
+
+  ngOnInit(): void {
+    
+  }
+
+ 
+/*
+  cargarProductos1(event: LazyLoadEvent) {
+    if (event?.first !== undefined && event?.rows !== undefined) {
+      const startIndex = event.first;
+      const endIndex = event.first + event.rows;
+      this.productosPaginados = this.productos.slice(startIndex, endIndex);
+    }
+  }*/
+
+  cargarProductos1(event: LazyLoadEvent) {
+    const startIndex = event.first || 0;
+    const endIndex = (event.first || 0) + (event.rows || this.productos.length);
+    this.productosPaginados = this.productos.slice(startIndex, endIndex);
+  }
+
+  cargarProductos(event: LazyLoadEvent) {
+    const startIndex = event.first || 0;
+    const endIndex = startIndex + this.productosPorPagina;
+    this.productosPaginados = this.productosOriginales.slice(startIndex, endIndex);
+    this.paginaActual = Math.floor(startIndex / this.productosPorPagina) + 1;
+  }
+  
+  
+
+  filtrarProductos1() {
+    if (this.filtroTexto.trim() === '') {
+      // Si el filtro está vacío, restaura los productos originales y carga la primera página
+      this.productos = [...this.productosOriginales];
+      this.cargarProductos({ first: 0, rows: 9 });
+    } else {
+      // Si hay texto en el filtro, aplica el filtro y carga la primera página de los resultados filtrados
+      this.productosPaginados = this.productos.filter(producto =>
+        Object.values(producto).some(propiedad =>
+          propiedad.toString().toLowerCase().includes(this.filtroTexto.toLowerCase())
+        )
+      ).slice(0, 9);
+    }
+
+  }
+
+  filtrarProductos() {
+    if (this.filtroTexto.trim() === '') {
+      this.productos = [...this.productosOriginales];
+    } else {
+      this.productos = this.productosOriginales.filter(producto =>
+        Object.values(producto).some(propiedad =>
+          propiedad.toString().toLowerCase().includes(this.filtroTexto.toLowerCase())
+        )
+      );
+    }
+    this.cargarProductos({ first: 1, rows: this.productosPorPagina });
+  }
+
+    irPaginaAnterior() {
+    if (this.paginaActual > 1) {
+      this.paginaActual--;
+      this.cargarProductos({ first: (this.paginaActual - 1) * this.productosPorPagina, rows: this.productosPorPagina });
+    }
+  }
+
+  irPaginaSiguiente() {
+    const ultimaPagina = Math.ceil(this.productosOriginales.length / this.productosPorPagina);
+    if (this.paginaActual < ultimaPagina) {
+      this.paginaActual++;
+      this.cargarProductos({ first: (this.paginaActual - 1) * this.productosPorPagina, rows: this.productosPorPagina });
+    }
+  }
+ 
+}

@@ -1,0 +1,42 @@
+.grid{
+   align-items: center;
+   justify-content: center;
+   text-align: center;
+}
+.card:hover {
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3); /* Sombreado al hacer hover */
+    transform: scale(1.05); /* Efecto de acercamiento al hacer hover */
+  }
+
+  .card {
+   width: 80%;
+    //max-width: 300px;
+    margin: 10px;
+    transition: box-shadow 0.5s, transform 0.5s; /* Transición más suave para el sombreado y el efecto de acercamiento */
+    border: solid 1px rgb(188, 184, 184);
+  }
+
+  .redondo {
+    border-radius: 25px;
+  }
+
+  .product-details {
+    padding: 1rem;
+  }
+  
+  .product-name {
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .product-price {
+    color: #007bff; /* Color azul, puedes cambiarlo según tu preferencia */
+    margin-top: 2px;
+    text-align: center;
+  }
+  .card-img-top {
+    max-width: 60%;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+  }
