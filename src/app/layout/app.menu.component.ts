@@ -46,7 +46,7 @@ export class AppMenuComponent implements OnInit {
         {
             label: 'Modulos', icon: 'pi pi-cog',
             items: [
-                {
+               /* {
                     label: 'Socio de negocios', icon: 'pi pi-cog',
                     
                     items: [
@@ -71,7 +71,7 @@ export class AppMenuComponent implements OnInit {
                     items: [
                         { label: 'Inventarios ', icon: 'pi pi-cog ', routerLink: ['/inventarios'] }, 
                     ]
-                },
+                },*/
                 {
                     label: 'Pedidos OV', icon: 'pi pi-cog',
                     items: [

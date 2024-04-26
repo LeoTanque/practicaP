@@ -11,18 +11,18 @@
 
   
 
- <p-card>
+ <p-card class="col-12  md:col-6 lg:col-4 sm:col-12">
     <h3>
         Vans
     </h3>
     <div class="grid">
-        <div *ngFor="let producto of productosPaginados  | filter: filtroTexto" class="col-4 ">
+        <div *ngFor="let producto of productosPaginados  | filter: filtroTexto" class="col-4  md:col-6 lg:col-4 sm:col-12">
           <div class="card ">
             <div class="justify-content-center ">
                 <img class="card-img-top" [src]="producto.imageUrl" alt="producto.name" >
             </div>
           
-            <div class="product-details">
+            <div class="product-details ">
               <p class="product-name">{{ producto.name }}</p>
               <div>
                 <p class="product-price">Precio: {{ producto.precio }}</p>

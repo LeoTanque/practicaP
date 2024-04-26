@@ -22,7 +22,7 @@ export class PedidosComponent implements OnInit {
     { name: 'ACCORD', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
     { name: 'ACCESORIOS', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
     { name: 'LLANTAS', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
-    { name: 'TODOS REPUESTOS', imageUrl: '../../../../assets/fondo1.jpg', precio: 200  },
+    { name: 'TODOS', imageUrl: '../../../../assets/fondo1.jpg', precio: 500  },
 
    
   ];
@@ -35,7 +35,7 @@ export class PedidosComponent implements OnInit {
   filtroTexto: string = '';
 
 
-  currentPage: number = 1;
+  currentPage: number = 0;
   itemsPerPage: number = 9;
   totalPages!: number ;
 
@@ -44,36 +44,28 @@ export class PedidosComponent implements OnInit {
     //this.cargarProductos({ first: 0, rows: 9 });
     
     this.productosOriginales = [...this.productos];
-    this.cargarProductos({ first: 1, rows: this.productosPorPagina });
+    this.cargarProductos({ first: 0, rows: this.productosPorPagina });
   }
 
   ngOnInit(): void {
     
   }
 
- 
-/*
-  cargarProductos1(event: LazyLoadEvent) {
-    if (event?.first !== undefined && event?.rows !== undefined) {
-      const startIndex = event.first;
-      const endIndex = event.first + event.rows;
-      this.productosPaginados = this.productos.slice(startIndex, endIndex);
-    }
-  }*/
-
-  cargarProductos1(event: LazyLoadEvent) {
-    const startIndex = event.first || 0;
-    const endIndex = (event.first || 0) + (event.rows || this.productos.length);
-    this.productosPaginados = this.productos.slice(startIndex, endIndex);
-  }
-
   cargarProductos(event: LazyLoadEvent) {
     const startIndex = event.first || 0;
     const endIndex = startIndex + this.productosPorPagina;
-    this.productosPaginados = this.productosOriginales.slice(startIndex, endIndex);
+    
+    let productosFiltrados = this.productosOriginales.filter(producto =>
+      Object.values(producto).some(propiedad =>
+        propiedad.toString().toLowerCase().includes(this.filtroTexto.toLowerCase())
+      )
+    );
+  
+    this.totalRegistros = productosFiltrados.length;
+  
+    this.productosPaginados = productosFiltrados.slice(startIndex, endIndex);
     this.paginaActual = Math.floor(startIndex / this.productosPorPagina) + 1;
   }
-  
   
 
   filtrarProductos1() {
@@ -92,7 +84,7 @@ export class PedidosComponent implements OnInit {
 
   }
 
-  filtrarProductos() {
+  filtrarProductos2() {
     if (this.filtroTexto.trim() === '') {
       this.productos = [...this.productosOriginales];
     } else {
@@ -103,6 +95,23 @@ export class PedidosComponent implements OnInit {
       );
     }
     this.cargarProductos({ first: 1, rows: this.productosPorPagina });
+    
+  }
+
+  filtrarProductos() {
+    if (this.filtroTexto.trim() === '') {
+      // Si el filtro está vacío, restaura los productos originales y carga la primera página
+      this.productos = [...this.productosOriginales];
+      this.cargarProductos({ first: 0, rows: this.productosPorPagina });
+    } else {
+      // Si hay texto en el filtro, aplica el filtro a todos los productos y carga la primera página
+      this.productos = this.productosOriginales.filter(producto =>
+        Object.values(producto).some(propiedad =>
+          propiedad.toString().toLowerCase().includes(this.filtroTexto.toLowerCase())
+        )
+      );
+      this.cargarProductos({ first: 0, rows: this.productosPorPagina });
+    }
   }
 
     irPaginaAnterior() {
