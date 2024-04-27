@@ -68,36 +68,6 @@ export class PedidosComponent implements OnInit {
   }
   
 
-  filtrarProductos1() {
-    if (this.filtroTexto.trim() === '') {
-      // Si el filtro está vacío, restaura los productos originales y carga la primera página
-      this.productos = [...this.productosOriginales];
-      this.cargarProductos({ first: 0, rows: 9 });
-    } else {
-      // Si hay texto en el filtro, aplica el filtro y carga la primera página de los resultados filtrados
-      this.productosPaginados = this.productos.filter(producto =>
-        Object.values(producto).some(propiedad =>
-          propiedad.toString().toLowerCase().includes(this.filtroTexto.toLowerCase())
-        )
-      ).slice(0, 9);
-    }
-
-  }
-
-  filtrarProductos2() {
-    if (this.filtroTexto.trim() === '') {
-      this.productos = [...this.productosOriginales];
-    } else {
-      this.productos = this.productosOriginales.filter(producto =>
-        Object.values(producto).some(propiedad =>
-          propiedad.toString().toLowerCase().includes(this.filtroTexto.toLowerCase())
-        )
-      );
-    }
-    this.cargarProductos({ first: 1, rows: this.productosPorPagina });
-    
-  }
-
   filtrarProductos() {
     if (this.filtroTexto.trim() === '') {
       // Si el filtro está vacío, restaura los productos originales y carga la primera página

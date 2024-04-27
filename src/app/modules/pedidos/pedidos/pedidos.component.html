@@ -1,6 +1,4 @@
-
-
-<div class=" col-12  justify-content-center align-items-center">
+<!--div class=" col-12  justify-content-center align-items-center">
     <span class="p-input-icon-left w-full">
         <i class="pi pi-search"></i>
         <input type="text" class="w-full" pInputText (input)="filtrarProductos()" [(ngModel)]="filtroTexto"  placeholder="Buscar ..." />
@@ -8,10 +6,7 @@
     </span>
 </div>
 
-
-  
-
- <p-card class="col-12  md:col-6 lg:col-4 sm:col-12">
+ <p-card class=" md:col-6 lg:col-4 sm:col-12">
     <h3>
         Vans
     </h3>
@@ -40,11 +35,35 @@
       </div>
   </p-card> 
 
- 
- 
+ <div class="flex justify-content-between mt-2">
+    <button class="p-button p-button-outlined" (click)="irPaginaAnterior()" [disabled]="paginaActual === 1">Página Anterior</button>
+    <button class="p-button p-button-outlined" (click)="irPaginaSiguiente()" [disabled]="paginaActual === totalPages">Página Siguiente</button>
+</div-->
+       
+
+<div class="contenedor">
+  <div class=" col-12  justify-content-center align-items-center mb-3">
+    <span class="p-input-icon-left w-full">
+        <i class="pi pi-search"></i>
+        <input type="text" class="w-full" pInputText (input)="filtrarProductos()" [(ngModel)]="filtroTexto"  placeholder="Buscar ..." />
+        
+    </span>
+</div>
+  <div class="contenedor-conciertos">
+    <div *ngFor="let producto of productosPaginados | filter: filtroTexto" class="card">
+      <div class="imagen">
+        <img class="card-img-top" [src]="producto.imageUrl" alt="producto.name">
+      </div>
+      <div class="textos">
+        <p>{{ producto.name }}</p>
+        <p>Precio: {{ producto.precio }}</p>
+        <p-button styleClass="p-button-outlined" class="redondo" label="Comprar"></p-button>
+      </div>
+    </div>
+  </div>
+
   <div class="flex justify-content-between mt-2">
     <button class="p-button p-button-outlined" (click)="irPaginaAnterior()" [disabled]="paginaActual === 1">Página Anterior</button>
     <button class="p-button p-button-outlined" (click)="irPaginaSiguiente()" [disabled]="paginaActual === totalPages">Página Siguiente</button>
+  </div>
 </div>
-       
-      

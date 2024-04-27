@@ -10,7 +10,7 @@ export class EntregaService {
   apiUrl = enviroment.apiUrl
   
   constructor(private http: HttpClient) { }
-
+ 
 
   datosDeEntrega(serie:any, Folio:any):Observable<any>{
     return this.http.get<any>(`/api/OrdenesTrabajo/ObtenerSerie?serie=${serie}&Folio=${Folio}`)

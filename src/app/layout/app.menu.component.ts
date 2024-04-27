@@ -75,6 +75,7 @@ export class AppMenuComponent implements OnInit {
                 {
                     label: 'Pedidos OV', icon: 'pi pi-cog',
                     items: [
+                        { label: 'Clientes ', icon: 'pi pi-cog ', routerLink: ['/clientes'] }, 
                         { label: 'Pedidos ', icon: 'pi pi-cog ', routerLink: ['/pedidos'] }, 
                     ]
                 },
