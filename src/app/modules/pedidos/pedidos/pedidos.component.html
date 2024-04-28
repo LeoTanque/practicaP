@@ -78,7 +78,7 @@ styleClass="p-fluid"
 
 </p-dialog>
 
-  <div class=" col-12  justify-content-center align-items-center mb-3">
+  <!--div class=" col-12  justify-content-center align-items-center mb-3">
     <span class="p-input-icon-left w-full">
         <i class="pi pi-search"></i>
         <input type="text" class="w-full" pInputText (input)="filtrarProductos()" [(ngModel)]="filtroTexto"  placeholder="Buscar ..." />
@@ -140,7 +140,7 @@ styleClass="p-fluid"
   <i class="pi pi-shopping-cart"></i>
 
   <span class="contador">{{ cantidadProductosEnCarrito }}</span>
-</div>
+</div-->
 
 
 <!--div class="carrito-icono" (click)="abrirCarrito()">
@@ -164,7 +164,7 @@ styleClass="p-fluid"
 
 
 
-<!--div class=" col-12  justify-content-center align-items-center mb-3">
+<div class=" col-12  justify-content-center align-items-center mb-3">
   <span class="p-input-icon-left w-full">
       <i class="pi pi-search"></i>
       <input type="text" class="w-full" pInputText (input)="filtrarProductosD()" [(ngModel)]="filtroTexto"  placeholder="Buscar ..." />
@@ -225,10 +225,7 @@ styleClass="p-fluid"
 </div>
 
 
-<div class="carrito-icono" (click)="abrirCarrito()">
-<i class="pi pi-shopping-cart"></i>
-<span class="contador">{{ cantidadProductosEnCarrito }}</span>
-</div>
+
 
 <p-dialog [(visible)]="mostrarCarrito" header="Carrito de Compras">
 <ng-template pTemplate="content">
@@ -241,4 +238,4 @@ styleClass="p-fluid"
     </div>
   </div>
 </ng-template>
-</p-dialog-->
+</p-dialog>

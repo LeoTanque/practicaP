@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LazyLoadEvent } from 'primeng/api';
+import { Articulo } from 'src/app/services/articulo';
 import { Pagination } from 'src/app/services/pagination';
 import { Productos } from 'src/app/services/productos';
 import { ServicioService } from 'src/app/services/servicio.service';
@@ -44,9 +45,9 @@ export class PedidosComponent implements OnInit {
 
   //productosOriginales: Productos[] = [];
   productosOriginales: Productos[] = [];
-  articulosOriginales:any[]=[];
+  articulosOriginales:Articulo[]=[];
   //productosPaginados: Productos[] = [];
-  productosPaginados: any[] = [];
+  productosPaginados: Articulo[] = [];
   totalRegistros: number;
   paginaActual: number = 1;
   productosPorPagina: number = 9;
@@ -61,7 +62,7 @@ export class PedidosComponent implements OnInit {
   mostrarCarrito: boolean = false;
   //productoSeleccionado: Productos | undefined;
 
-  productoSeleccionado:any | undefined
+  productoSeleccionado: Articulo | undefined
 
 
   cantidadProductos: number = 1;
@@ -70,18 +71,18 @@ export class PedidosComponent implements OnInit {
   productosAgregados: any[] = [];
   carrito: any[] = [];
   
-  articulos: any[]=[];
+  articulos: Articulo[]=[];
 
   
   constructor(private servicioService: ServicioService) {
-    this.totalRegistros = this.productos.length;
+   // this.totalRegistros = this.productos.length;
     this.totalRegistros = this.articulos.length;
     //this.cargarProductos({ first: 0, rows: 9 });
     
-    this.productosOriginales = [...this.productos];
-   // this.articulosOriginales = [...this.articulos];
-    this.cargarProductos({ first: 0, rows: this.productosPorPagina });
-    //this.cargarProductosD({ first: 0, rows: this.productosPorPagina });
+   // this.productosOriginales = [...this.productos];
+    this.articulosOriginales = [...this.articulos];
+    //this.cargarProductos({ first: 0, rows: this.productosPorPagina });
+    this.cargarProductosD({ first: 0, rows: this.productosPorPagina });
   }
 
   ngOnInit(): void {
@@ -178,7 +179,7 @@ export class PedidosComponent implements OnInit {
     
 
 
-
+/*
   cargarProductos(event: LazyLoadEvent) {
     const startIndex = event.first || 0;
     const endIndex = startIndex + this.productosPorPagina;
@@ -193,7 +194,7 @@ export class PedidosComponent implements OnInit {
   
     this.productosPaginados = productosFiltrados.slice(startIndex, endIndex);
     this.paginaActual = Math.floor(startIndex / this.productosPorPagina) + 1;
-  }
+  }*/
 
   cargarProductosD(event: LazyLoadEvent) {
     const startIndex = event.first || 0;
@@ -211,7 +212,7 @@ export class PedidosComponent implements OnInit {
     this.paginaActual = Math.floor(startIndex / this.productosPorPagina) + 1;
   }
   
-
+/*
   filtrarProductos() {
     if (this.filtroTexto.trim() === '') {
       // Si el filtro está vacío, restaura los productos originales y carga la primera página
@@ -226,7 +227,7 @@ export class PedidosComponent implements OnInit {
       );
       this.cargarProductos({ first: 0, rows: this.productosPorPagina });
     }
-  }
+  }*/
 
   
   filtrarProductosD() {
@@ -235,20 +236,22 @@ export class PedidosComponent implements OnInit {
       this.articulos = [...this.articulosOriginales];
       this.cargarProductosD({ first: 0, rows: this.productosPorPagina });
     } else {
-      // Si hay texto en el filtro, aplica el filtro a todos los productos y carga la primera página
+      // Si hay texto en el filtro, aplica el filtro a todos los productos
       this.articulos = this.articulosOriginales.filter(articulo =>
-        Object.values(articulo).some((propiedad:any )=>
+        Object.values(articulo).some(propiedad =>
           propiedad.toString().toLowerCase().includes(this.filtroTexto.toLowerCase())
         )
       );
-      this.cargarProductos({ first: 0, rows: this.productosPorPagina });
+      // Cargar los productos filtrados
+      this.cargarProductosD({ first: 0, rows: this.productosPorPagina });
     }
   }
+  
 
     irPaginaAnterior() {
     if (this.paginaActual > 1) {
       this.paginaActual--;
-      this.cargarProductos({ first: (this.paginaActual - 1) * this.productosPorPagina, rows: this.productosPorPagina });
+      this.cargarProductosD({ first: (this.paginaActual - 1) * this.productosPorPagina, rows: this.productosPorPagina });
     }
   }
 
@@ -256,14 +259,15 @@ export class PedidosComponent implements OnInit {
     const ultimaPagina = Math.ceil(this.productosOriginales.length / this.productosPorPagina);
     if (this.paginaActual < ultimaPagina) {
       this.paginaActual++;
-      this.cargarProductos({ first: (this.paginaActual - 1) * this.productosPorPagina, rows: this.productosPorPagina });
+      this.cargarProductosD({ first: (this.paginaActual - 1) * this.productosPorPagina, rows: this.productosPorPagina });
     }
   }
 
+  /*
   mostrarDetalles(producto: Productos) {
     this.productoSeleccionado = producto;
     this.mostrarModal = true;
-  }
+  }*/
 
 
 
@@ -282,9 +286,10 @@ export class PedidosComponent implements OnInit {
     }
   }
 
+  /*
   calcularPrecio(): number {
     return this.productoSeleccionado?.precio * this.cantidadProductos;
-  }
+  }*/
 
 
   calcularPrecioD(): number {
@@ -377,29 +382,27 @@ export class PedidosComponent implements OnInit {
 
  
 
-
+/*
   agregarAlCarrito(): void {
-    // Obtener el producto seleccionado
+   
     const producto = this.productoSeleccionado;
-    // Calcular el precio total
+
     const precioTotal = this.calcularPrecio();
     
-    // Agregar el producto al carrito
+   
     this.carrito.push({
       producto: producto,
       cantidad: this.cantidadProductos,
       precioTotal: precioTotal
     });
     this.mostrarModal = false;
-    //console.log(this.carrito)
-    // Incrementar el contador de productos en el carrito
+
     this.cantidadProductosEnCarrito++;
-   //console.log(this.cantidadProductosEnCarrito)
-    // Guardar el carrito en localStorage
+
    
     localStorage.setItem('carrito', JSON.stringify(this.carrito));
-    //this.abrirCarrito()
-  }
+   
+  }*/
 
 
   agregarAlCarritoD(): void {
