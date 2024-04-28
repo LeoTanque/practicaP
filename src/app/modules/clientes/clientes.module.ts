@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 
 import { ClientesRoutingModule } from './clientes-routing.module';
 import { ClientesComponent } from './clientes/clientes.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 
 
 @NgModule({
@@ -11,7 +16,13 @@ import { ClientesComponent } from './clientes/clientes.component';
   ],
   imports: [
     CommonModule,
-    ClientesRoutingModule
+    ClientesRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    TableModule,
+    DialogModule,
+    ButtonModule
   ]
 })
 export class ClientesModule { }

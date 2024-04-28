@@ -10,6 +10,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { FilterPipe } from 'src/app/services/filter.pipe';
 import { PaginatorModule } from 'primeng/paginator';
+import { DialogModule } from 'primeng/dialog';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { PaginatorModule } from 'primeng/paginator';
     ButtonModule,
     InputNumberModule,
     InputTextModule,
-    PaginatorModule
+    PaginatorModule,
+    DialogModule
   ]
 })
 export class PedidosModule { }

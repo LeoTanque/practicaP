@@ -44,7 +44,7 @@
 
 */
 
-
+ 
 
 
 .contenedor {
@@ -161,4 +161,84 @@
     margin-bottom: 20px; /* Espaciado inferior entre las tarjetas */
   }
 }
+
+
+.modal-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.modal-img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Agrega estilos responsive para el modal */
+@media screen and (max-width: 768px) {
+  .modal-content {
+    padding: 10px;
+  }
+}
+
+.stepper-button-container {
+  display: flex;
+ // flex-direction: column;
+  align-items: center; /* Alinear verticalmente */
+  text-align: center;
+  justify-content: center;
+ 
+}
+
+.boton-agregar {
+  font-size: small;
+}
+
+.stepper {
+  display: flex;
+  align-items: center; /* Alinear los botones horizontalmente */
+  gap: 5px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.stepper-button {
+  font-size: 0.5em; /* Tamaño de la fuente de los botones */
+  font-size: small;
+}
+
+
+
+
+/* Estilos para el icono flotante de carrito */
+.carrito-icono {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #363d44;
+  color: #fff;
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+ 
+}
+
+.carrito-icono i {
+  font-size: 2em; /* Tamaño del icono en relación al tamaño de fuente del contenedor */
+}
+
+.contador {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: #fff;
+  border-radius: 50%;
+  padding: 3px 6px;
+  font-size: 12px;
+}
+
+
 

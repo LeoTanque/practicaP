@@ -114,7 +114,7 @@ export class LoginComponent implements OnInit {
     }
   }*/
 
-  submitForm1() {
+  submitForm() {
     const staticUsername = 'leo';
     const staticPassword = '123';
   
@@ -130,7 +130,7 @@ export class LoginComponent implements OnInit {
   }
   
   
-  submitForm() {
+  submitForm1() {
     if (this.loginForm.valid) {
       const email = this.loginForm.get('email')?.value;
       const password = this.loginForm.get('password')?.value;

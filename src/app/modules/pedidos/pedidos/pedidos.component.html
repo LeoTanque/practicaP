@@ -1,44 +1,4 @@
-<!--div class=" col-12  justify-content-center align-items-center">
-    <span class="p-input-icon-left w-full">
-        <i class="pi pi-search"></i>
-        <input type="text" class="w-full" pInputText (input)="filtrarProductos()" [(ngModel)]="filtroTexto"  placeholder="Buscar ..." />
-        
-    </span>
-</div>
 
- <p-card class=" md:col-6 lg:col-4 sm:col-12">
-    <h3>
-        Vans
-    </h3>
-    <div class="grid">
-        <div *ngFor="let producto of productosPaginados  | filter: filtroTexto" class="col-4  md:col-6 lg:col-4 sm:col-12">
-          <div class="card ">
-            <div class="justify-content-center ">
-                <img class="card-img-top" [src]="producto.imageUrl" alt="producto.name" >
-            </div>
-          
-            <div class="product-details ">
-              <p class="product-name">{{ producto.name }}</p>
-              <div>
-                <p class="product-price">Precio: {{ producto.precio }}</p>
-              </div>
-             
-             
-            </div>
-        
-           <div class="flex justify-content-center mt-2">
-            <p-button styleClass="p-button-outlined" class="redondo" label="Comprar"></p-button>
-           
-         </div>
-        </div>
-        </div>
-      </div>
-  </p-card> 
-
- <div class="flex justify-content-between mt-2">
-    <button class="p-button p-button-outlined" (click)="irPaginaAnterior()" [disabled]="paginaActual === 1">Página Anterior</button>
-    <button class="p-button p-button-outlined" (click)="irPaginaSiguiente()" [disabled]="paginaActual === totalPages">Página Siguiente</button>
-</div-->
        
 
 <div class="contenedor">
@@ -48,6 +8,7 @@
         <input type="text" class="w-full" pInputText (input)="filtrarProductos()" [(ngModel)]="filtroTexto"  placeholder="Buscar ..." />
         
     </span>
+
 </div>
   <div class="contenedor-conciertos">
     <div *ngFor="let producto of productosPaginados | filter: filtroTexto" class="card">
@@ -57,7 +18,7 @@
       <div class="textos">
         <p>{{ producto.name }}</p>
         <p>Precio: {{ producto.precio }}</p>
-        <p-button styleClass="p-button-outlined" class="redondo" label="Comprar"></p-button>
+        <p-button styleClass="p-button-outlined" class="redondo" label="Comprar" (click)="mostrarDetalles(producto)" ></p-button>
       </div>
     </div>
   </div>
@@ -66,4 +27,62 @@
     <button class="p-button p-button-outlined" (click)="irPaginaAnterior()" [disabled]="paginaActual === 1">Página Anterior</button>
     <button class="p-button p-button-outlined" (click)="irPaginaSiguiente()" [disabled]="paginaActual === totalPages">Página Siguiente</button>
   </div>
+
+  <p-dialog [(visible)]="mostrarModal" header="{{ productoSeleccionado?.name }}" [style]="{'max-width': '80vw'}">
+    <ng-template pTemplate="content">
+      <!-- Contenido del modal con los detalles del producto -->
+      <div class="modal-content">
+        <img class="modal-img" [src]="productoSeleccionado?.imageUrl" alt="productoSeleccionado?.name">
+        <p>Precio: {{ calcularPrecio() }}</p>
+     
+        <div class="stepper-button-container">
+          <!-- Stepper -->
+          <div class="stepper">
+            <p-button class="stepper-button" size="small"   (click)="decrementarCantidad()">-</p-button>
+            <p class="cantidad">{{ cantidadProductos }}</p>
+            <p-button class="stepper-button"  size="small" (click)="incrementarCantidad()">+</p-button>
+          </div>
+      
+          <!-- Botón de agregar -->
+          <div class="boton-agregar">
+            <p-button styleClass="p-button-outlined" size="small" class="redondo" label="Agregar" (click)="agregarAlCarrito()" ></p-button>
+          </div>
+        </div>
+
+
+
+      </div>
+    </ng-template>
+  </p-dialog>
+
+
+
 </div>
+
+<!-- Icono flotante de carrito -->
+<div class="carrito-icono" (click)="imprimirProductosCarrito()" >
+  <i class="pi pi-shopping-cart"></i>
+  <!-- Contador dinámico -->
+  <span class="contador">{{ cantidadProductosEnCarrito }}</span>
+</div>
+
+
+<!--div class="carrito-icono" (click)="abrirCarrito()">
+  <i class="pi pi-shopping-cart"></i>
+  <span class="contador">{{ cantidadProductosEnCarrito }}</span>
+</div-->
+
+<p-dialog [(visible)]="mostrarCarrito" header="Carrito de Compras">
+  <ng-template pTemplate="content">
+    <div class="carrito-contenido">
+      <div *ngFor="let item of carrito" class="carrito-item">
+        <img [src]="item.producto.imageUrl" alt="{{ item.producto.name }}">
+        <p>{{ item.producto.name }}</p>
+        <p>Cantidad: {{ item.cantidad }}</p>
+        <p>Precio total: {{ item.precioTotal }}</p>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>
+
+

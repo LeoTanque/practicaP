@@ -14,8 +14,10 @@ export class ServicioService {
 
 
   obtenerClientes():Observable<any>{
-    //return this.http.get<any>(`/api/Clientes?company=**BasedePruebas**`);
-    return this.http.get<any>("http://26.239.132.42:8032/api/Clientes?company=**BasedePruebas**");
+    return this.http.get<any>('/api/Clientes?company=**BasedePruebas**');
     }
+
+   
+  
 
 } 
