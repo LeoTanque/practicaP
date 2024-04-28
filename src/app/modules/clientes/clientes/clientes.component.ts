@@ -19,7 +19,7 @@ export class ClientesComponent implements OnInit {
   lastTouchTime: number = 0;
   touchTimeout: any;
   cardCodeValue: any;
-
+  ListNumValue:any;
   constructor(private servicioService: ServicioService){
    
   }
@@ -31,11 +31,14 @@ export class ClientesComponent implements OnInit {
   }
 
 
-  obtenerClientes1(): void {
+  
+
+  obtenerClientes(): void {
     this.servicioService.obtenerClientes().subscribe(
       (response) => {
-        this.clientes = response.data; 
-        console.log(response.data);
+        this.clientes = response.Data;
+        console.log(this.clientes);
+     
       },
       (error) => {
         this.errorMessage = 'Error al obtener los clientes: ' + error.message;
@@ -44,18 +47,6 @@ export class ClientesComponent implements OnInit {
     );
   }
 
-  obtenerClientes(): void {
-    this.servicioService.obtenerClientes().subscribe(
-      (response) => {
-        this.clientes = response.Data; // Acceder a la propiedad Data en lugar de data
-        console.log(this.clientes); // Mostrar los datos en la consola
-      },
-      (error) => {
-        this.errorMessage = 'Error al obtener los clientes: ' + error.message;
-        console.error(this.errorMessage);
-      }
-    );
-  }
   
   
   openNew3() {
@@ -83,7 +74,9 @@ export class ClientesComponent implements OnInit {
    onrowDobleClick(cliente: any) {
     this.cardNameValue = cliente.CardName;
     this.cardCodeValue = cliente.CardCode;
+    this.ListNumValue = cliente.ListNum
   console.log(this.cardNameValue, this.cardCodeValue)
+  console.log('valor del ListNum del cliente seleccionado', this.ListNumValue)
   this.client=false
     }
 

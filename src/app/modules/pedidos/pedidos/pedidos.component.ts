@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { Pagination } from 'src/app/services/pagination';
 import { Productos } from 'src/app/services/productos';
+import { ServicioService } from 'src/app/services/servicio.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -10,6 +11,20 @@ import { Productos } from 'src/app/services/productos';
 })
 export class PedidosComponent implements OnInit {
 
+
+ 
+  clientes: any[] = [];
+  errorMessage: string = '';
+  client: boolean= false;
+ 
+ filtroGlobal: string = '';
+  cardNameValue: any;
+
+  lastTouchTime: number = 0;
+  touchTimeout: any;
+  cardCodeValue: any;
+  ListNumValue:any;
+  priceList:any;
   productos: any[] = [ 
     { name: 'Filas', imageUrl: '../../../../assets/fondo1.jpg', precio: 200 },
     { name: 'Adidass', imageUrl: '../../../../assets/fondo1.jpg', precio: 100  },
@@ -27,8 +42,11 @@ export class PedidosComponent implements OnInit {
    
   ];
 
+  //productosOriginales: Productos[] = [];
   productosOriginales: Productos[] = [];
-  productosPaginados: Productos[] = [];
+  articulosOriginales:any[]=[];
+  //productosPaginados: Productos[] = [];
+  productosPaginados: any[] = [];
   totalRegistros: number;
   paginaActual: number = 1;
   productosPorPagina: number = 9;
@@ -41,7 +59,10 @@ export class PedidosComponent implements OnInit {
 
   mostrarModal: boolean = false;
   mostrarCarrito: boolean = false;
-  productoSeleccionado: Productos | undefined;
+  //productoSeleccionado: Productos | undefined;
+
+  productoSeleccionado:any | undefined
+
 
   cantidadProductos: number = 1;
   cantidadProductosEnCarrito: number = 0;
@@ -49,17 +70,114 @@ export class PedidosComponent implements OnInit {
   productosAgregados: any[] = [];
   carrito: any[] = [];
   
-  constructor() {
+  articulos: any[]=[];
+
+  
+  constructor(private servicioService: ServicioService) {
     this.totalRegistros = this.productos.length;
+    this.totalRegistros = this.articulos.length;
     //this.cargarProductos({ first: 0, rows: 9 });
     
     this.productosOriginales = [...this.productos];
+   // this.articulosOriginales = [...this.articulos];
     this.cargarProductos({ first: 0, rows: this.productosPorPagina });
+    //this.cargarProductosD({ first: 0, rows: this.productosPorPagina });
   }
 
   ngOnInit(): void {
-    
+    this.obtenerClientes();
+   
   }
+
+  obtenerClientes(): void {
+    this.servicioService.obtenerClientes().subscribe(
+      (response) => {
+        this.clientes = response.Data;
+        console.log(this.clientes);
+     
+      },
+      (error) => {
+        this.errorMessage = 'Error al obtener los clientes: ' + error.message;
+        console.error(this.errorMessage);
+      }
+    );
+  }
+
+  
+  
+  openNew3() {
+ 
+    this.client = true
+   }
+
+
+   onrowTouchEnd(event: TouchEvent, cliente: any) {
+    const now = new Date().getTime();
+    const timeSinceLastTouch = now - this.lastTouchTime;
+    if (timeSinceLastTouch < 300 && timeSinceLastTouch > 0) {
+      // Doble toque detectado
+      this.onrowDobleClick(cliente);
+      clearTimeout(this.touchTimeout);
+    } else {
+      // Primer toque
+      this.lastTouchTime = now;
+      this.touchTimeout = setTimeout(() => {
+        clearTimeout(this.touchTimeout);
+      }, 300);
+    }
+  }
+
+   onrowDobleClick(cliente: any) {
+    this.cardNameValue = cliente.CardName;
+    this.cardCodeValue = cliente.CardCode;
+    this.ListNumValue = cliente.ListNum
+  console.log(this.cardNameValue, this.cardCodeValue)
+  console.log('valor del ListNum del cliente seleccionado', this.ListNumValue)
+  this.client=false
+
+  this.obtenerDatosArticulos(this.ListNumValue);
+    }
+
+
+    hideDialog() {
+      this.client = false
+    }
+
+
+
+
+    obtenerDatosArticulos(priceList: number): void {
+      this.servicioService.obtenerArticulos(priceList).subscribe(
+        response => {
+          this.articulos = response.Data;
+          console.log('Datos de los artículos:');
+          console.log(this.articulos); // Imprimir los datos de los artículos en la consola
+    
+          // Convertir ListNum a número
+          const listNumCliente = parseInt(this.ListNumValue);
+    
+          // Obtener el valor de PriceList de cada artículo y compararlo con ListNum del cliente seleccionado
+          this.articulos.forEach(articulo => {
+            const priceListArticulo = parseInt(articulo.PriceList);
+            console.log('PriceList del artículo:', priceListArticulo);
+            if (priceListArticulo === listNumCliente) {
+              console.log('Los valores coinciden. Datos del artículo:');
+              console.log(articulo);
+            } else {
+              console.log('Los valores no coinciden para este artículo:', articulo);
+            }
+          });
+        },
+        error => {
+          console.error('Error al obtener los datos de los artículos:', error);
+        }
+      );
+    }
+    
+    
+    
+
+
 
   cargarProductos(event: LazyLoadEvent) {
     const startIndex = event.first || 0;
@@ -67,6 +185,22 @@ export class PedidosComponent implements OnInit {
     
     let productosFiltrados = this.productosOriginales.filter(producto =>
       Object.values(producto).some(propiedad =>
+        propiedad.toString().toLowerCase().includes(this.filtroTexto.toLowerCase())
+      )
+    );
+  
+    this.totalRegistros = productosFiltrados.length;
+  
+    this.productosPaginados = productosFiltrados.slice(startIndex, endIndex);
+    this.paginaActual = Math.floor(startIndex / this.productosPorPagina) + 1;
+  }
+
+  cargarProductosD(event: LazyLoadEvent) {
+    const startIndex = event.first || 0;
+    const endIndex = startIndex + this.productosPorPagina;
+    
+    let productosFiltrados = this.articulosOriginales.filter(articulo =>
+      Object.values(articulo).some((propiedad:any) =>
         propiedad.toString().toLowerCase().includes(this.filtroTexto.toLowerCase())
       )
     );
@@ -94,6 +228,23 @@ export class PedidosComponent implements OnInit {
     }
   }
 
+  
+  filtrarProductosD() {
+    if (this.filtroTexto.trim() === '') {
+      // Si el filtro está vacío, restaura los productos originales y carga la primera página
+      this.articulos = [...this.articulosOriginales];
+      this.cargarProductosD({ first: 0, rows: this.productosPorPagina });
+    } else {
+      // Si hay texto en el filtro, aplica el filtro a todos los productos y carga la primera página
+      this.articulos = this.articulosOriginales.filter(articulo =>
+        Object.values(articulo).some((propiedad:any )=>
+          propiedad.toString().toLowerCase().includes(this.filtroTexto.toLowerCase())
+        )
+      );
+      this.cargarProductos({ first: 0, rows: this.productosPorPagina });
+    }
+  }
+
     irPaginaAnterior() {
     if (this.paginaActual > 1) {
       this.paginaActual--;
@@ -114,6 +265,13 @@ export class PedidosComponent implements OnInit {
     this.mostrarModal = true;
   }
 
+
+
+  mostrarDetallesD(articulo: any) {
+    this.productoSeleccionado = articulo;
+    this.mostrarModal = true;
+  }
+
   incrementarCantidad() {
     this.cantidadProductos++;
   }
@@ -126,6 +284,11 @@ export class PedidosComponent implements OnInit {
 
   calcularPrecio(): number {
     return this.productoSeleccionado?.precio * this.cantidadProductos;
+  }
+
+
+  calcularPrecioD(): number {
+    return this.productoSeleccionado?.Price * this.cantidadProductos;
   }
 
   agregarAlCarrito1(): void {
@@ -238,6 +401,30 @@ export class PedidosComponent implements OnInit {
     //this.abrirCarrito()
   }
 
+
+  agregarAlCarritoD(): void {
+    // Obtener el producto seleccionado
+    const articulo = this.productoSeleccionado;
+    // Calcular el precio total
+    const precioTotal = this.calcularPrecioD();
+    
+    // Agregar el producto al carrito
+    this.carrito.push({
+      articulo: articulo,
+      cantidad: this.cantidadProductos,
+      precioTotal: precioTotal
+    });
+    this.mostrarModal = false;
+    //console.log(this.carrito)
+    // Incrementar el contador de productos en el carrito
+    this.cantidadProductosEnCarrito++;
+   //console.log(this.cantidadProductosEnCarrito)
+    // Guardar el carrito en localStorage
+   
+    localStorage.setItem('carrito', JSON.stringify(this.carrito));
+    //this.abrirCarrito()
+  }
+
   imprimirProductosCarrito(): void {
     // Obtener los datos del carrito del localStorage
     const carritoString: string | null = localStorage.getItem('carrito');
@@ -257,6 +444,8 @@ export class PedidosComponent implements OnInit {
       console.log('El carrito está vacío');
     }
   }
+
+  
 
 
   
