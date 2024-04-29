@@ -240,5 +240,46 @@
   font-size: 12px;
 }
 
+.carrito-item {
+  display: flex;
+  align-items: center;
+}
+
+.modal-content1 {
+  display: flex;
+  flex-direction: column;
+}
 
 
+.producto-info {
+  display: flex;
+  align-items: center;
+}
+
+.cantidad {
+  margin-right: 5px; /* Ajusta el margen según sea necesario */
+}
+
+
+.modal-img1 {
+  width: 50px; /* Ajusta el tamaño de la imagen según sea necesario */
+  height: 50px; /* Ajusta el tamaño de la imagen según sea necesario */
+  margin-right: 10px; /* Ajusta el margen según sea necesario */
+}
+
+.precio-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+/* Opcional: Si deseas desactivar el scroll horizontal en pantallas móviles */
+@media (max-width: 767px) {
+  .table-wrapper {
+    overflow-x: hidden;
+  }
+}
